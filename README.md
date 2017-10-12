@@ -1,5 +1,5 @@
 
-# Project Name
+# MiAM
 
 TODO: short project description, some sample screenshots or mockups
 
