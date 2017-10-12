@@ -8,8 +8,9 @@ TODO: short project description, some sample screenshots or mockups
 TODO:  descriptions of code organization and tools and libraries used
 
 ## Setup
-
-TODO: how to get the project dev environment up and running, npm install etc
+npm install exp --global
+cd miam
+exp start
 
 ## Deployment
 
