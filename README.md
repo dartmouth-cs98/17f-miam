@@ -10,11 +10,12 @@ MiAM is an app in which users can generate memes easily, share them freely and p
 TODO:  descriptions of code organization and tools and libraries used
 
 ## Setup
-npm install exp --global
+1. Download `Expo XDE` from app store or the Internet
+2. `npm install exp --global`
 
-cd miam
+`cd miam`
 
-exp start
+`exp start`
 
 ## Deployment
 
@@ -29,3 +30,4 @@ TODO: how to deploy the project
 - Nina Liu
 
 ## Acknowledgments
+Thanks Tim for helping us along the way!
