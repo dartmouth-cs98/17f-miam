@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "userName": "Sally",
+    "userImg": "https://randomuser.me/api/portraits/women/37.jpg",
+    "imgURL": "https://media.giphy.com/media/xUA7b68hKy839wiVJC/giphy.gif",
+    "likes": 34,
+    "comments": ["this is awesome", "you rock"],
+    "text": "#miam"
+  }
+]
