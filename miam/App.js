@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-
+import { Feed } from "./Components/Feed";
 export default class App extends React.Component {
   render() {
     return (
@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
   },
   heading: {
     height: "10%",
-    alignItems: "flex-start",
     width: "100%",
-    backgroundColor: "#886BEA"
+    backgroundColor: "#886BEA",
+    justifyContent: "center"
   },
   logo: {
     color: "#ffffff",
-    fontSize: 50,
-    alignItems: "center"
+    fontSize: 40,
+    textAlign: "center"
   }
 });
