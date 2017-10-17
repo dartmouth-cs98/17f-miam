@@ -40,8 +40,8 @@ class LogIn extends React.Component {
     }
   }
 
-  onSignUp() {
-
+  onSignUp(navigation) {
+    this.props.navigation.navigate('SignUp');
   }
 
   render() {

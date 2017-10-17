@@ -7,13 +7,16 @@ import {
 from "react-native";
 import Feed from "./Components/Feed";
 import LogIn from "./Components/LogIn";
+import { AuthRoot } from './router';
 
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			selectedTab: 'featured',
-			loggedIn: true
+			loggedIn: true,
+			view: <AuthRoot />,
+			kind: 'AuthRoot',
 		};
 	}
 
@@ -80,7 +83,7 @@ export default class App extends React.Component {
 		}
 		else {
 			return (
-				<LogIn/>
+				<AuthRoot />
 			);
 		}
 	}

@@ -50,10 +50,10 @@ export function signInUser(email, password, cb) {
   }
   axios.post(ROOT_URL+'/users/signin', params)
   .then((response) => {
-    console.log(response.data);
+    console.log(response);
     cb(response.data, null);
   }).catch((error) => {
-    cb(null, error)
+    cb(null, error);
     console.log(`error in signInUser. ${error}`);
   })
 }
