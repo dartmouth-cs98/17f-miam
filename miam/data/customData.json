@@ -6,6 +6,15 @@
     "imgURL": "https://media.giphy.com/media/xUA7b68hKy839wiVJC/giphy.gif",
     "likes": 34,
     "comments": ["this is awesome", "you rock"],
-    "text": "#miam"
+    "hashtags": ["#miam", "#letsGo!"]
+  },
+  {
+    "id": 2,
+    "userName": "Tony",
+    "userImg": "https://randomuser.me/api/portraits/men/1.jpg",
+    "imgURL": "https://media.giphy.com/media/3NtY188QaxDdC/giphy.gif",
+    "likes": 40,
+    "comments": ["wonderful"],
+    "hashtags": ["#heySister"]
   }
 ]

@@ -45,20 +45,34 @@ export default class Feed extends React.Component {
             </Text>
           </View>
         </View>
+        <View style={styles.separatorLine} />
 
         <View style={styles.postContentContainer}>
+          <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
+            {post.hashtags}
+          </Text>
           <Image
             source={{ uri: post.imgURL }}
             style={styles.memeStyle}
             resizeMode="contain"
           />
         </View>
+        <View style={styles.separatorLine} />
         <View style={styles.postFooterContainer}>
-          <View>
-            <Icon name="favorite-border" color="#e68a00" size={23} />
+          <View style={styles.postFooterIconContainer}>
+            <Icon name="favorite-border" color="#cc6699" size={25} />
+            <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
+              {post.likes}
+            </Text>
+          </View>
+          <View style={styles.postFooterIconContainer}>
+            <Icon name="mode-comment" color="#cc6699" size={25} />
+            <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
+              {post.comments.length}
+            </Text>
           </View>
           <View>
-            <Icon name="mode-comment" color="#e68a00" size={23} />
+            <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
           </View>
         </View>
       </View>
@@ -104,15 +118,11 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     backgroundColor: "#ffffff",
-    borderRadius: 4,
     borderColor: "#000000",
     flexDirection: "column",
     width: 0.9 * vw,
     margin: 7,
     borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "space-around",
-    alignSelf: "center",
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
@@ -120,7 +130,8 @@ const styles = StyleSheet.create({
   },
   postHeadingContainer: {
     flexDirection: "row",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    paddingBottom: "1%"
   },
   iconContainer: {
     flex: 1,
@@ -141,6 +152,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around"
+  },
+  separatorLine: {
+    height: 1,
+    backgroundColor: "#ecc6ec"
+  },
+  postFooterIconContainer: {
+    flexDirection: "row",
+    alignItems: "center"
   }
 });
 
