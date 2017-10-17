@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { signUpUser } from '../api';
+
 class SignUp extends React.Component {
 
   constructor(props) {
@@ -29,11 +31,14 @@ class SignUp extends React.Component {
   }
 
   submitForm() {
-    const user = {
-      email: this.state.email,
-      password: this.state.password,
-    };
-    //this.props.signupUser(user);
+    signUpUser(this.state.email, this.state.password, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        const decoded = jwtDecode(response.token);
+        console.log(decoded);
+      }
+    });
   }
 
   render() {

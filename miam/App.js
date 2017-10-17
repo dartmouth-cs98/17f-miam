@@ -7,6 +7,7 @@ import {
 from "react-native";
 import Feed from "./Components/Feed";
 import LogIn from "./Components/LogIn";
+import SignUp from "./Components/SignUp";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -81,6 +82,7 @@ export default class App extends React.Component {
 		else {
 			return (
 				<LogIn/>
+				<SignUp/>
 			);
 		}
 	}
