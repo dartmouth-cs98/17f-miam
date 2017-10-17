@@ -4,13 +4,44 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { signInUser } from '../api';
+
 const vw = Dimensions.get('window').width;
 
 class LogIn extends React.Component {
 
-  onPress(navigation) {
-    console.log('Hello');
-    // this.props.navigation.navigate('Feed');
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: '',
+      password: ''
+    };
+
+    this.onLogIn = this.onLogIn.bind(this);
+    this.onSignUp = this.onSignUp.bind(this);
+  }
+
+  onLogIn(e) {
+    e.preventDefault();
+    console.log(this.state.email);
+    if (this.state.email !== '' && this.state.password !== '') {
+      signInUser(this.state.email, this.state.password, (response, error) => {
+        if (error) {
+
+          alert(error);
+        } else {
+          const decoded = jwtDecode(response.token);
+          console.log(decoded);
+        }
+      });
+    } else {
+      alert('Please sign in with valid email and password');
+    }
+  }
+
+  onSignUp() {
+
   }
 
   render() {
@@ -23,20 +54,23 @@ class LogIn extends React.Component {
           />
           <Text style={styles.logoFont}> MIAM </Text>
         </View>
-        <TextInput placeholder='Username' />
-        <TextInput placeholder='Password' />
+        <Text style={styles.instructions}> Enter your email and password </Text>
+        <View style={styles.numArea}>
+          <TextInput onChangeText={(email) => this.setState({email})} placeholder='Email' value={this.state.email} />
+          <TextInput onChangeText={(password) => this.setState({password})} placeholder='Password' value={this.state.password} />
+        </View>
         <View style={styles.buttonArea}>
           <Button
             containerStyle={{padding:10, width:vw * 0.7, height:50, overflow:'hidden', borderRadius:25, backgroundColor: '#6C56BA'}}
             style={styles.button}
-            onPress={this.onPress.bind(this)}
+            onPress={this.onLogIn}
             title="LOGIN">
           </Button>
           <Button
             containerStyle={{padding:10, width:vw * 0.7, height:50, overflow:'hidden', borderRadius:25, backgroundColor: '#6C56BA'}}
             style={styles.button}
-            onPress={this.onPress.bind(this)}
-            title="SIGN IN">
+            onPress={this.onSignUp}
+            title="SIGN UP">
           </Button>
         </View>
       </View>
@@ -88,6 +122,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Gill Sans',
     color: '#9C8FC4',
     marginBottom: 5,
+  },
+  numArea: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    margin: 15
+  },
+  textArea: {
+    fontFamily: 'Gill Sans',
+    color: '#372769',
+    height: 40,
+    width: vw*0.6,
+    padding: 5,
+    borderColor: '#9C8FC4',
+    borderWidth: 0.5
   },
 });
 
