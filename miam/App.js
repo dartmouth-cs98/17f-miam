@@ -7,14 +7,20 @@ import {
 from "react-native";
 import Feed from "./Components/Feed";
 import LogIn from "./Components/LogIn";
+<<<<<<< HEAD
 import SignUp from "./Components/SignUp";
+=======
+>>>>>>> d436c4ec00b33ea0f03c82af805c90fc7a45c2b1
+import { AuthRoot } from './router';
 
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			selectedTab: 'featured',
-			loggedIn: true
+			loggedIn: true,
+			view: <AuthRoot />,
+			kind: 'AuthRoot',
 		};
 	}
 
@@ -81,8 +87,7 @@ export default class App extends React.Component {
 		}
 		else {
 			return (
-				<LogIn/>
-				<SignUp/>
+				<AuthRoot />
 			);
 		}
 	}
