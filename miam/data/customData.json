@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "userID": 2
+    "userID": 2,
     "imgURL": "https://media.giphy.com/media/xUA7b68hKy839wiVJC/giphy.gif",
     "likes": 34,
     "commentIDs": [1,32],
@@ -9,7 +9,7 @@
   },
   {
     "id": 2,
-    "userID": 3
+    "userID": 3,
     "imgURL": "https://media.giphy.com/media/3NtY188QaxDdC/giphy.gif",
     "likes": 40,
     "comments": [33],
