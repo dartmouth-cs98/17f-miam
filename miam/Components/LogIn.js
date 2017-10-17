@@ -1,3 +1,5 @@
+// component for signup page
+
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
