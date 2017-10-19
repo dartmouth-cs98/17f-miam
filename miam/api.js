@@ -30,7 +30,7 @@ const ROOT_URL = 'https://miam98.herokuapp.com/api';
 
 export function signUpUser(email, password, cb)  {
   const params = {
-    email: email,
+    email: email.toLowerCase(),
     password: password,
   }
   axios.post(ROOT_URL+'/users/signup', params)
@@ -45,7 +45,7 @@ export function signUpUser(email, password, cb)  {
 
 export function signInUser(email, password, cb) {
   const params = {
-    email: email,
+    email: email.toLowerCase(),
     password: password,
   }
   axios.post(ROOT_URL+'/users/signin', params)
