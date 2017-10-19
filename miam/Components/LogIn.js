@@ -31,8 +31,9 @@ class LogIn extends React.Component {
 
           alert(error);
         } else {
-          const decoded = jwtDecode(response.token);
-          console.log(decoded);
+          // const decoded = jwtDecode(response.token);
+          // console.log(decoded);
+          console.log(response);
         }
       });
     } else {
@@ -56,8 +57,17 @@ class LogIn extends React.Component {
         </View>
         <Text style={styles.instructions}> Enter your email and password </Text>
         <View style={styles.numArea}>
-          <TextInput onChangeText={(email) => this.setState({email})} placeholder='Email' value={this.state.email} />
-          <TextInput onChangeText={(password) => this.setState({password})} placeholder='Password' value={this.state.password} />
+          <TextInput onChangeText={(email) => this.setState({email})}
+            placeholder='Email'
+            value={this.state.email}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            style={styles.textArea} />
+          <TextInput onChangeText={(password) => this.setState({password})}
+            placeholder='Password'
+            value={this.state.password}
+            autoCapitalize="none"
+            style={styles.textArea} />
         </View>
         <View style={styles.buttonArea}>
           <Button
