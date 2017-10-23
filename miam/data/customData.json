@@ -4,7 +4,7 @@
     "userID": 2,
     "imgURL": "https://media.giphy.com/media/xUA7b68hKy839wiVJC/giphy.gif",
     "likes": 34,
-    "commentIDs": [1,32],
+    "comments": [1, 32],
     "hashtags": ["#miam", "#letsGo!"]
   },
   {
