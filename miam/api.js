@@ -34,12 +34,10 @@ export function signUpUser(email, password, cb)  {
     password: password,
   }
   axios.post(ROOT_URL+'/users/signup', params)
-  .then((response) => {
-    // console.log(response.data);
-    cb(response.data, null);
+  .then(async (response) => {
+    cb(response, null);
   }).catch((error) => {
     cb(null, error)
-    // console.log(`error in codeAuth. ${error}`);
   })
 }
 
@@ -49,14 +47,13 @@ export function signInUser(email, password, cb) {
     password: password,
   }
   axios.post(ROOT_URL+'/users/signin', params)
-  .then((response) => {
-    console.log(response);
-    cb(response.data, null);
+  .then(async (response) => {
+    cb(response, null);
   }).catch((error) => {
     cb(null, error);
-    console.log(`error in signInUser. ${error}`);
   })
 }
+
 
 // export function fetchPosts(long, lat, sort, page, user, cb) {
 //   // console.log(`sort by ${sort}`);

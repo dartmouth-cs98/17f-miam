@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { signInUser } from '../api';
@@ -18,12 +18,21 @@ class LogIn extends React.Component {
 
     this.onLogIn = this.onLogIn.bind(this);
     this.onSignUp = this.onSignUp.bind(this);
+    this.saveLogin = this.saveLogin.bind(this);
+  }
+
+  async saveLogin(token) {
+    try {
+      await AsyncStorage.setItem('@Token:key', token);
+      console.log(token);
+      this.props.navigation.navigate('MainFiveTabs');
+    } catch (error) {
+      console.log(`Cannot save login. ${error}`);
+    }
   }
 
   onLogIn(e) {
     e.preventDefault();
-    console.log(this.state.email);
-    let navigation = this.props.navigation;
 
     if (this.state.email !== '' && this.state.password !== '') {
       signInUser(this.state.email, this.state.password, (response, error) => {
@@ -31,13 +40,7 @@ class LogIn extends React.Component {
           alert('Either username or password is incorrect');
 
         } else {
-          // const decoded = jwtDecode(response.token);
-          // console.log(decoded);
-          console.log(response);
-
-          // Debugging Purposes
-          // If sucessful, go to MainFiveTab Page
-          navigation.navigate('MainFiveTabs');
+          this.saveLogin(response.data.token);
         }
       });
     } else {
@@ -55,7 +58,7 @@ class LogIn extends React.Component {
         <View style={styles.logo}>
           <Image
             style={styles.logoImg}
-            source={{uri:'https://i.imgur.com/fdh8TNp.png'}}
+            source={{uri:'http://i0.kym-cdn.com/photos/images/newsfeed/000/284/742/7e2.png'}}
           />
           <Text style={styles.logoFont}> MIAM </Text>
         </View>
