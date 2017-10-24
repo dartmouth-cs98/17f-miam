@@ -7,6 +7,7 @@ import {
 from "react-native";
 import Feed from "./Feed";
 import Canvas from "./Canvas";
+import Profile from "./Profile";
 
 class MainFiveTabs extends React.Component {
 	constructor(props) {
@@ -71,7 +72,7 @@ class MainFiveTabs extends React.Component {
 					selectedTab: 'contacts',
 				});
 			}}>
-			<Feed/>
+			<Profile />
 			</TabBarIOS.Item>
 			</TabBarIOS>
 		);
