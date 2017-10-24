@@ -1,5 +1,3 @@
-// component for signup page
-
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,6 +23,8 @@ class LogIn extends React.Component {
   onLogIn(e) {
     e.preventDefault();
     console.log(this.state.email);
+    let navigation = this.props.navigation;
+
     if (this.state.email !== '' && this.state.password !== '') {
       signInUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
@@ -34,6 +34,10 @@ class LogIn extends React.Component {
           // const decoded = jwtDecode(response.token);
           // console.log(decoded);
           console.log(response);
+
+          // Debugging Purposes
+          // If sucessful, go to MainFiveTab Page
+          navigation.navigate('MainFiveTabs');
         }
       });
     } else {
@@ -41,7 +45,9 @@ class LogIn extends React.Component {
     }
   }
 
-  onSignUp(navigation) {
+
+
+  onSignUp() {
     this.props.navigation.navigate('SignUp');
   }
 
@@ -55,7 +61,7 @@ class LogIn extends React.Component {
           />
           <Text style={styles.logoFont}> MIAM </Text>
         </View>
-        <Text style={styles.instructions}> Enter your email and password </Text>
+        <Text style={styles.instructions}> Enter your email and password to login</Text>
         <View style={styles.numArea}>
           <TextInput onChangeText={(email) => this.setState({email})}
             placeholder='Email'
