@@ -37,7 +37,8 @@ class LogIn extends React.Component {
     if (this.state.email !== '' && this.state.password !== '') {
       signInUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
-          alert(error);
+          alert('Either username or password is incorrect');
+
         } else {
           this.saveLogin(response.data.token);
         }
@@ -46,8 +47,6 @@ class LogIn extends React.Component {
       alert('Please sign in with valid email and password');
     }
   }
-
-
 
   onSignUp() {
     this.props.navigation.navigate('SignUp');
