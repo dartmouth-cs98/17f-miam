@@ -7,6 +7,7 @@ import {
 from "react-native";
 import Feed from "./Feed";
 import Canvas from "./Canvas";
+import DummySignOut from "./DummySignOut";
 
 class MainFiveTabs extends React.Component {
 	constructor(props) {
@@ -60,7 +61,7 @@ class MainFiveTabs extends React.Component {
 					selectedTab: 'favorites',
 				});
 			}}>
-			<Feed/>
+			<DummySignOut/>
 			</TabBarIOS.Item>
 
 			<TabBarIOS.Item
