@@ -28,12 +28,11 @@ class LogIn extends React.Component {
     if (this.state.email !== '' && this.state.password !== '') {
       signInUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
-
           alert(error);
         } else {
           // const decoded = jwtDecode(response.token);
           // console.log(decoded);
-          console.log(response);
+
         }
       });
     } else {
@@ -51,7 +50,7 @@ class LogIn extends React.Component {
         <View style={styles.logo}>
           <Image
             style={styles.logoImg}
-            source={{uri:'https://i.imgur.com/fdh8TNp.png'}}
+            source={{uri:'http://i0.kym-cdn.com/photos/images/newsfeed/000/284/742/7e2.png'}}
           />
           <Text style={styles.logoFont}> MIAM </Text>
         </View>
