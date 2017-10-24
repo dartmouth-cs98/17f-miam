@@ -15,6 +15,7 @@ import {
 import LogIn from './Components/LogIn';
 import SignUp from './Components/SignUp';
 import MainFiveTabs from "./Components/MainFiveTabs";
+import Splash from './Components/Splash';
 
 const navBarMainColor='#F4F5F9';
 const navBarTintColor='#6C56BA';
@@ -43,6 +44,9 @@ const styles = StyleSheet.create({
 
 
 export const AuthStack = StackNavigator({
+  Splash: {
+    screen: Splash
+  },
   LogIn: {
     screen: LogIn
   },
@@ -64,7 +68,7 @@ export const AuthStack = StackNavigator({
 })
 
 
-export const AuthRoot = StackNavigator({
+export const Root = StackNavigator({
   Auth: {
     screen: AuthStack,
   },

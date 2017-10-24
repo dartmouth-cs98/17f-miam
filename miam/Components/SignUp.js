@@ -18,6 +18,7 @@ class SignUp extends React.Component {
     this.submitForm = this.submitForm.bind(this);
     this.goToLogIn = this.goToLogIn.bind(this);
     this.onSignUp = this.onSignUp.bind(this);
+    this.saveSignUp = this.saveSignUp.bind(this);
   }
 
   submitForm() {
@@ -31,27 +32,29 @@ class SignUp extends React.Component {
     });
   }
 
+  async saveSignUp(token) {
+    try {
+      await AsyncStorage.setItem('@Token:key', token);
+      console.log(token);
+      this.props.navigation.navigate('MainFiveTabs');
+    } catch (error) {
+      console.log(`Cannot save signup. ${error}`);
+    }
+  }
+
   onSignUp(e) {
     e.preventDefault();
-    console.log(this.state.email);
-    let navigation = this.props.navigation;
 
     if (this.state.email !== '' && this.state.password !== '') {
       signUpUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
           alert(error);
         } else {
-          // const decoded = jwtDecode(response.token);
-          // console.log(decoded);
-          console.log(response);
-
-          // Debugging Purposes
-          // If sucessful, go to MainFiveTab Page
-          navigation.navigate('MainFiveTabs');
+          this.saveSignUp(response.data.token);
         }
       });
     } else {
-      alert('Please sign in with valid email and password');
+      alert('Please sign up with valid email and password');
     }
   }
 
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   backButton:{
-    
+
   },
   buttonArea: {
     flex: 0.3

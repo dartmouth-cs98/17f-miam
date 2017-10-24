@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { signInUser } from '../api';
@@ -18,25 +18,28 @@ class LogIn extends React.Component {
 
     this.onLogIn = this.onLogIn.bind(this);
     this.onSignUp = this.onSignUp.bind(this);
+    this.saveLogin = this.saveLogin.bind(this);
+  }
+
+  async saveLogin(token) {
+    try {
+      await AsyncStorage.setItem('@Token:key', token);
+      console.log(token);
+      this.props.navigation.navigate('MainFiveTabs');
+    } catch (error) {
+      console.log(`Cannot save login. ${error}`);
+    }
   }
 
   onLogIn(e) {
     e.preventDefault();
-    console.log(this.state.email);
-    let navigation = this.props.navigation;
 
     if (this.state.email !== '' && this.state.password !== '') {
       signInUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
           alert(error);
         } else {
-          // const decoded = jwtDecode(response.token);
-          // console.log(decoded);
-          console.log(response);
-
-          // Debugging Purposes
-          // If sucessful, go to MainFiveTab Page
-          navigation.navigate('MainFiveTabs');
+          this.saveLogin(response.data.token);
         }
       });
     } else {

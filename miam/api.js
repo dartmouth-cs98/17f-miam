@@ -35,17 +35,9 @@ export function signUpUser(email, password, cb)  {
   }
   axios.post(ROOT_URL+'/users/signup', params)
   .then(async (response) => {
-    console.log(response.data.token);
-    try {
-      await AsyncStorage.setItem('@Token:key', response.data.token);
-      console.log('successfully saved token');
-    } catch(error) {
-      console.log('error in signup, cannot store token')
-    }
-    cb(response.data, null);
+    cb(response, null);
   }).catch((error) => {
     cb(null, error)
-    // console.log(`error in codeAuth. ${error}`);
   })
 }
 
@@ -56,19 +48,12 @@ export function signInUser(email, password, cb) {
   }
   axios.post(ROOT_URL+'/users/signin', params)
   .then(async (response) => {
-    console.log(response.data.token);
-    try {
-      await AsyncStorage.setItem('@Token:key', response.data.token);
-      console.log('successfully saved token');
-    } catch(error) {
-      console.log('error in signin, cannot store token')
-    }
-    cb(response.data, null);
+    cb(response, null);
   }).catch((error) => {
     cb(null, error);
-    console.log(`error in signInUser. ${error}`);
   })
 }
+
 
 // export function fetchPosts(long, lat, sort, page, user, cb) {
 //   // console.log(`sort by ${sort}`);

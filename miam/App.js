@@ -9,22 +9,18 @@ import Feed from "./Components/Feed";
 import LogIn from "./Components/LogIn";
 import SignUp from "./Components/SignUp";
 import MainFiveTabs from "./Components/MainFiveTabs";
-import { AuthRoot } from './router';
+import { Root } from './router';
 
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			selectedTab: 'featured',
-			loggedIn: false,
-			view: <AuthRoot />,
-			kind: 'AuthRoot',
 		};
 	}
 
 	render() {
 		return (
-			<AuthRoot />
+			<Root />
 		);
 	}
 }
