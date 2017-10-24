@@ -34,6 +34,8 @@ class SignUp extends React.Component {
   onSignUp(e) {
     e.preventDefault();
     console.log(this.state.email);
+    let navigation = this.props.navigation;
+
     if (this.state.email !== '' && this.state.password !== '') {
       signUpUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
@@ -42,6 +44,10 @@ class SignUp extends React.Component {
           // const decoded = jwtDecode(response.token);
           // console.log(decoded);
           console.log(response);
+
+          // Debugging Purposes
+          // If sucessful, go to MainFiveTab Page
+          navigation.navigate('MainFiveTabs');
         }
       });
     } else {
