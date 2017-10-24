@@ -28,8 +28,8 @@ class LogIn extends React.Component {
     if (this.state.email !== '' && this.state.password !== '') {
       signInUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
+          alert('Either username or password is incorrect');
 
-          alert(error);
         } else {
           // const decoded = jwtDecode(response.token);
           // console.log(decoded);

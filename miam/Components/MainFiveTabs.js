@@ -6,6 +6,7 @@ import {
 	TabBarIOS }
 from "react-native";
 import Feed from "./Feed";
+import Canvas from "./Canvas";
 
 class MainFiveTabs extends React.Component {
 	constructor(props) {
@@ -37,7 +38,7 @@ class MainFiveTabs extends React.Component {
 					selectedTab: 'search',
 				});
 			}}>
-			<Feed/>
+			<Canvas/>
 			</TabBarIOS.Item>
 
 			<TabBarIOS.Item
