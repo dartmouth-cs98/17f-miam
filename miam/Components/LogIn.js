@@ -45,8 +45,6 @@ class LogIn extends React.Component {
     }
   }
 
-
-
   onSignUp() {
     this.props.navigation.navigate('SignUp');
   }

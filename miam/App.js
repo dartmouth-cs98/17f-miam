@@ -4,9 +4,9 @@ import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
 import LogIn from "./Components/LogIn";
 import SignUp from "./Components/SignUp";
+import Profile from "./Components/Profile";
 import MainFiveTabs from "./Components/MainFiveTabs";
 import { AuthRoot } from './router';
-
 
 export default class App extends React.Component {
   constructor(props) {
