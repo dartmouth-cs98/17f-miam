@@ -106,9 +106,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   heading: {
-    height: "10%",
+    height: "8%",
     width: "100%",
-    backgroundColor: "#886BEA",
+    backgroundColor: "#bf80ff",
     justifyContent: "center"
   },
   logo: {
