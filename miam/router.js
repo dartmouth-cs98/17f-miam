@@ -14,6 +14,7 @@ import {
 
 import LogIn from './Components/LogIn';
 import SignUp from './Components/SignUp';
+import MainFiveTabs from "./Components/MainFiveTabs";
 
 const navBarMainColor='#F4F5F9';
 const navBarTintColor='#6C56BA';
@@ -47,6 +48,9 @@ export const AuthStack = StackNavigator({
   },
   SignUp: {
     screen: SignUp
+  },
+  MainFiveTabs: {
+    screen: MainFiveTabs
   }
 }, {
   navigationOptions: ({ navigation }) => ({
