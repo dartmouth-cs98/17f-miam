@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const vw = Dimensions.get('window').width;
@@ -14,13 +14,15 @@ class DummySignOut extends React.Component {
   }
 
   // TODO: SIGN OUT HERE
-  signOut(){
-    console.log("LogOut");
+  async signOut(){
+    try {
+      await AsyncStorage.removeItem('@Token:key');
+      console.log('Successfully log out');
+      this.navigation.navigate('LogIn');
+    } catch (error) {
+      console.log(`Cannot log out. ${error}`);
+    }
   }
-
-  // goToLogIn(){
-  //   this.props.navigation.goBack();
-  // }
 
   render() {
     return (
