@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const vw = Dimensions.get('window').width;
@@ -14,7 +14,8 @@ class DummySignOut extends React.Component {
   }
 
   // TODO: SIGN OUT HERE
-  signOut(){
+  await signOut(){
+
     console.log("LogOut");
   }
 
