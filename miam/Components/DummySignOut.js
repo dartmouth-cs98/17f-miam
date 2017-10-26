@@ -14,14 +14,15 @@ class DummySignOut extends React.Component {
   }
 
   // TODO: SIGN OUT HERE
-  await signOut(){
-
-    console.log("LogOut");
+  async signOut(){
+    try {
+      await AsyncStorage.removeItem('@Token:key');
+      console.log('Successfully log out');
+      this.navigation.navigate('LogIn');
+    } catch (error) {
+      console.log(`Cannot log out. ${error}`);
+    }
   }
-
-  // goToLogIn(){
-  //   this.props.navigation.goBack();
-  // }
 
   render() {
     return (
