@@ -54,10 +54,15 @@ export default class Profile extends React.Component {
         </View>
         <ScrollView>
           <Image
-            style={styles.profilePicture}
-            source={{uri: 'http://qimg.hxnews.com/2017/0912/1505204920938.jpg'}}
-          />
-          <Text style={styles.name}>Jasper Chan</Text>
+            style={styles.profile}
+            source={{uri: 'http://images.all-free-download.com/images/graphiclarge/blurred_golden_background_192849.jpg'}}
+          >
+            <Image
+              style={styles.profilePicture}
+              source={{uri: 'http://qimg.hxnews.com/2017/0912/1505204920938.jpg'}}
+            />
+            <Text style={styles.name}>Jasper Chan</Text>
+          </Image>
         </ScrollView>
       </View>
     );
@@ -80,20 +85,22 @@ const styles = StyleSheet.create({
     fontSize: 40,
     textAlign: "center"
   },
+  profile: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    height: 250,
+  },
   profilePicture: {
-    width: 200,
-    height: 200,
-    position: "absolute",
-    justifyContent: "center",
-    borderRadius: 70,
-    left: (vw / 2 - 100),
-    top: 40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
   name: {
     color: "#372769",
-    fontSize: 40,
-    textAlign: "center",
-    top: 250,
+    fontSize: 25,
+    top: 30,
   },
 });
 
