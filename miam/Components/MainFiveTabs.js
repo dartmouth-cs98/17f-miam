@@ -5,6 +5,8 @@ import {
 	View,
 	TabBarIOS }
 from "react-native";
+
+import Icon from 'react-native-vector-icons/Ionicons';
 import Feed from "./Feed";
 import Canvas from "./Canvas";
 import DummySignOut from "./DummySignOut";
@@ -21,6 +23,7 @@ class MainFiveTabs extends React.Component {
 	render() {
 		return (
 			<TabBarIOS selectedTab={this.state.selectedTab}>
+
 			<TabBarIOS.Item
 			selected={this.state.selectedTab === 'featured'}
 			systemIcon="featured"
