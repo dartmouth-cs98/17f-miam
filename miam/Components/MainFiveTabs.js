@@ -18,6 +18,8 @@ class MainFiveTabs extends React.Component {
 		this.state = {
 			selectedTab: 'featured',
 		};
+
+		this.navigation = props.navigation;
 	}
 
 	render() {
@@ -65,7 +67,7 @@ class MainFiveTabs extends React.Component {
 					selectedTab: 'favorites',
 				});
 			}}>
-			<DummySignOut/>
+			<DummySignOut navigation={this.navigation} />
 			</TabBarIOS.Item>
 
 			<TabBarIOS.Item
