@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { AsyncStorage, Image } from 'react-native';
+import React, { Component } from "react";
+import { AsyncStorage, Image } from "react-native";
 
 class Splash extends Component {
   constructor(props) {
@@ -8,18 +8,16 @@ class Splash extends Component {
     this.retrieveToken = this.retrieveToken.bind(this);
   }
 
-
   async retrieveToken() {
     try {
-      let savedToken = await AsyncStorage.getItem('@Token:key');
+      let savedToken = await AsyncStorage.getItem("@Token:key");
       if (savedToken === null) {
-        this.props.navigation.navigate('LogIn');
+        this.props.navigation.navigate("LogIn");
       } else {
-        this.props.navigation.navigate('MainFiveTabs');
+        this.props.navigation.navigate("Feed");
         console.log(savedToken);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   }
@@ -31,11 +29,13 @@ class Splash extends Component {
   render() {
     return (
       <Image
-        source={{uri:'http://i0.kym-cdn.com/photos/images/newsfeed/000/284/742/7e2.png'}}
+        source={{
+          uri:
+            "http://i0.kym-cdn.com/photos/images/newsfeed/000/284/742/7e2.png"
+        }}
       />
-    )
+    );
   }
-
 }
 
 export default Splash;
