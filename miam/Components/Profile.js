@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import AvatarEditor from 'react-avatar-editor'
+import Button from 'react-native-button';
 
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from './StatusBarColor';
@@ -59,10 +60,24 @@ export default class Profile extends React.Component {
             style={styles.profile}
             source={{uri: 'http://images.all-free-download.com/images/graphiclarge/blurred_golden_background_192849.jpg'}}
           >
+            <Button
+              containerStyle={{height:35, width: 35, overflow:'hidden', borderRadius:20, backgroundColor: 'white'}}
+              style={styles.addButton}
+              styleDisabled={{color: 'red'}}
+              onPress={() => this.onAdd()}>
+              +
+            </Button>
             <Image
               style={styles.profilePicture}
               source={{uri: 'http://qimg.hxnews.com/2017/0912/1505204920938.jpg'}}
             />
+            <Button
+              containerStyle={{height:35, width: 35, overflow:'hidden', borderRadius:20, backgroundColor: 'white'}}
+              style={styles.addButton}
+              styleDisabled={{color: 'red'}}
+              onPress={() => this.onMessage()}>
+              M
+            </Button>
             <Text style={styles.name}>Jasper Chan</Text>
           </Image>
         </ScrollView>
@@ -80,8 +95,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
+    flexDirection: 'row',
     height: 250,
+  },
+  addButton: {
+    fontSize: 30,
+    color: 'black',
   },
   profilePicture: {
     width: 120,
