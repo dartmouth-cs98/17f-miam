@@ -11,9 +11,9 @@ import {
   Dimensions
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import StatusBarColor from './StatusBarColor';
-import Heading from './Heading';
-
+import StatusBarColor from "./StatusBarColor";
+import Heading from "./Heading";
+import NavigationBar from "./NavigationBar";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -85,8 +85,8 @@ export default class Feed extends React.Component {
   render() {
     return (
       <View style={styles.body}>
-        <StatusBarColor/>
-        <Heading text="MiAM Feed"/>
+        <StatusBarColor />
+        <Heading text="MiAM Feed" />
         <ScrollView>
           <ListView
             initialListSize={5}
@@ -97,6 +97,7 @@ export default class Feed extends React.Component {
             }}
           />
         </ScrollView>
+        <NavigationBar navigation={this.props.navigation} />
       </View>
     );
   }

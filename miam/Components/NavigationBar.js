@@ -18,6 +18,7 @@ export default class NavigationBar extends React.Component {
       <View style={styles.Navigation}>
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Feed")}
+          underlayColor="white"
         >
           <View>
             <Icon name="stars" color="#862d59" size={30} />
@@ -26,6 +27,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Canvas")}
+          underlayColor="white"
         >
           <View>
             <Icon name="control-point" color="#862d59" size={30} />
@@ -34,6 +36,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Battle")}
+          underlayColor="white"
         >
           <View>
             <Icon name="filter-vintage" color="#862d59" size={30} />
@@ -42,6 +45,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Profile")}
+          underlayColor="white"
         >
           <View>
             <Icon name="account-circle" color="#862d59" size={30} />
