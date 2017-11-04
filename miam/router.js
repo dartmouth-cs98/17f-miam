@@ -15,6 +15,7 @@ import {
 import LogIn from './Components/LogIn';
 import SignUp from './Components/SignUp';
 import MainFiveTabs from "./Components/MainFiveTabs";
+import CreatePost from "./Components/CreatePost.js";
 import Splash from './Components/Splash';
 
 const navBarMainColor='#F4F5F9';
@@ -55,6 +56,9 @@ export const AuthStack = StackNavigator({
   },
   MainFiveTabs: {
     screen: MainFiveTabs
+  },
+  CreatePost: {
+    screen: CreatePost
   }
 }, {
   navigationOptions: ({ navigation }) => ({

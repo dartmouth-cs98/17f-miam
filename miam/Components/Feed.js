@@ -25,7 +25,10 @@ export default class Feed extends React.Component {
       postDataSource: ds.cloneWithRows([]),
       loaded: false
     };
+
+    this.nav = props.nav;
   }
+
   componentDidMount() {
     this.setState({
       postDataSource: ds.cloneWithRows(customData),
@@ -86,12 +89,13 @@ export default class Feed extends React.Component {
     return (
       <View style={styles.body}>
         <StatusBarColor/>
-        <Heading text="MiAM Feed"/>
+        <Heading text="MiAM Feed" postButtonVisible={true} nav={this.nav}/>
         <ScrollView>
           <ListView
             initialListSize={5}
             enableEmptySections={true}
             dataSource={this.state.postDataSource}
+            contentContainerStyle={styles.listView}
             renderRow={post => {
               return this.renderPostRow(post);
             }}
@@ -106,6 +110,9 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     backgroundColor: "#ffffff"
+  },
+  listView: {
+    alignItems: 'center'
   },
   postContainer: {
     backgroundColor: "#ffffff",
