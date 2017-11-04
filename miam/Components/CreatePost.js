@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {ImagePicker} from 'expo';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TouchableHighlight, TextInput, AsyncStorage } from 'react-native';
+import Ionicon from "react-native-vector-icons/Ionicons";
+import Maticon from "react-native-vector-icons/MaterialIcons"
 
 import { createPost } from '../api';
 
@@ -13,10 +15,12 @@ class CreatePost extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      image: null,
+      tags: []
+    };
 
-    this.thing1 = "Hello";
-    this.thing2 = "World";
-    this.thing3 = true;
+    this.nav = props.navigation;
 
     this.onCreatePost = this.onCreatePost.bind(this);
   }
@@ -32,70 +36,102 @@ class CreatePost extends React.Component {
     });
   }
 
+  getImageFromRoll = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4,3],
+    });
+
+    if(!result.cancelled){
+      this.setState({ image: result.uri });
+    }
+  }
+
+  getImageFromGiphy = async() => {
+
+  }
+
   render() {
-    if(this.thing3){
-      return (
-        <View>
-          <StatusBarColor/>
-          <Heading text="Create Post"/>
-        </View>
-      );
-    }
-    else{
-      return (
-        <View style={styles.container}>
-          <View style={styles.logo}>
-            <Image
-              style={styles.logoImg}
-              source={{uri:'https://orig00.deviantart.net/ed01/f/2012/208/d/4/meme_yao_ming_png_by_mfsyrcm-d58vitj.png'}}
-            />
-            <Text style={styles.logoFont}> Hello 2 </Text>
+    return (
+      <View style={styles.body}>
+        <StatusBarColor/>
+        <Heading text="Create Post" backButtonVisible={true} nav={this.nav}/>
+        <TouchableHighlight style={[styles.buttonTouchHighlight, styles.backgroundGreen]} onPress={this.getImageFromRoll}>
+          <View style={styles.buttonContainer}>
+            <Ionicon style={[styles.buttonIcon, styles.colorWhite]} name="md-image" size={30} color="white" />
+            <Text style={[styles.buttonText, styles.colorWhite]}>Get Image from Camera Roll</Text>
           </View>
-        </View>
-      );
-    }
+        </TouchableHighlight>
+        <TouchableHighlight style={[styles.buttonTouchHighlight, styles.backgroundDeepPurple]} onPress={this.getImageFromRoll}>
+          <View style={styles.buttonContainer}>
+            <Maticon style={[styles.buttonIcon, styles.colorWhite]} name="gif" size={30} color="white" />
+            <Text style={[styles.buttonText, styles.colorWhite]}>Get Gif from GIPHY</Text>
+          </View>
+        </TouchableHighlight>
+        {
+          this.state.image &&
+          <View style={{height: "100%"}}>
+            <Image source={{ uri: this.state.image }} style={styles.imagePreview}/>
+            <TouchableHighlight style={styles.buttonTouchHighlight} onPress={this.getImageFromRoll}>
+              <View style={styles.buttonContainer}>
+                <Ionicon style={styles.buttonIcon} name="ios-brush" size={30} color="white" />
+                <Text style={styles.buttonText}>Edit</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        }
+      </View>
+    );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    paddingTop: "8%",
-    flexDirection: "row",
-    backgroundColor: '#F4F5F9',
+  body: {
+    flex: 1.5,
+    backgroundColor: "#ffffff"
   },
-  logo: {
-    flex: 0.7,
-    justifyContent: 'center'
+  buttonTouchHighlight: {
+    alignSelf: "center",
+    marginTop: "3%",
+    height: "6%",
+    width: "90%",
+    borderRadius: 10,
   },
-  logoImg: {
-    width: vw * 0.6,
-    height: vw * 0.4,
-    resizeMode: 'contain',
-    shadowColor: '#291D56',
-    shadowOffset: {height: 2},
-    shadowOpacity: 0.4,
-    shadowRadius: 3
+  buttonContainer: {
+    marginTop: "3%"
   },
-  logoFont: {
-    fontSize: 45,
-    fontFamily: 'Gill Sans',
-    color: '#372769',
-    textAlign: 'center',
-    margin: 20,
-    marginBottom: 50,
+  buttonIcon: {
+    position: "absolute",
+    marginTop: "-1.5%",
+    left: "5%"
   },
-  heading: {
-    height: "8%",
-    width: "100%",
-    backgroundColor: "#bf80ff",
-    justifyContent: "center"
-  },
-  headingText: {
-    color: "#ffffff",
-    fontSize: 24,
+  buttonText: {
+    position: "absolute",
+    fontSize: 16,
     fontWeight: 'bold',
-    textAlign: "center"
+    textAlign: "center",
+    top: "15%",
+    right: "10%"
+  },
+  colorWhite: {
+    color: "white"
+  },
+  colorBlack: {
+    color: "black"
+  },
+  backgroundGreen: {
+    backgroundColor: "#4ca84c"
+  },
+  backgroundDeepPurple: {
+    backgroundColor: "#695287"
+  },
+  imagePreview: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+    marginTop: '3%',
+    shadowOpacity: 0.3,
+    shadowRadius: 3
   }
 });
 

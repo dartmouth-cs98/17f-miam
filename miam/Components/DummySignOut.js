@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import StatusBarColor from './StatusBarColor';
+import Heading from './Heading';
+
 const vw = Dimensions.get('window').width;
 
 class DummySignOut extends React.Component {
@@ -27,6 +30,8 @@ class DummySignOut extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <StatusBarColor/>
+        <Heading text="MiAM DummySignOut"/>
         <View style={styles.goBackContainer}>
           <Button
             style={styles.backButton}
