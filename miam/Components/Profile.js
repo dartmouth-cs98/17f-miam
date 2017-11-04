@@ -58,7 +58,7 @@ export default class Profile extends React.Component {
         <ScrollView>
           <Image
             style={styles.profile}
-            source={{uri: 'http://images.all-free-download.com/images/graphiclarge/blurred_golden_background_192849.jpg'}}
+            source={{uri: 'http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg'}}
           >
             <Button
               containerStyle={styles.buttonContainer}
@@ -84,6 +84,20 @@ export default class Profile extends React.Component {
               M
             </Button>
           </Image>
+          <View style={styles.bodyMiddle}>
+            <View style={styles.box}>
+              <Text style={styles.fda}>120</Text>
+              <Text style={styles.fda}>Followers</Text>
+            </View>
+            <View style={styles.box}>
+              <Text style={styles.fda}>32</Text>
+              <Text style={styles.fda}>Post</Text>
+            </View>
+            <View style={styles.box}>
+              <Text style={styles.fda}>1</Text>
+              <Text style={styles.fda}>Followering</Text>
+            </View>
+          </View>
         </ScrollView>
       </View>
     );
@@ -144,6 +158,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     top: 10,
     backgroundColor: 'rgba(0,0,0,0)',
+  },
+  bodyMiddle: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: 50,
+    borderColor:'#D3D3D3',
+  },
+  box: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    borderColor:'#D3D3D3',
+    marginHorizontal: 20,
   },
 });
 
