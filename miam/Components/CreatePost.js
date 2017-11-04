@@ -1,7 +1,8 @@
 import React from 'react';
 import {ImagePicker} from 'expo';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TouchableHighlight, TextInput, AsyncStorage } from 'react-native';
-import Icon from "react-native-vector-icons/Ionicons";
+import Ionicon from "react-native-vector-icons/Ionicons";
+import Maticon from "react-native-vector-icons/MaterialIcons"
 
 import { createPost } from '../api';
 
@@ -57,13 +58,13 @@ class CreatePost extends React.Component {
         <Heading text="Create Post" backButtonVisible={true} nav={this.nav}/>
         <TouchableHighlight style={[styles.buttonTouchHighlight, styles.backgroundGreen]} onPress={this.getImageFromRoll}>
           <View style={styles.buttonContainer}>
-            <Icon style={[styles.buttonIcon, styles.colorWhite]} name="md-image" size={30} color="white" />
+            <Ionicon style={[styles.buttonIcon, styles.colorWhite]} name="md-image" size={30} color="white" />
             <Text style={[styles.buttonText, styles.colorWhite]}>Get Image from Camera Roll</Text>
           </View>
         </TouchableHighlight>
         <TouchableHighlight style={[styles.buttonTouchHighlight, styles.backgroundDeepPurple]} onPress={this.getImageFromRoll}>
           <View style={styles.buttonContainer}>
-            <Icon style={[styles.buttonIcon, styles.colorWhite]} name="md-image" size={30} color="white" />
+            <Maticon style={[styles.buttonIcon, styles.colorWhite]} name="gif" size={30} color="white" />
             <Text style={[styles.buttonText, styles.colorWhite]}>Get Gif from GIPHY</Text>
           </View>
         </TouchableHighlight>
@@ -73,7 +74,7 @@ class CreatePost extends React.Component {
             <Image source={{ uri: this.state.image }} style={styles.imagePreview}/>
             <TouchableHighlight style={styles.buttonTouchHighlight} onPress={this.getImageFromRoll}>
               <View style={styles.buttonContainer}>
-                <Icon style={styles.buttonIcon} name="ios-brush" size={30} color="white" />
+                <Ionicon style={styles.buttonIcon} name="ios-brush" size={30} color="white" />
                 <Text style={styles.buttonText}>Edit</Text>
               </View>
             </TouchableHighlight>
@@ -119,10 +120,10 @@ const styles = StyleSheet.create({
     color: "black"
   },
   backgroundGreen: {
-    backgroundColor: "#5cb85c"
+    backgroundColor: "#4ca84c"
   },
   backgroundDeepPurple: {
-    backgroundColor: "#493267"
+    backgroundColor: "#695287"
   },
   imagePreview: {
     width: 200,
