@@ -61,24 +61,28 @@ export default class Profile extends React.Component {
             source={{uri: 'http://images.all-free-download.com/images/graphiclarge/blurred_golden_background_192849.jpg'}}
           >
             <Button
-              containerStyle={{height:35, width: 35, overflow:'hidden', borderRadius:20, backgroundColor: 'white'}}
+              containerStyle={styles.buttonContainer}
               style={styles.addButton}
               styleDisabled={{color: 'red'}}
               onPress={() => this.onAdd()}>
               +
             </Button>
-            <Image
-              style={styles.profilePicture}
-              source={{uri: 'http://qimg.hxnews.com/2017/0912/1505204920938.jpg'}}
-            />
+            <View style={styles.profiles}>
+              <Image
+                style={styles.profilePicture}
+                source={{uri: 'http://qimg.hxnews.com/2017/0912/1505204920938.jpg'}}
+              />
+              <Text style={styles.name}>Jasper Chan</Text>
+              <Text style={styles.score}>Score: 537</Text>
+              <Text style={styles.battlewon}>Battle Won: 6</Text>
+            </View>
             <Button
-              containerStyle={{height:35, width: 35, overflow:'hidden', borderRadius:20, backgroundColor: 'white'}}
-              style={styles.addButton}
+              containerStyle={styles.buttonContainer}
+              style={styles.messageButton}
               styleDisabled={{color: 'red'}}
               onPress={() => this.onMessage()}>
               M
             </Button>
-            <Text style={styles.name}>Jasper Chan</Text>
           </Image>
         </ScrollView>
       </View>
@@ -98,19 +102,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 250,
   },
+  buttonContainer: {
+    height:35,
+    width: 35,
+    overflow:'hidden',
+    borderRadius:20,
+    backgroundColor: 'white',
+  },
   addButton: {
     fontSize: 30,
     color: 'black',
+  },
+  messageButton: {
+    fontSize: 30,
+    color: 'black',
+  },
+  profiles: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profilePicture: {
     width: 120,
     height: 120,
     borderRadius: 60,
+    marginHorizontal: 20,
   },
   name: {
-    color: "#372769",
+    color: 'white',
     fontSize: 25,
-    top: 30,
+    top: 20,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  score: {
+    color: 'white',
+    fontSize: 15,
+    top: 15,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  battlewon: {
+    color: 'white',
+    fontSize: 15,
+    top: 10,
+    backgroundColor: 'rgba(0,0,0,0)',
   },
 });
 
