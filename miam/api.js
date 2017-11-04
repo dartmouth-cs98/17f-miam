@@ -54,6 +54,18 @@ export function signInUser(email, password, cb) {
   })
 }
 
+export function createPost(postObj, cb) {
+  const params = {
+    postObj: postObj
+  }
+  axios.post(ROOT_URL+'/post', params)
+  .then(async (response) => {
+    cb(response, null);
+  }).catch((error) => {
+    cb(null, error);
+  })
+}
+
 
 // export function fetchPosts(long, lat, sort, page, user, cb) {
 //   // console.log(`sort by ${sort}`);

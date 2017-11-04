@@ -13,6 +13,8 @@ import {
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import StatusBarColor from './StatusBarColor';
+import Heading from './Heading';
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -89,9 +91,8 @@ export default class Canvas extends React.Component {
     }
     return (
       <View>
-        <View style={styles.heading}>
-          <Text style={styles.logo}>MiAM</Text>
-        </View>
+        <StatusBarColor/>
+        <Heading text="Miam Canvas"/>
         <View style={styles.searchBarContainer}>
           <TextInput
             style={styles.searchBar}

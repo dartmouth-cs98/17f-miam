@@ -14,6 +14,9 @@ import {
 import AvatarEditor from 'react-avatar-editor'
 
 import Icon from "react-native-vector-icons/MaterialIcons";
+import StatusBarColor from './StatusBarColor';
+import Heading from './Heading';
+
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -49,9 +52,8 @@ export default class Profile extends React.Component {
   render() {
     return (
       <View style={styles.body}>
-        <View style={styles.heading}>
-          <Text style={styles.logo}>MiAM</Text>
-        </View>
+        <StatusBarColor/>
+        <Heading text="MiAM Profile"/>
         <ScrollView>
           <Image
             style={styles.profile}
@@ -73,17 +75,6 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     backgroundColor: "#ffffff"
-  },
-  heading: {
-    height: "10%",
-    width: "100%",
-    backgroundColor: "#886BEA",
-    justifyContent: "center"
-  },
-  logo: {
-    color: "#ffffff",
-    fontSize: 40,
-    textAlign: "center"
   },
   profile: {
     flex: 1,

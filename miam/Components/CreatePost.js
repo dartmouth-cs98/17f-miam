@@ -2,7 +2,10 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { signInUser } from '../api';
+import { createPost } from '../api';
+
+import StatusBarColor from './StatusBarColor';
+import Heading from './Heading';
 
 const vw = Dimensions.get('window').width;
 
@@ -11,101 +14,59 @@ class CreatePost extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      email: '',
-      password: ''
-    };
+    this.thing1 = "Hello";
+    this.thing2 = "World";
+    this.thing3 = true;
 
     this.onCreatePost = this.onCreatePost.bind(this);
-    this.onSignUp = this.onSignUp.bind(this);
-    this.saveLogin = this.saveLogin.bind(this);
   }
 
-  async saveLogin(token) {
-    try {
-      await AsyncStorage.setItem('@Token:key', token);
-      console.log(token);
-      this.props.navigation.navigate('MainFiveTabs');
-    } catch (error) {
-      console.log(`Cannot save login. ${error}`);
-    }
-  }
-
-  onCreatePost(e) {
-    e.preventDefault();
-
-    if (this.state.email !== '' && this.state.password !== '') {
-      signInUser(this.state.email, this.state.password, (response, error) => {
-        if (error) {
-          alert('Either username or password is incorrect');
-
-        } else {
-          this.saveLogin(response.data.token);
-        }
-      });
-    } else {
-      alert('Please sign in with valid email and password');
-    }
-  }
-
-  onSignUp() {
-    this.props.navigation.navigate('SignUp');
+  onCreatePost() {
+    createPost(this.state.email, this.state.password, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        const decoded = jwtDecode(response.token);
+        console.log(decoded);
+      }
+    });
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.logo}>
-          <Image
-            style={styles.logoImg}
-            source={{uri:'http://i0.kym-cdn.com/photos/images/newsfeed/000/284/742/7e2.png'}}
-          />
-          <Text style={styles.logoFont}> MIAM </Text>
+    if(this.thing3){
+      return (
+        <View>
+          <StatusBarColor/>
+          <Heading text="Create Post"/>
         </View>
-        <Text style={styles.instructions}> Enter your email and password to login</Text>
-        <View style={styles.numArea}>
-          <TextInput onChangeText={(email) => this.setState({email})}
-            placeholder='Email'
-            value={this.state.email}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            style={styles.textArea} />
-          <TextInput onChangeText={(password) => this.setState({password})}
-            placeholder='Password'
-            value={this.state.password}
-            autoCapitalize="none"
-            style={styles.textArea} />
+      );
+    }
+    else{
+      return (
+        <View style={styles.container}>
+          <View style={styles.logo}>
+            <Image
+              style={styles.logoImg}
+              source={{uri:'https://orig00.deviantart.net/ed01/f/2012/208/d/4/meme_yao_ming_png_by_mfsyrcm-d58vitj.png'}}
+            />
+            <Text style={styles.logoFont}> Hello 2 </Text>
+          </View>
         </View>
-        <View style={styles.buttonArea}>
-          <Button
-            containerStyle={{padding:10, width:vw * 0.7, height:50, overflow:'hidden', borderRadius:25, backgroundColor: '#6C56BA'}}
-            style={styles.button}
-            onPress={this.onCreatePost}
-            title="LOGIN">
-          </Button>
-          <Button
-            containerStyle={{padding:10, width:vw * 0.7, height:50, overflow:'hidden', borderRadius:25, backgroundColor: '#6C56BA'}}
-            style={styles.button}
-            onPress={this.onSignUp}
-            title="SIGN UP">
-          </Button>
-        </View>
-      </View>
-    )
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: "8%",
+    flexDirection: "row",
     backgroundColor: '#F4F5F9',
   },
   logo: {
     flex: 0.7,
-    justifyContent: 'flex-end'
+    justifyContent: 'center'
   },
   logoImg: {
     width: vw * 0.6,
@@ -124,36 +85,18 @@ const styles = StyleSheet.create({
     margin: 20,
     marginBottom: 50,
   },
-  buttonArea: {
-    flex: 0.3
+  heading: {
+    height: "8%",
+    width: "100%",
+    backgroundColor: "#bf80ff",
+    justifyContent: "center"
   },
-  button: {
-    fontSize: 20,
-    letterSpacing: 1,
-    fontFamily: 'Futura',
-    color: '#FFFFFF',
-  },
-  instructions: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontFamily: 'Gill Sans',
-    color: '#9C8FC4',
-    marginBottom: 5,
-  },
-  numArea: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    margin: 15
-  },
-  textArea: {
-    fontFamily: 'Gill Sans',
-    color: '#372769',
-    height: 40,
-    width: vw*0.6,
-    padding: 5,
-    borderColor: '#9C8FC4',
-    borderWidth: 0.5
-  },
+  headingText: {
+    color: "#ffffff",
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: "center"
+  }
 });
 
 export default CreatePost;
