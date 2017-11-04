@@ -13,8 +13,8 @@ import {
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import StatusBarColor from './StatusBarColor';
-import Heading from './Heading';
+import StatusBarColor from "./StatusBarColor";
+import Heading from "./Heading";
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -30,6 +30,7 @@ export default class Canvas extends React.Component {
       text: ""
     };
     this.fetchData = this.fetchData.bind(this);
+    this.selectMeme = this.selectMeme.bind(this);
   }
   fetchData(offset = 0) {
     if (this.state.text === "") {
@@ -47,6 +48,8 @@ export default class Canvas extends React.Component {
       .then(response => response.json())
       .then(responseJson => {
         console.log(responseJson);
+        if (responseJson.data.length === 0) {
+        }
         let ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
         });
@@ -79,20 +82,20 @@ export default class Canvas extends React.Component {
         console.error(error);
       });
   }
-
+  selectMeme(url) {}
   render() {
     if (this.state.isLoading) {
       return (
         <View style={{ flex: 1, paddingTop: 20 }}>
           <ActivityIndicator />
-          <Text>abs</Text>
+          <Text>Loading...</Text>
         </View>
       );
     }
     return (
       <View>
-        <StatusBarColor/>
-        <Heading text="Miam Canvas"/>
+        <StatusBarColor />
+        <Heading text="Miam Canvas" />
         <View style={styles.searchBarContainer}>
           <TextInput
             style={styles.searchBar}
@@ -121,13 +124,17 @@ export default class Canvas extends React.Component {
             dataSource={this.state.dataSource}
             enableEmptySections={true}
             renderRow={rowData => (
-              <View style={styles.memeContainer}>
-                <Image
-                  source={{ uri: rowData.images.original.url }}
-                  style={styles.memeStyle}
-                  resizeMode="contain"
-                />
-              </View>
+              <TouchableHighlight
+                onPress={this.selectMeme(rowData.images.original.url)}
+              >
+                <View style={styles.memeContainer}>
+                  <Image
+                    source={{ uri: rowData.images.original.url }}
+                    style={styles.memeStyle}
+                    resizeMode="contain"
+                  />
+                </View>
+              </TouchableHighlight>
             )}
           />
         </View>
