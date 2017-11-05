@@ -74,12 +74,14 @@ export default class Profile extends React.Component {
           style={styles.audienceProfile}
           source={{uri: post.userProfile}}
         />
-        <Text style={styles.message}>
-          {post.userName} {message} {'\n'}
-        </Text>
-        <Text style={styles.time}>
-          {post.time}
-        </Text>
+        <View style={styles.audienceBox}>
+          <Text style={styles.message}>
+            {post.userName} {message}
+          </Text>
+          <Text style={styles.time}>
+            {post.time}
+          </Text>
+        </View>
       </View>
     );
   }
@@ -89,7 +91,7 @@ export default class Profile extends React.Component {
       <View style={styles.body}>
         <StatusBarColor/>
         <Heading text="MiAM Profile"/>
-        <ScrollView>
+        <View style={{flex: 1}}>
           <Image
             style={styles.profile}
             source={{uri: 'http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg'}}
@@ -142,7 +144,7 @@ export default class Profile extends React.Component {
             }}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
-        </ScrollView>
+        </View>
       </View>
     );
   }
@@ -218,7 +220,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   listviewcontainer: {
-    flex: 1,
+    flex: 2,
     padding: 12,
     flexDirection: 'column',
     height: 200,
@@ -226,24 +228,29 @@ const styles = StyleSheet.create({
   singleListContainer: {
     flexDirection: 'row',
     marginTop: 3,
-    marginBottom: 5,
     height: 40,
   },
   audienceProfile: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    marginRight: 5,
     marginRight: 15,
   },
   message: {
-
+    fontSize: 15,
+  },
+  time: {
+    fontSize: 10,
+    color: "grey",
   },
   separator: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#8E8E8E',
   },
+  audienceBox: {
+    justifyContent: 'space-around',
+  }
 });
 
 module.exports = Profile;
