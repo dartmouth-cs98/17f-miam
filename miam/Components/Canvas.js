@@ -25,8 +25,14 @@ class Canvas extends React.Component {
       image: null,
       tags: []
     };
-
     this.onCreatePost = this.onCreatePost.bind(this);
+    this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.navigation.state.params) {
+      this.setState({ image: this.props.navigation.state.params.gifurl });
+    }
   }
   onCreatePost() {
     createPost(this.state.email, this.state.password, (response, error) => {
@@ -50,9 +56,10 @@ class Canvas extends React.Component {
     }
   };
 
-  getImageFromGiphy = async () => {
+  getImageFromGiphy() {
     this.props.navigation.navigate("Search");
-  };
+  }
+
   render() {
     return (
       <View style={styles.body}>
