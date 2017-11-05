@@ -36,6 +36,7 @@ import Splash from "./Components/Splash";
 import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
 import Profile from "./Components/Profile";
+import Search from "./Components/Search";
 // import MainFiveTabs from "./Components/MainFiveTabs";
 // import CreatePost from "./Components/CreatePost.js";
 const navBarMainColor = "#F4F5F9";
@@ -82,6 +83,9 @@ export const AuthStack = StackNavigator(
     },
     Profile: {
       screen: Profile
+    },
+    Search: {
+      screen: Search
     }
   },
   // MainFiveTabs: {

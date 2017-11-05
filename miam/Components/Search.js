@@ -10,6 +10,7 @@ import {
   ScrollView,
   Dimensions,
   ActivityIndicator,
+  Button,
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -31,6 +32,7 @@ export default class Search extends React.Component {
     };
     this.fetchData = this.fetchData.bind(this);
     this.selectMeme = this.selectMeme.bind(this);
+    this.renderRow = this.renderRow.bind(this);
   }
   fetchData(offset = 0) {
     if (this.state.text === "") {
@@ -82,7 +84,25 @@ export default class Search extends React.Component {
         console.error(error);
       });
   }
-  selectMeme(url) {}
+  selectMeme(url) {
+    this.props.navigation.navigate("Canvas", { gifurl: url });
+  }
+  renderRow(rowData) {
+    return (
+      <View style={styles.memeContainer}>
+        <Image
+          source={{ uri: rowData.images.original.url }}
+          style={styles.memeStyle}
+          resizeMode="contain"
+        />
+        <Button
+          onPress={() => this.selectMeme(rowData.images.original.url)}
+          title="select"
+          color="#841584"
+        />
+      </View>
+    );
+  }
   render() {
     if (this.state.isLoading) {
       return (
@@ -95,7 +115,11 @@ export default class Search extends React.Component {
     return (
       <View>
         <StatusBarColor />
-        <Heading text="Miam Canvas" />
+        <Heading
+          text="Miam"
+          backButtonVisible={true}
+          nav={this.props.navigation}
+        />
         <View style={styles.searchBarContainer}>
           <TextInput
             style={styles.searchBar}
@@ -123,19 +147,9 @@ export default class Search extends React.Component {
           <ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
-            renderRow={rowData => (
-              <TouchableHighlight
-                onPress={this.selectMeme(rowData.images.original.url)}
-              >
-                <View style={styles.memeContainer}>
-                  <Image
-                    source={{ uri: rowData.images.original.url }}
-                    style={styles.memeStyle}
-                    resizeMode="contain"
-                  />
-                </View>
-              </TouchableHighlight>
-            )}
+            renderRow={rowData => {
+              return this.renderRow(rowData);
+            }}
           />
         </View>
       </View>
@@ -145,11 +159,15 @@ export default class Search extends React.Component {
 const styles = StyleSheet.create({
   memeStyle: {
     width: 300,
-    height: 200
+    height: 200,
+    marginTop: "1%"
   },
   searchBarContainer: {
     height: "5%",
     paddingTop: "1%",
+    flexDirection: "row"
+  },
+  headingContainer: {
     flexDirection: "row"
   },
   heading: {
