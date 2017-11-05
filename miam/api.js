@@ -55,17 +55,41 @@ export function signInUser(email, password, cb) {
 }
 
 export function createPost(postObj, cb) {
-  const params = {
-    postObj: postObj
-  }
-  axios.post(ROOT_URL+'/post', params)
+  axios.post(ROOT_URL+'/posts', postObj)
   .then(async (response) => {
+    console.log(response)
     cb(response, null);
   }).catch((error) => {
     cb(null, error);
   })
 }
 
+export function fetchBattles(cb) {
+  axios.get(`${ROOT_URL}/battles/`).
+  then((response) => {
+    cb(response.data, null);
+  }).catch((error) => {
+    cb(null, error);
+  });
+}
+
+export function getBattle(battleId, cb) {
+  axios.get(`${ROOT_URL}/battles/${battleId}`).
+  then((response) => {
+    cb(response.data, null);
+  }).catch((error) => {
+    cb(null, error);
+  });
+}
+
+export function getUserProfile(cb) {
+  axios.get(`${ROOT_URL}/users`).
+  then((response) => {
+    cb(response.data, null);
+  }).catch((error) => {
+    cb(null, error);
+  });
+}
 
 // export function fetchPosts(long, lat, sort, page, user, cb) {
 //   // console.log(`sort by ${sort}`);
