@@ -24,7 +24,6 @@ class LogIn extends React.Component {
   async saveLogin(token, userId) {
     try {
       await AsyncStorage.setItem('@Token:key', token);
-      await AsyncStorage.setItem('@UserId:key', userId);
       this.props.navigation.navigate('Feed');
     } catch (error) {
       console.log(`Cannot save login. ${error}`);
@@ -39,12 +38,7 @@ class LogIn extends React.Component {
         if (error) {
           alert('Either username or password is incorrect');
         } else {
-          getUserProfile((response2, error2) => {
-            if (response2) {
-              this.saveLogin(response.data.token, response2.id);
-            }
-          })
-
+          this.saveLogin(response.data.token);
         }
       });
     } else {
