@@ -55,11 +55,9 @@ export function signInUser(email, password, cb) {
 }
 
 export function createPost(postObj, cb) {
-  const params = {
-    postObj: postObj
-  }
-  axios.post(ROOT_URL+'/post', params)
+  axios.post(ROOT_URL+'/posts', postObj)
   .then(async (response) => {
+    console.log(response)
     cb(response, null);
   }).catch((error) => {
     cb(null, error);
