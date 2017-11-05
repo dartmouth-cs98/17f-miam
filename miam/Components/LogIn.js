@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { signInUser } from '../api';
+import { signInUser, getUserProfile } from '../api';
 
 const vw = Dimensions.get('window').width;
 
@@ -21,11 +21,11 @@ class LogIn extends React.Component {
     this.saveLogin = this.saveLogin.bind(this);
   }
 
-  async saveLogin(token) {
+  async saveLogin(token, userId) {
     try {
       await AsyncStorage.setItem('@Token:key', token);
-      console.log(token);
-      this.props.navigation.navigate('MainFiveTabs');
+      await AsyncStorage.setItem('@UserId:key', userId);
+      this.props.navigation.navigate('Feed');
     } catch (error) {
       console.log(`Cannot save login. ${error}`);
     }
@@ -38,9 +38,13 @@ class LogIn extends React.Component {
       signInUser(this.state.email, this.state.password, (response, error) => {
         if (error) {
           alert('Either username or password is incorrect');
-
         } else {
-          this.saveLogin(response.data.token);
+          getUserProfile((response2, error2) => {
+            if (response2) {
+              this.saveLogin(response.data.token, response2.id);
+            }
+          })
+
         }
       });
     } else {

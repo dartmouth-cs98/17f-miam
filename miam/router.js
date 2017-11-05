@@ -1,5 +1,29 @@
 import React from "react";
 
+////////////////////////////////////////////////////////////////////
+//                            _ooOoo_                             //
+//                           o8888888o                            //
+//                           88" . "88                            //
+//                           (| ^_^ |)                            //
+//                           O\  =  /O                            //
+//                        ____/`---'\____                         //
+//                      .'  \\|     |//  `.                       //
+//                     /  \\|||  :  |||//  \                      //
+//                    /  _||||| -:- |||||-  \                     //
+//                    |   | \\\  -  /// |   |                     //
+//                    | \_|  ''\---/''  |   |                     //
+//                    \  .-\__  `-`  ___/-. /                     //
+//                  ___`. .'  /--.--\  `. . ___                   //
+//                ."" '<  `.___\_<|>_/___.'  >'"".                //
+//              | | :  `- \`.;`\ _ /`;.`/ - ` : | |               //
+//              \  \ `-.   \_ __\ /__ _/   .-` /  /               //
+//        ========`-.____`-.___\_____/___.-`____.-'========       //
+//                             `=---='                            //
+//        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      //
+//                    Buddha Keeps Bugs Away                      //
+//                    佛祖保佑         永无bug                      //
+////////////////////////////////////////////////////////////////////
+
 /* eslint-disable */
 
 import { TabNavigator, StackNavigator } from "react-navigation";
@@ -11,6 +35,7 @@ import SignUp from "./Components/SignUp";
 import Splash from "./Components/Splash";
 import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
+import BattleList from "./Components/Battles/BattleList";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
 // import MainFiveTabs from "./Components/MainFiveTabs";
@@ -56,6 +81,9 @@ export const AuthStack = StackNavigator(
     },
     Canvas: {
       screen: Canvas
+    },
+    BattleList: {
+      screen: BattleList
     },
     Profile: {
       screen: Profile
