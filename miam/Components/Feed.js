@@ -85,14 +85,14 @@ export default class Feed extends React.Component {
     );
   }
 
-        // <StatusBarColor/>
-        // <Heading text="MiAM Feed" postButtonVisible={true} nav={this.nav}/>
+  // <StatusBarColor/>
+  // <Heading text="MiAM Feed" postButtonVisible={true} nav={this.nav}/>
 
   render() {
     return (
       <View style={styles.body}>
         <StatusBarColor />
-        <Heading text="MiAM Feed" />
+        <Heading text="MiAM" />
         <ScrollView>
           <ListView
             initialListSize={5}
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   listView: {
-    alignItems: 'center'
+    alignItems: "center"
   },
   postContainer: {
     backgroundColor: "#ffffff",
