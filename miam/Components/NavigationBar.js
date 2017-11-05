@@ -51,6 +51,16 @@ export default class NavigationBar extends React.Component {
             <Icon name="account-circle" color="#862d59" size={30} />
           </View>
         </TouchableHighlight>
+
+        <TouchableHighlight
+          onPress={() => this.props.navigation.navigate("BattleList")}
+          underlayColor="white"
+        >
+          <View>
+            <Icon name="account-circle" color="#862d59" size={30} />
+          </View>
+        </TouchableHighlight>
+
       </View>
     );
   }

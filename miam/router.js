@@ -35,6 +35,7 @@ import SignUp from "./Components/SignUp";
 import Splash from "./Components/Splash";
 import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
+import BattleList from "./Components/Battles/BattleList";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
 // import MainFiveTabs from "./Components/MainFiveTabs";
@@ -80,6 +81,9 @@ export const AuthStack = StackNavigator(
     },
     Canvas: {
       screen: Canvas
+    },
+    BattleList: {
+      screen: BattleList
     },
     Profile: {
       screen: Profile
