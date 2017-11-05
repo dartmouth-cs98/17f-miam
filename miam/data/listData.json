@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "userName": "Puff Liu",
+    "userProfile": "https://cdn.hk01.com/media/images/901920/xlarge/0841cddcf6cd146f24da71a76fb82f4b.jpg",
+    "event": "follow",
+    "time": "yesterday",
+  },
+  {
+    "id": 2,
+    "userName": "Aha Du",
+    "userProfile": "https://media.giphy.com/media/3NtY188QaxDdC/giphy.gif",
+    "event": "challenge",
+    "time": "3 days ago",
+  },
+  {
+    "id": 3,
+    "userName": "Neinei Wu",
+    "userProfile": "http://babyonea.com/file//n381/t.jpg",
+    "event": "challenge",
+    "time": "last week",
+  }
+]
