@@ -6,6 +6,7 @@
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
+    "@terrylinla/react-native-sketch-canvas": "^0.1.0",
     "axios": "^0.16.2",
     "expo": "^21.0.0",
     "material-icons": "^0.1.0",
@@ -15,6 +16,8 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-21.0.2.tar.gz",
     "react-native-button": "^2.1.0",
     "react-native-elements": "^0.17.0",
+    "react-native-infinite-scroll-view": "^0.4.3",
+    "react-native-interactable": "^0.1.7",
     "react-native-vector-icons": "^4.4.2",
     "react-navigation": "git+https://github.com/react-community/react-navigation.git"
   }
