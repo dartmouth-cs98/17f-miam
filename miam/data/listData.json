@@ -19,5 +19,12 @@
     "userProfile": "http://babyonea.com/file//n381/t.jpg",
     "event": "challenge",
     "time": "last week",
-  }
+  },
+  {
+    "id": 4,
+    "userName": "Max Wu",
+    "userProfile": "http://5b0988e595225.cdn.sohucs.com/images/20170906/6f785ab8b8b34135aec825975207f756.jpeg",
+    "event": "follow",
+    "time": "two weeks ago",
+  },
 ]
