@@ -2,12 +2,13 @@ import React from 'react';
 import {ImagePicker} from 'expo';
 import { View, Text, Image, StyleSheet, Dimensions, Button, TouchableHighlight, TextInput, AsyncStorage } from 'react-native';
 import Ionicon from "react-native-vector-icons/Ionicons";
-import Maticon from "react-native-vector-icons/MaterialIcons"
+import Maticon from "react-native-vector-icons/MaterialIcons";
 
 import { createPost } from '../api';
 
 import StatusBarColor from './StatusBarColor';
 import Heading from './Heading';
+import TestCanvas from "./TestCanvas";
 
 const vw = Dimensions.get('window').width;
 
@@ -22,18 +23,7 @@ class CreatePost extends React.Component {
 
     this.nav = props.navigation;
 
-    this.onCreatePost = this.onCreatePost.bind(this);
-  }
-
-  onCreatePost() {
-    createPost(this.state.email, this.state.password, (response, error) => {
-      if (error) {
-        alert(error);
-      } else {
-        const decoded = jwtDecode(response.token);
-        console.log(decoded);
-      }
-    });
+    // console.log(this.tester);
   }
 
   getImageFromRoll = async() => {
@@ -43,13 +33,19 @@ class CreatePost extends React.Component {
     });
 
     if(!result.cancelled){
-      this.setState({ image: result.uri });
+      // this.setState({ image: result.uri });
+      this.canvas.addImageCanvasObj(result);
+      
     }
   }
 
-  getImageFromGiphy = async() => {
+        // <TouchableHighlight style={[styles.buttonTouchHighlight, styles.backgroundDeepPurple]} onPress={this.getImageFromRoll}>
+        //   <View style={styles.buttonContainer}>
+        //     <Maticon style={[styles.buttonIcon, styles.colorWhite]} name="gif" size={30} color="white" />
+        //     <Text style={[styles.buttonText, styles.colorWhite]}>Get Gif from GIPHY</Text>
+        //   </View>
+        // </TouchableHighlight>
 
-  }
 
   render() {
     return (
@@ -62,24 +58,20 @@ class CreatePost extends React.Component {
             <Text style={[styles.buttonText, styles.colorWhite]}>Get Image from Camera Roll</Text>
           </View>
         </TouchableHighlight>
-        <TouchableHighlight style={[styles.buttonTouchHighlight, styles.backgroundDeepPurple]} onPress={this.getImageFromRoll}>
-          <View style={styles.buttonContainer}>
-            <Maticon style={[styles.buttonIcon, styles.colorWhite]} name="gif" size={30} color="white" />
-            <Text style={[styles.buttonText, styles.colorWhite]}>Get Gif from GIPHY</Text>
-          </View>
-        </TouchableHighlight>
         {
-          this.state.image &&
-          <View style={{height: "100%"}}>
-            <Image source={{ uri: this.state.image }} style={styles.imagePreview}/>
-            <TouchableHighlight style={styles.buttonTouchHighlight} onPress={this.getImageFromRoll}>
-              <View style={styles.buttonContainer}>
-                <Ionicon style={styles.buttonIcon} name="ios-brush" size={30} color="white" />
-                <Text style={styles.buttonText}>Edit</Text>
-              </View>
-            </TouchableHighlight>
-          </View>
+          this.state.image //&&
+          // <View style={{height: "100%"}}>
+          //   <Image source={{ uri: this.state.image }} style={styles.imagePreview}/>
+          //   <TouchableHighlight style={styles.buttonTouchHighlight} onPress={this.getImageFromRoll}>
+          //     <View style={styles.buttonContainer}>
+          //       <Ionicon style={styles.buttonIcon} name="ios-brush" size={30} color="white" />
+          //       <Text style={styles.buttonText}>Edit</Text>
+          //     </View>
+          //   </TouchableHighlight>
+          // </View>
         }
+        
+         <TestCanvas ref={component => this.canvas = component} {...this.props}/>
       </View>
     );
   }
