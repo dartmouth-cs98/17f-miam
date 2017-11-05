@@ -11,6 +11,7 @@ import SignUp from "./Components/SignUp";
 import Splash from "./Components/Splash";
 import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
+import BattleList from "./Components/Battles/BattleList";
 const navBarMainColor = "#F4F5F9";
 const navBarTintColor = "#6C56BA";
 const accentColor = "#D0CCDF";
@@ -52,6 +53,9 @@ export const AuthStack = StackNavigator(
     },
     Canvas: {
       screen: Canvas
+    },
+    BattleList: {
+      screen: BattleList
     }
   },
   {

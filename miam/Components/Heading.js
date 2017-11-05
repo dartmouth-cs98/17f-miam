@@ -16,7 +16,7 @@ class Heading extends Component{
 		return (
 			<View style={styles.heading}>
 				<Text style={styles.logo}>{this.headingText}</Text>
-	        </View>
+	    </View>
 		);
 	}
 }

@@ -66,6 +66,32 @@ export function createPost(postObj, cb) {
   })
 }
 
+export function fetchBattles(cb) {
+  axios.get(`${ROOT_URL}/battles/`).
+  then((response) => {
+    cb(response.data, null);
+  }).catch((error) => {
+    cb(null, error);
+  });
+}
+
+export function getBattle(battleId, cb) {
+  axios.get(`${ROOT_URL}/battles/${battleId}`).
+  then((response) => {
+    cb(response.data, null);
+  }).catch((error) => {
+    cb(null, error);
+  });
+}
+
+export function getUserProfile(cb) {
+  axios.get(`${ROOT_URL}/users`).
+  then((response) => {
+    cb(response.data, null);
+  }).catch((error) => {
+    cb(null, error);
+  });
+}
 
 // export function fetchPosts(long, lat, sort, page, user, cb) {
 //   // console.log(`sort by ${sort}`);
