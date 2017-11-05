@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
+import { fetchPosts } from "../api";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -30,6 +31,7 @@ export default class Feed extends React.Component {
   }
 
   componentDidMount() {
+    fetchPosts();
     this.setState({
       postDataSource: ds.cloneWithRows(customData),
       loaded: true

@@ -14,7 +14,6 @@ import {
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import InfiniteScrollView from "react-native-infinite-scroll-view";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });

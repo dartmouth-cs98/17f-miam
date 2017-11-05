@@ -11,13 +11,13 @@ import {
   Dimensions
 } from "react-native";
 
-import AvatarEditor from 'react-avatar-editor'
-import Button from 'react-native-button';
+import AvatarEditor from "react-avatar-editor";
+import Button from "react-native-button";
 
 import Icon from "react-native-vector-icons/MaterialIcons";
-import StatusBarColor from './StatusBarColor';
-import Heading from './Heading';
-
+import StatusBarColor from "./StatusBarColor";
+import Heading from "./Heading";
+import NavigationBar from "./NavigationBar";
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
 
@@ -48,14 +48,14 @@ export default class Profile extends React.Component {
     if (this.editor) {
       // This returns a HTMLCanvasElement, it can be made into a data URL or a blob,
       // drawn on another canvas, or added to the DOM.
-      const canvas = this.editor.getImage()
+      const canvas = this.editor.getImage();
 
       // If you want the image resized to the canvas size (also a HTMLCanvasElement)
-      const canvasScaled = this.editor.getImageScaledToCanvas()
+      const canvasScaled = this.editor.getImageScaledToCanvas();
     }
-  }
+  };
 
-  setEditorRef = (editor) => this.editor = editor
+  setEditorRef = editor => (this.editor = editor);
 
   renderListView(post) {
     var message = "";
@@ -94,19 +94,24 @@ export default class Profile extends React.Component {
         <View style={{flex: 1}}>
           <Image
             style={styles.profile}
-            source={{uri: 'http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg'}}
+            source={{
+              uri: "http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg"
+            }}
           >
             <Button
               containerStyle={styles.buttonContainer}
               style={styles.addButton}
-              styleDisabled={{color: 'red'}}
-              onPress={() => this.onAdd()}>
+              styleDisabled={{ color: "red" }}
+              onPress={() => this.onAdd()}
+            >
               +
             </Button>
             <View style={styles.profiles}>
               <Image
                 style={styles.profilePicture}
-                source={{uri: 'http://qimg.hxnews.com/2017/0912/1505204920938.jpg'}}
+                source={{
+                  uri: "http://qimg.hxnews.com/2017/0912/1505204920938.jpg"
+                }}
               />
               <Text style={styles.name}>Jasper Chan</Text>
               <Text style={styles.score}>Score: 537</Text>
@@ -115,8 +120,9 @@ export default class Profile extends React.Component {
             <Button
               containerStyle={styles.buttonContainer}
               style={styles.messageButton}
-              styleDisabled={{color: 'red'}}
-              onPress={() => this.onMessage()}>
+              styleDisabled={{ color: "red" }}
+              onPress={() => this.onMessage()}
+            >
               M
             </Button>
           </Image>
@@ -165,56 +171,56 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: 35,
     width: 35,
-    overflow:'hidden',
-    borderRadius:20,
-    backgroundColor: 'white',
+    overflow: "hidden",
+    borderRadius: 20,
+    backgroundColor: "white"
   },
   addButton: {
     fontSize: 30,
-    color: 'black',
+    color: "black"
   },
   messageButton: {
     fontSize: 30,
-    color: 'black',
+    color: "black"
   },
   profiles: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center"
   },
   profilePicture: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginHorizontal: 20,
+    marginHorizontal: 20
   },
   name: {
-    color: 'white',
+    color: "white",
     fontSize: 25,
     top: 20,
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: "rgba(0,0,0,0)"
   },
   score: {
-    color: 'white',
+    color: "white",
     fontSize: 15,
     top: 15,
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: "rgba(0,0,0,0)"
   },
   battlewon: {
-    color: 'white',
+    color: "white",
     fontSize: 15,
     top: 10,
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: "rgba(0,0,0,0)"
   },
   bodyMiddle: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
     height: 50,
-    borderColor:'#D3D3D3',
+    borderColor: "#D3D3D3"
   },
   box: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 50,
     borderColor:'#D3D3D3',
     marginHorizontal: 20,
