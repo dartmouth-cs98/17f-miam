@@ -69,6 +69,7 @@ class Canvas extends React.Component {
           <View style={styles.canvas}>
             <View style={styles.canvasHeading}>
               <Text style={{ fontSize: 25, color: "#cc66cc" }}>Canvas</Text>
+              <Icon name="send" color="#ac3973" size={20} />
             </View>
             {this.state.image && (
               <View>

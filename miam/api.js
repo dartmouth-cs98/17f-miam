@@ -1,8 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
-const ROOT_URL = 'https://miam98.herokuapp.com/api';
+const ROOT_URL = "https://miam98.herokuapp.com/api";
 // const ROOT_URL = 'http://localhost:9090/api';
-
 
 // export function getUserPosts(user_id, page, cb) {
 //   // console.log('user id in user api call', user_id);
@@ -28,58 +27,61 @@ const ROOT_URL = 'https://miam98.herokuapp.com/api';
 //   });
 // }
 
-export function signUpUser(email, password, cb)  {
+export function signUpUser(email, password, cb) {
   const params = {
     email: email.toLowerCase(),
-    password: password,
-  }
-  axios.post(ROOT_URL+'/users/signup', params)
-  .then(async (response) => {
-    cb(response, null);
-  }).catch((error) => {
-    cb(null, error)
-  })
+    password: password
+  };
+  axios
+    .post(ROOT_URL + "/users/signup", params)
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function signInUser(email, password, cb) {
   const params = {
     email: email.toLowerCase(),
-    password: password,
-  }
-  axios.post(ROOT_URL+'/users/signin', params)
-  .then(async (response) => {
-    cb(response, null);
-  }).catch((error) => {
-    cb(null, error);
-  })
+    password: password
+  };
+  axios
+    .post(ROOT_URL + "/users/signin", params)
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function createPost(postObj, cb) {
   const params = {
     postObj: postObj
-  }
-  axios.post(ROOT_URL+'/post', params)
-  .then(async (response) => {
-    cb(response, null);
-  }).catch((error) => {
-    cb(null, error);
-  })
+  };
+  axios
+    .post(ROOT_URL + "/post", params)
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
+export function fetchPosts() {
+  axios
+    .get(`${ROOT_URL}/posts/`)
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.log(error.response);
+    });
+}
 
-// export function fetchPosts(long, lat, sort, page, user, cb) {
-//   // console.log(`sort by ${sort}`);
-//   axios.get(`${ROOT_URL}/posts/`, { params: { long, lat, sort, page, user } }).
-//   then((response) => {
-//     // console.log(response);
-//     cb(response.data, null);
-//   }).catch((error) => {
-//     // console.log(error.response);
-//     // console.log(`error fetching posts with long: ${long}, lat: ${lat} with sort of ${sort}`);
-//     cb(null, error);
-//   });
-// }
-//
 // export function searchPosts(long, lat, tags, page, user, cb) {
 //   // console.log('search posts lat:', lat, 'long:', long);
 //   axios.get(`${ROOT_URL}/search/`, { params: { long, lat, tags, page, user } }).
