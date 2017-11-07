@@ -12,7 +12,9 @@ import {
 class TextCanvasObj extends React.Component{
 	constructor(props){
 	    super(props);
-	    this.text = props.text;
+	    this.state = {
+	    	text: props.text || ""
+	    };
 	}
 
 	componentWillMount(){
@@ -49,7 +51,7 @@ class TextCanvasObj extends React.Component{
 	                backgroundColor: '#00000000'
 	              }} 
 	            {...this._panResponder.panHandlers}>
-	            <Text style={styles.textStyle}>{this.text}</Text>
+	            <Text style={styles.textStyle}>{this.state.text}</Text>
 	        </Animated.View>
 	      	</View>
         );
