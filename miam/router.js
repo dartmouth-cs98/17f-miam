@@ -39,7 +39,8 @@ import BattleList from "./Components/Battles/BattleList";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
 // import MainFiveTabs from "./Components/MainFiveTabs";
-// import CreatePost from "./Components/CreatePost.js";
+import CreatePost from "./Components/CreatePost.js";
+import TestCanvas from "./Components/TestCanvas"
 const navBarMainColor = "#F4F5F9";
 const navBarTintColor = "#6C56BA";
 const accentColor = "#D0CCDF";

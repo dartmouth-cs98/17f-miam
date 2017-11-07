@@ -104,11 +104,23 @@ export function getBattle(battleId, cb) {
     });
 }
 
-export function getUserProfile(cb) {
+export function getUserProfile(token, cb) {
   axios
-    .get(`${ROOT_URL}/users`)
+    .get(`${ROOT_URL}/users`, { headers: { Authorization: token } })
     .then(response => {
-      cb(response.data, null);
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function sendMessage(battleId, token, msg, cb) {
+  const url = `${ROOT_URL}/battles/msg/${battleId}`;
+  axios
+    .put(url, { message: msg }, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
     })
     .catch(error => {
       cb(null, error);
@@ -161,7 +173,7 @@ export function getUserProfile(cb) {
 //     // console.log(error);
 //   });
 // }
-//
+
 // export function editPost(postId, fields, action, cb) {
 //   const url = `${ROOT_URL}/posts/${postId}`;
 //   let params;

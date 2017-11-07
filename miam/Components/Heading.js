@@ -74,16 +74,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-const plusButton = (
-	<TouchableHighlight style={styles.postButton} onPress={this.goToCreatePost}>
-		<Icon name="ios-add-circle-outline" size={38} color="white" />
-	</TouchableHighlight>
-);
-
-const backButton = (
-	<TouchableHighlight style={styles.backButton}>
-		<Icon name="ios-arrow-back" size={38} color="white" />
-	</TouchableHighlight>
-);
-
 export default Heading;

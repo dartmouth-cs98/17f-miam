@@ -35,25 +35,16 @@ export default class NavigationBar extends React.Component {
         </TouchableHighlight>
 
         <TouchableHighlight
-          onPress={() => this.props.navigation.navigate("Battle")}
+          onPress={() => this.props.navigation.navigate("BattleList")}
           underlayColor="white"
         >
           <View>
-            <Icon name="filter-vintage" color="#862d59" size={30} />
+            <Icon name="whatshot" color="#862d59" size={30} />
           </View>
         </TouchableHighlight>
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Profile")}
-          underlayColor="white"
-        >
-          <View>
-            <Icon name="account-circle" color="#862d59" size={30} />
-          </View>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          onPress={() => this.props.navigation.navigate("BattleList")}
           underlayColor="white"
         >
           <View>

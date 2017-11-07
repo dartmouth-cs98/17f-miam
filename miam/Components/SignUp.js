@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import { signUpUser } from "../api";
+import { signUpUser, getUserProfile } from "../api";
 
 const vw = Dimensions.get("window").width;
 
@@ -23,27 +23,15 @@ class SignUp extends React.Component {
       password: ""
     };
 
-    this.submitForm = this.submitForm.bind(this);
     this.goToLogIn = this.goToLogIn.bind(this);
     this.onSignUp = this.onSignUp.bind(this);
     this.saveSignUp = this.saveSignUp.bind(this);
   }
 
-  submitForm() {
-    signUpUser(this.state.email, this.state.password, (response, error) => {
-      if (error) {
-        alert(error);
-      } else {
-        const decoded = jwtDecode(response.token);
-        console.log(decoded);
-      }
-    });
-  }
 
   async saveSignUp(token) {
     try {
       await AsyncStorage.setItem("@Token:key", token);
-      console.log(token);
       this.props.navigation.navigate("Feed");
     } catch (error) {
       console.log(`Cannot save signup. ${error}`);

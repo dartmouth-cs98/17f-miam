@@ -10,11 +10,12 @@ import {
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Ionicon from "react-native-vector-icons/Ionicons";
 import StatusBarColor from "./StatusBarColor";
 import { ImagePicker } from "expo";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import Maticon from "react-native-vector-icons/MaterialIcons";
+import TxtCObj from "./CanvasObjects/TextCanvasObj";
 
 import { createPost } from "../api";
 
@@ -23,10 +24,12 @@ class Canvas extends React.Component {
     super(props);
     this.state = {
       image: null,
+      texts: [],
       tags: []
     };
     this.onCreatePost = this.onCreatePost.bind(this);
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
+    this.createText = this.createText.bind(this);
   }
 
   componentDidMount() {
@@ -60,6 +63,12 @@ class Canvas extends React.Component {
     this.props.navigation.navigate("Search");
   }
 
+  createText(){
+    this.setState(prevState => ({
+      texts: [...prevState.texts, <TxtCObj key={prevState.texts.length} text="Place Text Here!"/>]
+    }));
+  }
+
   render() {
     return (
       <View style={styles.body}>
@@ -79,6 +88,9 @@ class Canvas extends React.Component {
                 />
               </View>
             )}
+            {
+              this.state.texts
+            }
           </View>
           <View style={styles.tools}>
             <TouchableHighlight
@@ -95,6 +107,11 @@ class Canvas extends React.Component {
               <Icon name="gif" color="#ac3973" size={40} />
             </TouchableHighlight>
             <Icon name="brush" color="#ac3973" size={30} />
+            <TouchableHighlight
+              onPress={this.createText}
+              underlayColor="white">
+              <Ionicon name="ios-text" color="#ac3973" size={40} />
+            </TouchableHighlight>
           </View>
         </View>
         <NavigationBar navigation={this.props.navigation} />
