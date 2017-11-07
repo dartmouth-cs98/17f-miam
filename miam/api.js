@@ -71,11 +71,11 @@ export function createPost(postObj, cb) {
     });
 }
 
-export function fetchPosts() {
+export function fetchPosts(cb) {
   axios
     .get(`${ROOT_URL}/posts/`)
     .then(response => {
-      console.log(response);
+      cb(response, null);
     })
     .catch(error => {
       console.log(error.response);
@@ -83,31 +83,36 @@ export function fetchPosts() {
 }
 
 export function fetchBattles(cb) {
-  axios.get(`${ROOT_URL}/battles/`).
-  then((response) => {
-    cb(response.data, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
+  axios
+    .get(`${ROOT_URL}/battles/`)
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function getBattle(battleId, cb) {
-  axios.get(`${ROOT_URL}/battles/${battleId}`).
-  then((response) => {
-    cb(response.data, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
+  axios
+    .get(`${ROOT_URL}/battles/${battleId}`)
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function getUserProfile(cb) {
-  axios.get(`${ROOT_URL}/users`).
-  then((response) => {
-    cb(response.data, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
-
+  axios
+    .get(`${ROOT_URL}/users`)
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 // export function searchPosts(long, lat, tags, page, user, cb) {

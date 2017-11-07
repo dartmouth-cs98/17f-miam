@@ -30,11 +30,17 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
-  componentDidMount() {
-    fetchPosts();
-    this.setState({
-      postDataSource: ds.cloneWithRows(customData),
-      loaded: true
+  componentWillMount() {
+    fetchPosts((response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        console.log(response);
+        this.setState({
+          postDataSource: ds.cloneWithRows(response),
+          loaded: true
+        });
+      }
     });
   }
 
@@ -44,7 +50,7 @@ export default class Feed extends React.Component {
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
-              source={{ uri: post.userImg }}
+              source={{ uri: post.meme.imgURL }}
               style={styles.userIconStyle}
               resizeMode="contain"
             />
