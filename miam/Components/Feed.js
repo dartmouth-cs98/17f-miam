@@ -8,13 +8,14 @@ import {
   TouchableHighlight,
   ListView,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts } from "../api";
+import { fetchPosts, getUserProfile } from "../api";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -30,12 +31,36 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
+  async setUserId() {
+    try {
+      const userId = await AsyncStorage.getItem('@UserId:key');
+      const token = await AsyncStorage.getItem('@Token:key');
+      if (token && userId === null){
+        getUserProfile(token, async (response, error) => {
+          if (response.data) {
+            try {
+              await AsyncStorage.setItem('@UserId:key', response.data.id);
+              console.log('Successfully saved user id');
+            } catch (error) {
+              console.log(`Cannot save userId. ${error}`);
+            }
+          } else {
+            console.log(error);
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   componentDidMount() {
     fetchPosts();
     this.setState({
       postDataSource: ds.cloneWithRows(customData),
       loaded: true
     });
+    this.setUserId();
   }
 
   renderPostRow(post) {

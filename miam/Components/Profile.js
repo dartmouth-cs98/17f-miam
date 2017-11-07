@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   ListView,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 
 import AvatarEditor from "react-avatar-editor";
@@ -35,6 +36,8 @@ export default class Profile extends React.Component {
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
     };
+
+    this.signOut = this.signOut.bind(this);
   }
   componentDidMount() {
     this.setState({
@@ -43,7 +46,16 @@ export default class Profile extends React.Component {
       loaded: true,
     });
   }
-
+  async signOut(){
+    try {
+      await AsyncStorage.removeItem('@Token:key');
+      await AsyncStorage.removeItem('@UserId:key');
+      console.log('Successfully log out');
+      this.props.navigation.navigate('LogIn');
+    } catch (error) {
+      console.log(`Cannot log out. ${error}`);
+    }
+  }
   onClickSave = () => {
     if (this.editor) {
       // This returns a HTMLCanvasElement, it can be made into a data URL or a blob,
@@ -54,6 +66,14 @@ export default class Profile extends React.Component {
       const canvasScaled = this.editor.getImageScaledToCanvas();
     }
   };
+
+  onAdd() {
+    console.log("onAdd hasnt been finished!");
+  }
+
+  onMessage() {
+    console.log("onMessage hasnt been finished!");
+  }
 
   setEditorRef = editor => (this.editor = editor);
 
@@ -151,6 +171,12 @@ export default class Profile extends React.Component {
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
         </View>
+        <Button
+          onPress={this.signOut}
+        >
+          Sign Out
+        </Button>
+        <NavigationBar navigation={this.props.navigation} />
       </View>
     );
   }
