@@ -67,6 +67,14 @@ export default class Profile extends React.Component {
     }
   };
 
+  onAdd() {
+    console.log("onAdd hasnt been finished!");
+  }
+
+  onMessage() {
+    console.log("onMessage hasnt been finished!");
+  }
+
   setEditorRef = editor => (this.editor = editor);
 
   renderListView(post) {
