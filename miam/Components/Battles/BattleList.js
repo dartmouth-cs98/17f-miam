@@ -65,7 +65,7 @@ export default class BattleList extends React.Component {
       <View style={styles.battleContainer}>
         <View style={styles.battleContentContainer}>
           <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
-            {battle.participant1.email} VS. {battle.participant2.email}
+            {battle.participant1.username} VS. {battle.participant2.username}
           </Text>
           <Button
             containerStyle={styles.buttonContainer}

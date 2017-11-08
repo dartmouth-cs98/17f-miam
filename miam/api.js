@@ -27,10 +27,11 @@ const ROOT_URL = "https://miam98.herokuapp.com/api";
 //   });
 // }
 
-export function signUpUser(email, password, cb) {
+export function signUpUser(email, password, username, cb) {
   const params = {
     email: email.toLowerCase(),
-    password: password
+    password: password,
+    username: username,
   };
   axios
     .post(ROOT_URL + "/users/signup", params)

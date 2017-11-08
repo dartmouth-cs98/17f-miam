@@ -1,14 +1,33 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TextInput, ListView, ScrollView, AsyncStorage} from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TextInput, ListView, ScrollView, AsyncStorage, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {findNodeHandle} from 'react-native';
 
 const vw = Dimensions.get('window').width;
+const vh = Dimensions.get('window').height;
 var mockMessages = require("../../data/mockMessages.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
 import Button from 'react-native-button';
 import { getBattle, sendMessage } from "../../api";
+import Pusher from 'pusher-js/react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+
+// Enable pusher logging - don't include this in production
+Pusher.logToConsole = true;
+
+var pusher = new Pusher('8bf10764c83bdb2f6afd', {
+  cluster: 'us2',
+  encrypted: true
+});
+
+var channel = pusher.subscribe('123');
+channel.bind('my-event', function(data) {
+  alert(data.message);
+});
+
 
 class Battle extends React.Component {
 
@@ -20,11 +39,14 @@ class Battle extends React.Component {
       meme: '',
       myId: '',
       token: '',
-      participating: false
+      participating: false,
+      participant1: {},
+      participant2: {}
     };
 
     this.sendMsg = this.sendMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
+
   }
 
   async getMyId() {
@@ -48,6 +70,8 @@ class Battle extends React.Component {
         console.log(response);
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
+          participant1: response.participant1,
+          participant2: response.participant2
         });
         if (this.state.myId === response.participant1._id || this.state.myId === response.participant2._id) {
           this.setState({
@@ -69,6 +93,12 @@ class Battle extends React.Component {
     this.fetchBattle();
   }
 
+  componentDidMount() {
+    if (this.scrollView) {
+      this.scrollView.scrollToEnd({animated: true});
+    }
+  }
+
   sendMsg() {
     let msg = {
       "text" : this.state.text,
@@ -88,26 +118,43 @@ class Battle extends React.Component {
     });
   }
 
+
   renderMsgRow(msg) {
     console.log(this.state.myId);
-    if (msg.sender === this.state.myId) {
-      return (
-        <View style={styles.msgSent}>
-          <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
-            {msg.text}
-          </Text>
-        </View>
-      );
+
+    var isLeft = false;
+
+    if (this.state.participating) {
+      if (msg.sender !== this.state.myId) {
+        isLeft = true;
+      }
     } else {
-      return (
-        <View style={styles.msgReceived}>
-          <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
+      if (msg.sender === this.state.participant1._id) {
+        isLeft = true;
+      }
+    }
+
+    var leftSpacer = isLeft ? null : <View/>;
+    var rightSpacer = isLeft ? <View/> : null;
+
+    var bubbleStyles = isLeft ? [styles.messageBubble, styles.messageBubbleLeft] : [styles.messageBubble, styles.messageBubbleRight];
+
+    var bubbleTextStyle = isLeft ? styles.messageBubbleTextLeft : styles.messageBubbleTextRight;
+
+    return (
+      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+        {leftSpacer}
+        <View style={bubbleStyles}>
+          <Text style={[bubbleTextStyle, { fontSize: 20, marginLeft: "5%", marginTop: "3%" }]}>
             {msg.text}
           </Text>
         </View>
-      )
-    }
+        {rightSpacer}
+      </View>
+    );
+
   }
+
 
   render() {
     if (this.state.participating) {
@@ -119,7 +166,11 @@ class Battle extends React.Component {
             onPress={() => this.props.returnToList()}>
             Back
           </Button>
-          <ScrollView>
+          <KeyboardAwareScrollView
+            ref={(ref) => { this.scrollView = ref }}
+            onContentSizeChange={(contentWidth, contentHeight)=>{
+              this.scrollView.scrollToEnd({animated: true});
+            }}>
             <ListView
               initialListSize={5}
               enableEmptySections={true}
@@ -128,16 +179,19 @@ class Battle extends React.Component {
                 return this.renderMsgRow(msg);
               }}
             />
-          </ScrollView>
-          <TextInput onChangeText={(text) => this.setState({text})}
-            placeholder='Say something...'
-            value={this.state.text}
-            autoCapitalize="none"
-            style={styles.textArea} />
-          <Button
-            onPress={() => this.sendMsg()}>
-            SEND
-          </Button>
+            <View style={styles.inputBar}>
+              <TextInput onChangeText={(text) => this.setState({text})}
+                placeholder='Say something...'
+                value={this.state.text}
+                autoCapitalize="none"
+                style={styles.textArea} />
+              <TouchableHighlight
+                onPress={() => this.sendMsg()}
+                style={styles.sendButton}>
+                <Text style={{color: 'white'}}>Send</Text>
+              </TouchableHighlight>
+            </View>
+          </KeyboardAwareScrollView>
         </View>
       );
     } else {
@@ -182,42 +236,73 @@ const styles = StyleSheet.create({
     fontSize: 40,
     textAlign: "center"
   },
+
+  // Input Bar
+  inputBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    backgroundColor: '#F8F8FF',
+    marginTop: 20
+  },
   textArea: {
+    backgroundColor: 'white',
     alignSelf: 'flex-start',
     fontFamily: 'Gill Sans',
     color: '#372769',
     height: 40,
     width: vw*0.9,
     margin: 10,
-    borderColor: '#9C8FC4',
-    borderWidth: 0.5
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    flex: 1,
+    fontSize: 16,
+    paddingHorizontal: 10
   },
-  msgReceived: {
-    backgroundColor: "white",
+  sendButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    margin: 10,
+    borderRadius: 5,
+    backgroundColor: '#66db30'
+  },
+
+  //MessageBubble
+  messageBubble: {
+      borderRadius: 10,
+      borderColor: "#000000",
+      marginTop: 8,
+      marginRight: 10,
+      marginLeft: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      flexDirection:"column",
+      shadowColor: "#291D56",
+      shadowOffset: { height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3
+  },
+
+  messageBubbleLeft: {
+    backgroundColor: '#d5d8d4',
     alignSelf: 'flex-start',
-    borderColor: "#000000",
-    flexDirection: "column",
-    padding: 10,
-    margin: 7,
-    borderRadius: 10,
-    shadowColor: "#291D56",
-    shadowOffset: { height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3
   },
-  msgSent: {
-    backgroundColor: "green",
-    alignSelf: 'flex-end',
-    borderColor: "#000000",
-    flexDirection: "column",
-    padding: 10,
-    margin: 7,
-    borderRadius: 10,
-    shadowColor: "#291D56",
-    shadowOffset: { height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3
-  }
+
+  messageBubbleTextLeft: {
+    color: 'black'
+  },
+
+  messageBubbleRight: {
+    backgroundColor: '#66db30',
+    alignSelf: 'flex-end'
+  },
+
+  messageBubbleTextRight: {
+    color: 'white'
+  },
 });
 
 

@@ -20,7 +20,8 @@ class SignUp extends React.Component {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      username: ""
     };
 
     this.goToLogIn = this.goToLogIn.bind(this);
@@ -42,9 +43,9 @@ class SignUp extends React.Component {
     e.preventDefault();
 
     if (this.state.email !== "" && this.state.password !== "") {
-      signUpUser(this.state.email, this.state.password, (response, error) => {
+      signUpUser(this.state.email, this.state.password, this.state.username, (response, error) => {
         if (error) {
-          alert(error);
+          console.log(error);
         } else {
           this.saveSignUp(response.data.token);
         }
@@ -84,6 +85,13 @@ class SignUp extends React.Component {
         </Text>
         <View style={styles.numArea}>
           <TextInput
+            onChangeText={username => this.setState({ username })}
+            placeholder="Username"
+            value={this.state.username}
+            autoCapitalize="none"
+            style={styles.textArea}
+          />
+          <TextInput
             onChangeText={email => this.setState({ email })}
             placeholder="Email"
             value={this.state.email}
@@ -94,6 +102,7 @@ class SignUp extends React.Component {
           <TextInput
             onChangeText={password => this.setState({ password })}
             placeholder="Password"
+            secureTextEntry={true}
             value={this.state.password}
             autoCapitalize="none"
             style={styles.textArea}
