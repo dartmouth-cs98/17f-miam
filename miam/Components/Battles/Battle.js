@@ -1,14 +1,33 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, ListView, ScrollView, AsyncStorage} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {findNodeHandle} from 'react-native';
 
 const vw = Dimensions.get('window').width;
+const vh = Dimensions.get('window').height;
 var mockMessages = require("../../data/mockMessages.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
 import Button from 'react-native-button';
 import { getBattle, sendMessage } from "../../api";
+import Pusher from 'pusher-js/react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+
+// Enable pusher logging - don't include this in production
+Pusher.logToConsole = true;
+
+var pusher = new Pusher('8bf10764c83bdb2f6afd', {
+  cluster: 'us2',
+  encrypted: true
+});
+
+var channel = pusher.subscribe('123');
+channel.bind('my-event', function(data) {
+  alert(data.message);
+});
+
 
 class Battle extends React.Component {
 
@@ -20,11 +39,14 @@ class Battle extends React.Component {
       meme: '',
       myId: '',
       token: '',
-      participating: false
+      participating: false,
+      participant1: {},
+      participant2: {}
     };
 
     this.sendMsg = this.sendMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
+
   }
 
   async getMyId() {
@@ -48,6 +70,8 @@ class Battle extends React.Component {
         console.log(response);
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
+          participant1: response.participant1,
+          participant2: response.participant2
         });
         if (this.state.myId === response.participant1._id || this.state.myId === response.participant2._id) {
           this.setState({
@@ -69,6 +93,12 @@ class Battle extends React.Component {
     this.fetchBattle();
   }
 
+  componentDidMount() {
+    if (this.scrollView) {
+      this.scrollView.scrollToEnd({animated: true});
+    }
+  }
+
   sendMsg() {
     let msg = {
       "text" : this.state.text,
@@ -88,25 +118,47 @@ class Battle extends React.Component {
     });
   }
 
+
   renderMsgRow(msg) {
     console.log(this.state.myId);
-    if (msg.sender === this.state.myId) {
-      return (
-        <View style={styles.msgSent}>
-          <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
-            {msg.text}
-          </Text>
-        </View>
-      );
+    if (this.state.participating) {
+      if (msg.sender === this.state.myId) {
+        return (
+          <View style={styles.msgSent}>
+            <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
+              {msg.text}
+            </Text>
+          </View>
+        );
+      } else {
+        return (
+          <View style={styles.msgReceived}>
+            <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
+              {msg.text}
+            </Text>
+          </View>
+        )
+      }
     } else {
-      return (
-        <View style={styles.msgReceived}>
-          <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
-            {msg.text}
-          </Text>
-        </View>
-      )
+      if (msg.sender === this.state.participant1._id) {
+        return (
+          <View style={styles.msgSent}>
+            <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
+              {msg.text}
+            </Text>
+          </View>
+        );
+      } else {
+        return (
+          <View style={styles.msgReceived}>
+            <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
+              {msg.text}
+            </Text>
+          </View>
+        )
+      }
     }
+
   }
 
   render() {
@@ -119,7 +171,11 @@ class Battle extends React.Component {
             onPress={() => this.props.returnToList()}>
             Back
           </Button>
-          <ScrollView>
+          <KeyboardAwareScrollView
+            ref={(ref) => { this.scrollView = ref }}
+            onContentSizeChange={(contentWidth, contentHeight)=>{
+              this.scrollView.scrollToEnd({animated: true});
+            }}>
             <ListView
               initialListSize={5}
               enableEmptySections={true}
@@ -128,16 +184,16 @@ class Battle extends React.Component {
                 return this.renderMsgRow(msg);
               }}
             />
-          </ScrollView>
-          <TextInput onChangeText={(text) => this.setState({text})}
-            placeholder='Say something...'
-            value={this.state.text}
-            autoCapitalize="none"
-            style={styles.textArea} />
-          <Button
-            onPress={() => this.sendMsg()}>
-            SEND
-          </Button>
+            <TextInput onChangeText={(text) => this.setState({text})}
+              placeholder='Say something...'
+              value={this.state.text}
+              autoCapitalize="none"
+              style={styles.textArea} />
+            <Button
+              onPress={() => this.sendMsg()}>
+              SEND
+            </Button>
+          </KeyboardAwareScrollView>
         </View>
       );
     } else {

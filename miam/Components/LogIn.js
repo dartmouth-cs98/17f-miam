@@ -69,6 +69,7 @@ class LogIn extends React.Component {
             keyboardType="email-address"
             style={styles.textArea} />
           <TextInput onChangeText={(password) => this.setState({password})}
+            secureTextEntry={true}
             placeholder='Password'
             value={this.state.password}
             autoCapitalize="none"
