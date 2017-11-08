@@ -31,19 +31,6 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
-<<<<<<< HEAD
-  componentWillMount() {
-    fetchPosts((response, error) => {
-      if (error) {
-        alert(error);
-      } else {
-        console.log(response);
-        this.setState({
-          postDataSource: ds.cloneWithRows(response),
-          loaded: true
-        });
-      }
-=======
   async setUserId() {
     try {
       const userId = await AsyncStorage.getItem('@UserId:key');
@@ -67,12 +54,26 @@ export default class Feed extends React.Component {
     }
   }
 
+  // componentWillMount() {
+  //   fetchPosts((response, error) => {
+  //     if (error) {
+  //       alert(error);
+  //     } else {
+  //       console.log(response);
+  //       this.setState({
+  //         postDataSource: ds.cloneWithRows(response),
+  //         loaded: true
+  //       });
+  //     }
+  //   });
+  //   this.setUserId();
+  // }
+
   componentDidMount() {
     fetchPosts();
     this.setState({
       postDataSource: ds.cloneWithRows(customData),
       loaded: true
->>>>>>> 6a5fd00d59c5190b4823c7accdd4d848b32f0392
     });
     this.setUserId();
   }
@@ -83,7 +84,8 @@ export default class Feed extends React.Component {
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
-              source={{ uri: post.meme.imgURL }}
+              // source={{ uri: post.meme.imgURL }}
+              source={{ uri: post.userImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
             />
