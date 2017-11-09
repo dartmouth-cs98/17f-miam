@@ -11,6 +11,7 @@ import {
   Dimensions,
   AsyncStorage
 } from "react-native";
+import { SearchBar } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
@@ -63,6 +64,10 @@ export default class Feed extends React.Component {
     this.setUserId();
   }
 
+  onSearch() {
+    console.log("search!");
+  }
+
   renderPostRow(post) {
     return (
       <View style={styles.postContainer}>
@@ -112,14 +117,16 @@ export default class Feed extends React.Component {
     );
   }
 
-  // <StatusBarColor/>
-  // <Heading text="MiAM Feed" postButtonVisible={true} nav={this.nav}/>
-
   render() {
     return (
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
+        <SearchBar
+          round
+          lightTheme
+          onChangeText={() => this.onSearch()}
+          placeholder='Search' />
         <ScrollView>
           <ListView
             initialListSize={5}
