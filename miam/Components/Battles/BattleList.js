@@ -20,6 +20,10 @@ import { fetchBattles } from "../../api";
 var mockBattleData = require("../../data/mockBattleData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
+import Pusher from 'pusher-js/react-native';
+
+// Enable pusher logging - don't include this in production
+Pusher.logToConsole = true;
 
 export default class BattleList extends React.Component {
   constructor(props) {
@@ -27,8 +31,14 @@ export default class BattleList extends React.Component {
     this.state = {
       battleDataSource: ds.cloneWithRows([]),
       loaded: false,
-      selectedBattle: ""
+      selectedBattle: "",
+      pusher: {}
     };
+
+    this.pusher = new Pusher('8bf10764c83bdb2f6afd', {
+      cluster: 'us2',
+      encrypted: true
+    });
 
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
@@ -101,7 +111,7 @@ export default class BattleList extends React.Component {
     } else {
       return (
         <View style={styles.body}>
-          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} />
+          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} pusher={this.pusher} />
         </View>
       );
     }
