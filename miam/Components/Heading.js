@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 class Heading extends Component{
 	constructor(props){
 		super(props);
+		this.backFunction = props.backFunction;
 		this.headingText = props.text || "MiAM";
 		this.createPostButton = props.postButtonVisible || false;
 		this.createBackButton = props.backButtonVisible || false;
@@ -21,7 +22,11 @@ class Heading extends Component{
 	}
 
 	goBack(){
-		this.nav.goBack();
+		if (this.backFunction) {
+			this.backFunction();
+		} else {
+			this.nav.goBack();
+		}
 	}
 
 	goToCreatePost(){
@@ -33,13 +38,13 @@ class Heading extends Component{
 			<View style={styles.heading}>
 				<Text style={styles.logo}>{this.headingText}</Text>
 				{
-					this.createPostButton && 
+					this.createPostButton &&
 					<TouchableHighlight style={styles.postButton} onPress={this.goToCreatePost}>
 						<Icon name="ios-add-circle-outline" size={38} color="white" />
 					</TouchableHighlight>
 				}
 				{
-					this.createBackButton && 
+					this.createBackButton &&
 					<TouchableHighlight style={styles.backButton} onPress={this.goBack}>
 						<Icon name="ios-arrow-back" size={38} color="white" />
 					</TouchableHighlight>

@@ -74,16 +74,14 @@ export default class BattleList extends React.Component {
     return (
       <View style={styles.battleContainer}>
         <View style={styles.battleContentContainer}>
-          <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
+          <Text style={{ fontSize: 20, marginLeft: "5%"}}>
             {battle.participant1.username} VS. {battle.participant2.username}
           </Text>
-          <Button
-            containerStyle={styles.buttonContainer}
-            style={styles.messageButton}
-            styleDisabled={{color: 'red'}}
-            onPress={() => this.selectBattle(battle._id)}>
-            JOIN
-          </Button>
+          <TouchableHighlight
+            onPress={() => this.selectBattle(battle._id)}
+            style={styles.joinButton}>
+            <Text style={{color: 'white'}}>JOIN</Text>
+          </TouchableHighlight>
         </View>
       </View>
     );
@@ -139,7 +137,8 @@ const styles = StyleSheet.create({
   battleContentContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingBottom: "1%"
+    paddingBottom: "1%",
+    alignItems: 'center'
   },
   iconContainer: {
     flex: 1,
@@ -156,17 +155,14 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ecc6ec"
   },
-  buttonContainer: {
-    height:35,
-    width: 50,
-    overflow:'hidden',
-    borderRadius:20,
-    backgroundColor: 'yellow',
-    justifyContent: "center"
-  },
-  messageButton: {
-    fontSize: 15,
-    color: 'black',
+  joinButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    margin: 10,
+    borderRadius: 5,
+    backgroundColor: '#66db30',
+    height: 30,
   },
 });
 
