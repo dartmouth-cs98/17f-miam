@@ -9,11 +9,13 @@ import {
   ListView,
   ScrollView,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  TextInput,
 } from "react-native";
 import { SearchBar } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
+import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { fetchPosts, getUserProfile } from "../api";
@@ -26,7 +28,7 @@ export default class Feed extends React.Component {
     super(props);
     this.state = {
       postDataSource: ds.cloneWithRows([]),
-      loaded: false
+      loaded: false,
     };
 
     this.nav = props.nav;
@@ -62,10 +64,6 @@ export default class Feed extends React.Component {
       loaded: true
     });
     this.setUserId();
-  }
-
-  onSearch() {
-    console.log("search!");
   }
 
   renderPostRow(post) {
@@ -122,11 +120,7 @@ export default class Feed extends React.Component {
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
-        <SearchBar
-          round
-          lightTheme
-          onChangeText={() => this.onSearch()}
-          placeholder='Search' />
+        <SearchProfile />
         <ScrollView>
           <ListView
             initialListSize={5}
@@ -196,7 +190,24 @@ const styles = StyleSheet.create({
   postFooterIconContainer: {
     flexDirection: "row",
     alignItems: "center"
-  }
+  },
+  // searchBar: {
+  //   borderWidth: 3,
+  //   width: "85%",
+  //   backgroundColor: "#f2d9e6",
+  //   borderColor: "#d279a6"
+  // },
+  // searchBarContainer: {
+  //   height: "5%",
+  //   paddingTop: "1%",
+  //   flexDirection: "row"
+  // },
+  // searchBarButton: {
+  //   backgroundColor: "#993366",
+  //   height: "100%",
+  //   width: "15%",
+  //   justifyContent: "center"
+  // },
 });
 
 module.exports = Feed;
