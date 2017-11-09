@@ -11,30 +11,20 @@ import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
 import Button from 'react-native-button';
 import { getBattle, sendMessage } from "../../api";
-import Pusher from 'pusher-js/react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
-// Enable pusher logging - don't include this in production
-Pusher.logToConsole = true;
-
-var pusher = new Pusher('8bf10764c83bdb2f6afd', {
-  cluster: 'us2',
-  encrypted: true
-});
-
-var channel = pusher.subscribe('123');
-channel.bind('my-event', function(data) {
-  alert(data.message);
-});
-
+// channel.bind('my-event', function(data) {
+//   alert(data.message);
+// });
 
 class Battle extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      msgDataSource: ds.cloneWithRows(mockMessages),
+      msgDataSource: ds.cloneWithRows([]),
+      messages: [],
       text: '',
       meme: '',
       myId: '',
@@ -44,10 +34,17 @@ class Battle extends React.Component {
       participant2: {}
     };
 
+    this.channel = props.pusher.subscribe(props.battleId);
+    this.channel.bind('pusher:subscription_succeeded', () => {
+      this.channel.bind('message', (data) => {
+        this.handleMessage(data.message);
+      });
+    });
+
     this.sendMsg = this.sendMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
-
   }
+
 
   async getMyId() {
     try {
@@ -70,6 +67,7 @@ class Battle extends React.Component {
         console.log(response);
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
+          messages: response.messages,
           participant1: response.participant1,
           participant2: response.participant2
         });
@@ -97,6 +95,15 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({animated: true});
     }
+  }
+
+  handleMessage(message) {
+    const messages = this.state.messages.slice();
+    messages.push(message);
+    this.setState({
+      messages: messages,
+      msgDataSource: ds.cloneWithRows(messages)
+    });
   }
 
   sendMsg() {

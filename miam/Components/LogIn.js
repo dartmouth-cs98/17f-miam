@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, Button, TextInput, AsyncStorage, KeyboardAvoidingView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { signInUser, getUserProfile } from '../api';
@@ -61,7 +61,7 @@ class LogIn extends React.Component {
           <Text style={styles.logoFont}> MIAM </Text>
         </View>
         <Text style={styles.instructions}> Enter your email and password to login</Text>
-        <View style={styles.numArea}>
+        <KeyboardAvoidingView style={styles.numArea}>
           <TextInput onChangeText={(email) => this.setState({email})}
             placeholder='Email'
             value={this.state.email}
@@ -74,7 +74,7 @@ class LogIn extends React.Component {
             value={this.state.password}
             autoCapitalize="none"
             style={styles.textArea} />
-        </View>
+        </KeyboardAvoidingView>
         <View style={styles.buttonArea}>
           <Button
             containerStyle={{padding:10, width:vw * 0.7, height:50, overflow:'hidden', borderRadius:25, backgroundColor: '#6C56BA'}}
