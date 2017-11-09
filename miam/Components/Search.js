@@ -33,6 +33,7 @@ export default class Search extends React.Component {
     this.selectMeme = this.selectMeme.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
+
   fetchData(offset = 0) {
     if (this.state.text === "") {
       return;
