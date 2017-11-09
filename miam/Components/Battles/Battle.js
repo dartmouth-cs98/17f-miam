@@ -14,10 +14,6 @@ import { getBattle, sendMessage } from "../../api";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
-// channel.bind('my-event', function(data) {
-//   alert(data.message);
-// });
-
 class Battle extends React.Component {
 
   constructor(props) {
@@ -43,6 +39,7 @@ class Battle extends React.Component {
 
     this.sendMsg = this.sendMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
+    this.renderInputBar = this.renderInputBar.bind(this);
   }
 
 
@@ -64,7 +61,6 @@ class Battle extends React.Component {
       if (error) {
         console.log(error);
       } else {
-        console.log(response);
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
           messages: response.messages,
@@ -100,10 +96,14 @@ class Battle extends React.Component {
   handleMessage(message) {
     const messages = this.state.messages.slice();
     messages.push(message);
-    this.setState({
-      messages: messages,
-      msgDataSource: ds.cloneWithRows(messages)
-    });
+    try {
+      this.setState({
+        messages: messages,
+        msgDataSource: ds.cloneWithRows(messages)
+      });
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   sendMsg() {
@@ -115,7 +115,6 @@ class Battle extends React.Component {
       if (error) {
         console.log(error);
       } else {
-        console.log(response);
         this.setState({
           text: '',
           meme: ''
@@ -127,8 +126,6 @@ class Battle extends React.Component {
 
 
   renderMsgRow(msg) {
-    console.log(this.state.myId);
-
     var isLeft = false;
 
     if (this.state.participating) {
@@ -141,88 +138,85 @@ class Battle extends React.Component {
       }
     }
 
-    var leftSpacer = isLeft ? null : <View/>;
-    var rightSpacer = isLeft ? <View/> : null;
+    const username = msg.sender === this.state.participant1._id ? this.state.participant1.username : this.state.participant2.username;
+    const atlas = username ? username.charAt(0).toUpperCase() : 'A';
+
+
+    var avator = (
+      <View style={styles.avator}>
+        <Text style={{ fontSize: 20, alignSelf: 'center', backgroundColor: 'transparent', marginTop: 5,}}>
+          {atlas}
+        </Text>
+      </View>
+    );
+
+    var leftSpacer = isLeft ? avator : null;
+    var rightSpacer = isLeft ? null : avator;
 
     var bubbleStyles = isLeft ? [styles.messageBubble, styles.messageBubbleLeft] : [styles.messageBubble, styles.messageBubbleRight];
 
     var bubbleTextStyle = isLeft ? styles.messageBubbleTextLeft : styles.messageBubbleTextRight;
 
-    return (
-      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-        {leftSpacer}
-        <View style={bubbleStyles}>
-          <Text style={[bubbleTextStyle, { fontSize: 20, marginLeft: "5%", marginTop: "3%" }]}>
-            {msg.text}
-          </Text>
-        </View>
-        {rightSpacer}
-      </View>
-    );
+    var align = isLeft ? {justifyContent: 'flex-start'} : {justifyContent: 'flex-end'};
 
-  }
-
-
-  render() {
-    if (this.state.participating) {
+    if (msg.text !== '') {
       return (
-        <View style={styles.body}>
-          <StatusBarColor/>
-          <Heading text="BATTLE TIME!"/>
-          <Button
-            onPress={() => this.props.returnToList()}>
-            Back
-          </Button>
-          <KeyboardAwareScrollView
-            ref={(ref) => { this.scrollView = ref }}
-            onContentSizeChange={(contentWidth, contentHeight)=>{
-              this.scrollView.scrollToEnd({animated: true});
-            }}>
-            <ListView
-              initialListSize={5}
-              enableEmptySections={true}
-              dataSource={this.state.msgDataSource}
-              renderRow={msg => {
-                return this.renderMsgRow(msg);
-              }}
-            />
-            <View style={styles.inputBar}>
-              <TextInput onChangeText={(text) => this.setState({text})}
-                placeholder='Say something...'
-                value={this.state.text}
-                autoCapitalize="none"
-                style={styles.textArea} />
-              <TouchableHighlight
-                onPress={() => this.sendMsg()}
-                style={styles.sendButton}>
-                <Text style={{color: 'white'}}>Send</Text>
-              </TouchableHighlight>
-            </View>
-          </KeyboardAwareScrollView>
+        <View style={[{flexDirection: 'row', alignItems: 'center', margin: 5}, align]}>
+          {leftSpacer}
+          <View style={bubbleStyles}>
+            <Text style={[bubbleTextStyle, { fontSize: 20, marginLeft: "5%", marginTop: "3%" }]}>
+              {msg.text}
+            </Text>
+          </View>
+          {rightSpacer}
         </View>
       );
     } else {
-      return (
-        <View style={styles.body}>
-          <StatusBarColor/>
-          <Heading text="BATTLE TIME!"/>
-          <Button
-            onPress={() => this.props.returnToList()}>
-            Back
-          </Button>
-          <ScrollView>
-            <ListView
-              initialListSize={5}
-              enableEmptySections={true}
-              dataSource={this.state.msgDataSource}
-              renderRow={msg => {
-                return this.renderMsgRow(msg);
-              }}
-            />
-          </ScrollView>
-        </View>
-      );
+      return <View/>;
     }
+
+  }
+
+  renderInputBar() {
+    return (
+      <View style={styles.inputBar}>
+        <TextInput onChangeText={(text) => this.setState({text})}
+          placeholder='Say something...'
+          value={this.state.text}
+          autoCapitalize="none"
+          style={styles.textArea} />
+        <TouchableHighlight
+          onPress={() => this.sendMsg()}
+          style={styles.sendButton}>
+          <Text style={{color: 'white'}}>Send</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
+
+  render() {
+    return (
+      <View style={styles.body}>
+        <StatusBarColor/>
+        <Heading text="BATTLE TIME!" backButtonVisible={true} backFunction={this.props.returnToList}/>
+        <KeyboardAwareScrollView
+          ref={(ref) => { this.scrollView = ref }}
+          onContentSizeChange={(contentWidth, contentHeight)=>{
+            this.scrollView.scrollToEnd({animated: true});
+          }}
+          style={styles.scrollView}>
+          <ListView
+            initialListSize={5}
+            enableEmptySections={true}
+            dataSource={this.state.msgDataSource}
+            renderRow={msg => {
+              return this.renderMsgRow(msg);
+            }}
+          />
+          {this.state.participating && this.renderInputBar()}
+        </KeyboardAwareScrollView>
+      </View>
+    );
   }
 }
 
@@ -290,7 +284,8 @@ const styles = StyleSheet.create({
       shadowColor: "#291D56",
       shadowOffset: { height: 2 },
       shadowOpacity: 0.3,
-      shadowRadius: 3
+      shadowRadius: 3,
+      maxWidth: '85%'
   },
 
   messageBubbleLeft: {
@@ -299,7 +294,7 @@ const styles = StyleSheet.create({
   },
 
   messageBubbleTextLeft: {
-    color: 'black'
+    color: 'black',
   },
 
   messageBubbleRight: {
@@ -308,8 +303,22 @@ const styles = StyleSheet.create({
   },
 
   messageBubbleTextRight: {
-    color: 'white'
+    color: 'white',
   },
+
+  scrollView: {
+    flexDirection: 'column',
+    marginBottom: 25
+  },
+
+  avator: {
+    flex: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 32/2,
+    backgroundColor: '#d5d8d4',
+    marginTop: 8,
+  }
 });
 
 
