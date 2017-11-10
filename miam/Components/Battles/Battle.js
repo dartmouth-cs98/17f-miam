@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, ListView, ScrollView, AsyncStorage, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IconMaterial from "react-native-vector-icons/MaterialIcons";
 import {findNodeHandle} from 'react-native';
 
 const vw = Dimensions.get('window').width;
@@ -40,6 +41,9 @@ class Battle extends React.Component {
     this.sendMsg = this.sendMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
     this.renderInputBar = this.renderInputBar.bind(this);
+    this.sendGif = this.sendGif.bind(this);
+    this.renderMeme = this.renderMeme.bind(this);
+    this.renderText = this.renderText.bind(this);
   }
 
 
@@ -67,13 +71,15 @@ class Battle extends React.Component {
           participant1: response.participant1,
           participant2: response.participant2
         });
-        if (this.state.myId === response.participant1._id || this.state.myId === response.participant2._id) {
+        if (this.state.myId === response.participant1._id) {
+          this.setState({
+            participating: true,
+            participant1: this.state.participant2,
+            participant2: this.state.participant1
+          });
+        } else if (this.state.myId === response.participant2._id) {
           this.setState({
             participating: true
-          });
-        } else {
-          this.setState({
-            participating: false
           });
         }
       }
@@ -124,18 +130,16 @@ class Battle extends React.Component {
     });
   }
 
+  sendGif() {
+    this.props.navigation.navigate("Search");
+  }
+
 
   renderMsgRow(msg) {
     var isLeft = false;
 
-    if (this.state.participating) {
-      if (msg.sender !== this.state.myId) {
-        isLeft = true;
-      }
-    } else {
-      if (msg.sender === this.state.participant1._id) {
-        isLeft = true;
-      }
+    if (msg.sender === this.state.participant1._id) {
+      isLeft = true;
     }
 
     const username = msg.sender === this.state.participant1._id ? this.state.participant1.username : this.state.participant2.username;
@@ -159,14 +163,13 @@ class Battle extends React.Component {
 
     var align = isLeft ? {justifyContent: 'flex-start'} : {justifyContent: 'flex-end'};
 
-    if (msg.text !== '') {
+    if (msg.text !== '' || msg.meme !== '') {
       return (
         <View style={[{flexDirection: 'row', alignItems: 'center', margin: 5}, align]}>
           {leftSpacer}
           <View style={bubbleStyles}>
-            <Text style={[bubbleTextStyle, { fontSize: 20, marginLeft: "5%", marginTop: "3%" }]}>
-              {msg.text}
-            </Text>
+            {msg.text !== '' && this.renderText(msg.text, bubbleTextStyle)}
+            {msg.meme !== '' && this.renderMeme(msg.meme)}
           </View>
           {rightSpacer}
         </View>
@@ -177,9 +180,26 @@ class Battle extends React.Component {
 
   }
 
+  renderMeme(memeId) {
+    return <View/>;
+  }
+
+  renderText(text, bubbleTextStyle) {
+    return (
+      <Text style={[bubbleTextStyle, { fontSize: 20, marginLeft: "5%", marginTop: "3%" }]}>
+        {text}
+      </Text>
+    );
+  }
+
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
+        <TouchableHighlight
+          underlayColor="white"
+          onPress={this.sendGif}>
+          <IconMaterial name="gif" color="#ac3973" size={65} />
+        </TouchableHighlight>
         <TextInput onChangeText={(text) => this.setState({text})}
           placeholder='Say something...'
           value={this.state.text}
@@ -245,16 +265,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 3,
     backgroundColor: '#F8F8FF',
-    marginTop: 20
+    marginTop: 20,
+    alignItems: 'center'
   },
   textArea: {
     backgroundColor: 'white',
-    alignSelf: 'flex-start',
     fontFamily: 'Gill Sans',
     color: '#372769',
     height: 40,
-    width: vw*0.9,
-    margin: 10,
+    width: vw*0.93,
+    margin: 5,
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 5,
@@ -266,7 +286,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    margin: 10,
+    margin: 5,
     borderRadius: 5,
     backgroundColor: '#66db30'
   },

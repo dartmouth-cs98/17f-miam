@@ -109,7 +109,7 @@ export default class BattleList extends React.Component {
     } else {
       return (
         <View style={styles.body}>
-          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} pusher={this.pusher} />
+          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} pusher={this.pusher} navigation={this.props.navigation}/>
         </View>
       );
     }
