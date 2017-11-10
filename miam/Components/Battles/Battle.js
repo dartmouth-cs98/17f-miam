@@ -6,7 +6,6 @@ import {findNodeHandle} from 'react-native';
 
 const vw = Dimensions.get('window').width;
 const vh = Dimensions.get('window').height;
-var mockMessages = require("../../data/mockMessages.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
@@ -97,6 +96,11 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({animated: true});
     }
+    if (this.props.navigation.state.params) {
+      this.setState({ meme: this.props.navigation.state.params.gifurl }, () => {
+        this.sendMsg();
+      });
+    }
   }
 
   handleMessage(message) {
@@ -117,21 +121,26 @@ class Battle extends React.Component {
       "text" : this.state.text,
       "meme" : this.state.meme,
     };
-    sendMessage(this.props.battleId, this.state.token, msg, (response, error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        this.setState({
-          text: '',
-          meme: ''
-        });
-        this.fetchBattle();
-      }
-    });
+    console.log(this.state.meme);
+    if (msg.text !== '' || msg.meme !== '') {
+      sendMessage(this.props.battleId, this.state.token, msg, (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          this.setState({
+            text: '',
+            meme: ''
+          });
+          this.fetchBattle();
+        }
+      });
+    } else {
+      alert('Message cannot be empty or you have to send a Meme!');
+    }
   }
 
   sendGif() {
-    this.props.navigation.navigate("Search");
+    this.props.navigation.navigate("Search", { source: 'battle', battleId: this.props.battleId });
   }
 
 
@@ -180,8 +189,14 @@ class Battle extends React.Component {
 
   }
 
-  renderMeme(memeId) {
-    return <View/>;
+  renderMeme(meme) {
+    return (
+      <Image
+        source= {{ uri: meme }}
+        style= { styles.memeStyle }
+        resizeMode="contain"
+      />
+    );
   }
 
   renderText(text, bubbleTextStyle) {
@@ -338,7 +353,12 @@ const styles = StyleSheet.create({
     borderRadius: 32/2,
     backgroundColor: '#d5d8d4',
     marginTop: 8,
-  }
+  },
+
+  memeStyle: {
+    width: 250,
+    height: 150
+  },
 });
 
 

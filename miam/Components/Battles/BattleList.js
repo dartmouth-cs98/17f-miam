@@ -16,22 +16,27 @@ import Button from 'react-native-button';
 import Battle from './Battle';
 import NavigationBar from "../NavigationBar";
 import { fetchBattles } from "../../api";
-
-var mockBattleData = require("../../data/mockBattleData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from 'pusher-js/react-native';
 
 // Enable pusher logging - don't include this in production
-Pusher.logToConsole = true;
+// Pusher.logToConsole = true;
 
 export default class BattleList extends React.Component {
   constructor(props) {
     super(props);
+
+    var battleId = '';
+    var params = this.props.navigation.state.params;
+    if (params && params.battleId !== '') {
+      battleId = params.battleId;
+    }
+
     this.state = {
       battleDataSource: ds.cloneWithRows([]),
       loaded: false,
-      selectedBattle: "",
+      selectedBattle: battleId,
       pusher: {}
     };
 
@@ -56,7 +61,6 @@ export default class BattleList extends React.Component {
       }
     })
   }
-
 
   selectBattle(battleId) {
     this.setState({
