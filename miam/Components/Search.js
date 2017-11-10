@@ -49,7 +49,7 @@ export default class Search extends React.Component {
     return fetch(query)
       .then(response => response.json())
       .then(responseJson => {
-        console.log(responseJson);
+        // console.log(responseJson);
         if (responseJson.data.length === 0) {
         }
         let ds = new ListView.DataSource({
@@ -71,7 +71,7 @@ export default class Search extends React.Component {
     )
       .then(response => response.json())
       .then(responseJson => {
-        console.log(responseJson);
+        // console.log(responseJson);
         let ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
         });
@@ -85,7 +85,12 @@ export default class Search extends React.Component {
       });
   }
   selectMeme(url) {
-    this.props.navigation.navigate("Canvas", { gifurl: url });
+    var params = this.props.navigation.state.params;
+    if ( params && params.source === 'battle') {
+      this.props.navigation.navigate("BattleList", { gifurl: url, battleId: params.battleId });
+    } else {
+      this.props.navigation.navigate("Canvas", { gifurl: url });
+    }
   }
   renderRow(rowData) {
     return (
