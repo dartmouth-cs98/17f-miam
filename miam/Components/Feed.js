@@ -31,7 +31,6 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
-
   componentWillMount() {
     fetchPosts((response, error) => {
       if (error) {
@@ -43,17 +42,19 @@ export default class Feed extends React.Component {
           loaded: true
         });
       }
+    });
+  }
 
   async setUserId() {
     try {
-      const userId = await AsyncStorage.getItem('@UserId:key');
-      const token = await AsyncStorage.getItem('@Token:key');
-      if (token && userId === null){
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
+      if (token && userId === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {
-              await AsyncStorage.setItem('@UserId:key', response.data.id);
-              console.log('Successfully saved user id');
+              await AsyncStorage.setItem("@UserId:key", response.data.id);
+              console.log("Successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }

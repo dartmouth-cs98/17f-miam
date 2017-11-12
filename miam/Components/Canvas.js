@@ -57,7 +57,7 @@ class Canvas extends React.Component {
 
   async retrieveToken() {
     try {
-      let savedToken = await AsyncStorage.getItem("@Token:key");
+      const savedToken = await AsyncStorage.getItem("@Token:key");
       if (savedToken === null) {
         this.props.navigation.navigate("LogIn");
       } else {
@@ -70,7 +70,8 @@ class Canvas extends React.Component {
     }
   }
   createMeme() {
-    const postObj = { imgURL: this.state.image };
+    const postObj = { imgURL: this.state.image, hashtags: "" };
+    console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);

@@ -63,9 +63,15 @@ export function uploadImage(file) {
 
 export function createPost(postObj, token, cb) {
   const url = `${ROOT_URL}/posts`;
+  console.log(postObj.imgURL);
+  console.log(token);
   axios
-    .post(url, { postObj: postObj }, { headers: { Authorization: token } })
-    .then(async response => {
+    .post(
+      url,
+      { imgURL: postObj.imgURL, hashtags: postObj.hashtags },
+      { headers: { Authorization: token } }
+    )
+    .then(response => {
       cb(response, null);
     })
     .catch(error => {
