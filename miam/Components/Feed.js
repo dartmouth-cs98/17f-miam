@@ -31,6 +31,7 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
+
   componentWillMount() {
     fetchPosts((response, error) => {
       if (error) {
@@ -42,6 +43,50 @@ export default class Feed extends React.Component {
           loaded: true
         });
       }
+
+  async setUserId() {
+    try {
+      const userId = await AsyncStorage.getItem('@UserId:key');
+      const token = await AsyncStorage.getItem('@Token:key');
+      if (token && userId === null){
+        getUserProfile(token, async (response, error) => {
+          if (response.data) {
+            try {
+              await AsyncStorage.setItem('@UserId:key', response.data.id);
+              console.log('Successfully saved user id');
+            } catch (error) {
+              console.log(`Cannot save userId. ${error}`);
+            }
+          } else {
+            console.log(error);
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // componentWillMount() {
+  //   fetchPosts((response, error) => {
+  //     if (error) {
+  //       alert(error);
+  //     } else {
+  //       console.log(response);
+  //       this.setState({
+  //         postDataSource: ds.cloneWithRows(response),
+  //         loaded: true
+  //       });
+  //     }
+  //   });
+  //   this.setUserId();
+  // }
+
+  componentDidMount() {
+    fetchPosts();
+    this.setState({
+      postDataSource: ds.cloneWithRows(customData),
+      loaded: true
     });
   }
 
@@ -51,7 +96,8 @@ export default class Feed extends React.Component {
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
-              source={{ uri: post.meme.imgURL }}
+              // source={{ uri: post.meme.imgURL }}
+              source={{ uri: post.userImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
             />
