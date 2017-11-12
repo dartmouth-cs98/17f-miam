@@ -58,13 +58,45 @@ export function signInUser(email, password, cb) {
     });
 }
 
-export function createPost(postObj, cb) {
-  const params = {
-    postObj: postObj
-  };
+function getSignedRequest(file) {
+  const fileName = encodeURIComponent(file.name);
+  // hit our own server to get a signed s3 url
+  return axios.get(
+    `${ROOT_URL}/sign-s3?file-name=${fileName}&file-type=${file.type}`
+  );
+}
+
+function uploadFileToS3(signedRequest, file, url) {
+  return new Promise((fulfill, reject) => {
+    axios
+      .put(signedRequest, file, { headers: { "Content-Type": file.type } })
+      .then(response => {
+        fulfill(url);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
+export function uploadImage(file) {
+  // returns a promise so you can handle error and completion in your component
+  return getSignedRequest(file).then(response => {
+    return uploadFileToS3(response.data.signedRequest, file, response.data.url);
+  });
+}
+
+export function createPost(postObj, token, cb) {
+  const url = `${ROOT_URL}/posts`;
+  console.log(postObj.imgURL);
+  console.log(token);
   axios
-    .post(ROOT_URL + "/post", params)
-    .then(async response => {
+    .post(
+      url,
+      { imgURL: postObj.imgURL, hashtags: postObj.hashtags },
+      { headers: { Authorization: token } }
+    )
+    .then(response => {
       cb(response, null);
     })
     .catch(error => {
@@ -72,11 +104,11 @@ export function createPost(postObj, cb) {
     });
 }
 
-export function fetchPosts() {
+export function fetchPosts(cb) {
   axios
     .get(`${ROOT_URL}/posts/`)
     .then(response => {
-      console.log(response);
+      cb(response, null);
     })
     .catch(error => {
       console.log(error.response);
@@ -84,139 +116,46 @@ export function fetchPosts() {
 }
 
 export function fetchBattles(cb) {
-  axios.get(`${ROOT_URL}/battles/`).
-  then((response) => {
-    cb(response.data, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
+  axios
+    .get(`${ROOT_URL}/battles/`)
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function getBattle(battleId, cb) {
-  axios.get(`${ROOT_URL}/battles/${battleId}`).
-  then((response) => {
-    cb(response.data, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
+  axios
+    .get(`${ROOT_URL}/battles/${battleId}`)
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function getUserProfile(token, cb) {
-  axios.get(`${ROOT_URL}/users`, { headers: { Authorization: token } }).
-  then((response) => {
-    cb(response, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
+  axios
+    .get(`${ROOT_URL}/users`, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function sendMessage(battleId, token, msg, cb) {
   const url = `${ROOT_URL}/battles/msg/${battleId}`;
-  axios.put(url, { "message": msg }, { headers: { Authorization: token} }).
-  then((response) => {
-    cb(response, null);
-  }).catch((error) => {
-    cb(null, error);
-  });
+  axios
+    .put(url, { message: msg }, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
-
-
-// export function searchPosts(long, lat, tags, page, user, cb) {
-//   // console.log('search posts lat:', lat, 'long:', long);
-//   axios.get(`${ROOT_URL}/search/`, { params: { long, lat, tags, page, user } }).
-//   then((response) => {
-//     // console.log(response, null);
-//     cb(response.data);
-//   }).catch((error) => {
-//     // console.log(error);
-//     // console.log('error searching posts');
-//     cb(null, error);
-//   })
-// }
-//
-// export function createPost(post, cb) {
-//   // console.log(`post is ${JSON.stringify(post)}`);
-//   axios.post(`${ROOT_URL}/posts/`, post).
-//   then((response) => {
-//     // console.log(`Post created. ${response.data}`);
-//     cb(response.data);
-//   }).catch((error) => {
-//     // console.log(`error creating posts. ${error}`);
-//   });
-// }
-//
-// export function getPost(post_id, user, cb) {
-//   const url = `${ROOT_URL}/posts/${post_id}`;
-//   axios.get(url, {params: {post_id, user}}).
-//   then((response) => {
-//     // console.log(response.data);
-//     cb(response.data, null);
-//   }).catch((error) => {
-//     // console.log(error);
-//     cb(null, error);
-//   });
-// }
-//
-// export function deletePost(post_id, cb) {
-//   const url = `${ROOT_URL}/posts/${post_id}`;
-//   axios.delete(url, {params: {post_id}}).
-//   then((response) => {
-//     // console.log(response.data);
-//     cb(response.data);
-//   }).catch((error) => {
-//     // console.log(error);
-//   });
-// }
-
-
-
-// export function editPost(postId, fields, action, cb) {
-//   const url = `${ROOT_URL}/posts/${postId}`;
-//   let params;
-//   if (action == 'CREATE_COMMENT') {
-//     params = {
-//       comment: fields.comment,
-//       user: fields.user,
-//       action,
-//     }
-//   } else if (action == 'DOWNVOTE_COMMENT') {
-//     params = {
-//       commentId: fields.commentId,
-//       user: fields.user,
-//       action,
-//     }
-//   } else if (action == 'UPVOTE_COMMENT') {
-//     params = {
-//       commentId: fields.commentId,
-//       user: fields.user,
-//       action,
-//     }
-//   } else if (action == 'DELETE_COMMENT') {
-//     params = {
-//       commentId: fields.commentId,
-//       action,
-//     }
-//   } else {
-//     params = {
-//       user: fields.user,
-//       action
-//     }
-//   }
-//
-//   axios.put(url, params).
-//   then((response) => {
-//
-//     cb(response.data, null);
-//   }).catch((error) => {
-//     cb(null, error);
-//   });
-// }
-//
-// export function getTrendingTags(long, lat, cb) {
-//   // console.log('getting trending');
-//   axios.get(`${ROOT_URL}/tags/`, { params: { long, lat } }).
-//   then((response) => {
-//     // console.log(response);
-//     cb(response.data)
-//   })
-// }

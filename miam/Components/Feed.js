@@ -18,7 +18,8 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile } from "../api";
+import { fetchPosts } from "../api";
+import ViewShot from "react-native-view-shot";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -34,16 +35,30 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
+  componentWillMount() {
+    fetchPosts((response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        console.log(response);
+        this.setState({
+          postDataSource: ds.cloneWithRows(customData),
+          loaded: true
+        });
+      }
+    });
+  }
+
   async setUserId() {
     try {
-      const userId = await AsyncStorage.getItem('@UserId:key');
-      const token = await AsyncStorage.getItem('@Token:key');
-      if (token && userId === null){
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
+      if (token && userId === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {
-              await AsyncStorage.setItem('@UserId:key', response.data.id);
-              console.log('Successfully saved user id');
+              await AsyncStorage.setItem("@UserId:key", response.data.id);
+              console.log("Successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }
@@ -57,13 +72,27 @@ export default class Feed extends React.Component {
     }
   }
 
+  // componentWillMount() {
+  //   fetchPosts((response, error) => {
+  //     if (error) {
+  //       alert(error);
+  //     } else {
+  //       console.log(response);
+  //       this.setState({
+  //         postDataSource: ds.cloneWithRows(response),
+  //         loaded: true
+  //       });
+  //     }
+  //   });
+  //   this.setUserId();
+  // }
+
   componentDidMount() {
     fetchPosts();
     this.setState({
       postDataSource: ds.cloneWithRows(customData),
       loaded: true
     });
-    this.setUserId();
   }
 
   renderPostRow(post) {
@@ -72,12 +101,13 @@ export default class Feed extends React.Component {
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
+              // source={{ uri: post.meme.imgURL }}
               source={{ uri: post.userImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
             />
             <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
-              {post.userName}
+              user
             </Text>
           </View>
         </View>
@@ -103,9 +133,9 @@ export default class Feed extends React.Component {
           </View>
           <View style={styles.postFooterIconContainer}>
             <Icon name="mode-comment" color="#cc6699" size={25} />
-            <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
-              {post.comments.length}
-            </Text>
+            <Text
+              style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}
+            />
           </View>
           <View>
             <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
