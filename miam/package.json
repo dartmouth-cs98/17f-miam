@@ -13,10 +13,15 @@
     "react": "^16.0.0",
     "react-avatar-editor": "^10.3.0",
     "react-dom": "^16.0.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-21.0.2.tar.gz",
+    "react-native":
+      "https://github.com/expo/react-native/archive/sdk-21.0.2.tar.gz",
+    "react-native-aws3": "0.0.8",
     "react-native-button": "^2.1.0",
     "react-native-elements": "^0.17.0",
+    "react-native-signature-capture": "^0.4.9",
     "react-native-vector-icons": "^4.4.2",
-    "react-navigation": "git+https://github.com/react-community/react-navigation.git"
+    "react-native-view-shot": "^2.1.1",
+    "react-navigation":
+      "git+https://github.com/react-community/react-navigation.git"
   }
 }
