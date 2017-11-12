@@ -16,19 +16,34 @@ import Button from 'react-native-button';
 import Battle from './Battle';
 import NavigationBar from "../NavigationBar";
 import { fetchBattles } from "../../api";
-
-var mockBattleData = require("../../data/mockBattleData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
+import Pusher from 'pusher-js/react-native';
+
+// Enable pusher logging - don't include this in production
+// Pusher.logToConsole = true;
 
 export default class BattleList extends React.Component {
   constructor(props) {
     super(props);
+
+    var battleId = '';
+    var params = this.props.navigation.state.params;
+    if (params && params.battleId !== '') {
+      battleId = params.battleId;
+    }
+
     this.state = {
       battleDataSource: ds.cloneWithRows([]),
       loaded: false,
-      selectedBattle: ""
+      selectedBattle: battleId,
+      pusher: {}
     };
+
+    this.pusher = new Pusher('8bf10764c83bdb2f6afd', {
+      cluster: 'us2',
+      encrypted: true
+    });
 
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
@@ -47,7 +62,6 @@ export default class BattleList extends React.Component {
     })
   }
 
-
   selectBattle(battleId) {
     this.setState({
       selectedBattle: battleId
@@ -64,16 +78,14 @@ export default class BattleList extends React.Component {
     return (
       <View style={styles.battleContainer}>
         <View style={styles.battleContentContainer}>
-          <Text style={{ fontSize: 20, marginLeft: "5%", marginTop: "3%" }}>
-            {battle.participant1.email} VS. {battle.participant2.email}
+          <Text style={{ fontSize: 20, marginLeft: "5%"}}>
+            {battle.participant1.username} VS. {battle.participant2.username}
           </Text>
-          <Button
-            containerStyle={styles.buttonContainer}
-            style={styles.messageButton}
-            styleDisabled={{color: 'red'}}
-            onPress={() => this.selectBattle(battle._id)}>
-            JOIN
-          </Button>
+          <TouchableHighlight
+            onPress={() => this.selectBattle(battle._id)}
+            style={styles.joinButton}>
+            <Text style={{color: 'white'}}>JOIN</Text>
+          </TouchableHighlight>
         </View>
       </View>
     );
@@ -101,7 +113,7 @@ export default class BattleList extends React.Component {
     } else {
       return (
         <View style={styles.body}>
-          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} />
+          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} pusher={this.pusher} navigation={this.props.navigation}/>
         </View>
       );
     }
@@ -129,7 +141,8 @@ const styles = StyleSheet.create({
   battleContentContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingBottom: "1%"
+    paddingBottom: "1%",
+    alignItems: 'center'
   },
   iconContainer: {
     flex: 1,
@@ -146,17 +159,14 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ecc6ec"
   },
-  buttonContainer: {
-    height:35,
-    width: 50,
-    overflow:'hidden',
-    borderRadius:20,
-    backgroundColor: 'yellow',
-    justifyContent: "center"
-  },
-  messageButton: {
-    fontSize: 15,
-    color: 'black',
+  joinButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    margin: 10,
+    borderRadius: 5,
+    backgroundColor: '#66db30',
+    height: 30,
   },
 });
 

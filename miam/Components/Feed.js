@@ -8,10 +8,14 @@ import {
   TouchableHighlight,
   ListView,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage,
+  TextInput,
 } from "react-native";
+import { SearchBar } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
+import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { fetchPosts } from "../api";
@@ -25,7 +29,7 @@ export default class Feed extends React.Component {
     super(props);
     this.state = {
       postDataSource: ds.cloneWithRows([]),
-      loaded: false
+      loaded: false,
     };
 
     this.nav = props.nav;
@@ -146,6 +150,7 @@ export default class Feed extends React.Component {
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
+        <SearchProfile />
         <ScrollView>
           <ListView
             initialListSize={5}
@@ -215,7 +220,24 @@ const styles = StyleSheet.create({
   postFooterIconContainer: {
     flexDirection: "row",
     alignItems: "center"
-  }
+  },
+  // searchBar: {
+  //   borderWidth: 3,
+  //   width: "85%",
+  //   backgroundColor: "#f2d9e6",
+  //   borderColor: "#d279a6"
+  // },
+  // searchBarContainer: {
+  //   height: "5%",
+  //   paddingTop: "1%",
+  //   flexDirection: "row"
+  // },
+  // searchBarButton: {
+  //   backgroundColor: "#993366",
+  //   height: "100%",
+  //   width: "15%",
+  //   justifyContent: "center"
+  // },
 });
 
 module.exports = Feed;

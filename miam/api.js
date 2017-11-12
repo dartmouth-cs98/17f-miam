@@ -3,10 +3,35 @@ import axios from "axios";
 const ROOT_URL = "https://miam98.herokuapp.com/api";
 // const ROOT_URL = 'http://localhost:9090/api';
 
-export function signUpUser(email, password, cb) {
+// export function getUserPosts(user_id, page, cb) {
+//   // console.log('user id in user api call', user_id);
+//   axios.get(`${ROOT_URL}/userPosts/${user_id}`, { params: { page }}).
+//   then((response) => {
+//     // console.log('posts for user', user_id, page, response);
+//     cb(response.data, null);
+//   }).catch((error) => {
+//     // console.log('error in user posts', error.data);
+//     cb(null, error);
+//   })
+// }
+//
+// export function createReport(report, cb) {
+//   // { reporter, item, type, severity, additionalInfo }
+//   // console.log(`report is ${JSON.stringify(report)}`);
+//   axios.post(`${ROOT_URL}/report`, report)
+//   .then((response) => {
+//     // console.log(`Report created. ${response.data}`);
+//     cb(response.data);
+//   }).catch((error) => {
+//     // console.log(`error creating posts. ${error}`);
+//   });
+// }
+
+export function signUpUser(email, password, username, cb) {
   const params = {
     email: email.toLowerCase(),
-    password: password
+    password: password,
+    username: username,
   };
   axios
     .post(ROOT_URL + "/users/signup", params)
