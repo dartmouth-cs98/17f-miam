@@ -36,7 +36,8 @@ class Canvas extends React.Component {
       showCaption: false,
       gifWords: "Sup",
       res: null,
-      showText: false
+      showText: false,
+      token: ""
     };
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
@@ -45,7 +46,9 @@ class Canvas extends React.Component {
     this.translate = this.translate.bind(this);
     this.retrieveToken = this.retrieveToken.bind(this);
   }
-
+  componentWillMount() {
+    this.retrieveToken();
+  }
   componentDidMount() {
     if (this.props.navigation.state.params) {
       this.setState({ image: this.props.navigation.state.params.gifurl });
@@ -58,17 +61,17 @@ class Canvas extends React.Component {
       if (savedToken === null) {
         this.props.navigation.navigate("LogIn");
       } else {
-        return savedToken;
+        this.setState({
+          token: savedToken
+        });
       }
     } catch (error) {
       console.log(error);
     }
   }
   createMeme() {
-    token = this.retrieveToken();
-    console.log(token);
     const postObj = { imgURL: this.state.image };
-    createPost(postObj, token, (response, error) => {
+    createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
