@@ -8,14 +8,14 @@ import {
   TouchableHighlight,
   ListView,
   ScrollView,
-  Dimensions,
-  AsyncStorage
+  Dimensions
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile } from "../api";
+import { fetchPosts } from "../api";
+import ViewShot from "react-native-view-shot";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -24,12 +24,30 @@ export default class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      data: require("../data/customData.json"),
       postDataSource: ds.cloneWithRows([]),
-      loaded: false
+      loaded: false,
+      headingTabSelected: "new"
     };
 
     this.nav = props.nav;
   }
+
+
+  // componentWillMount() {
+  //   fetchPosts((response, error) => {
+  //     if (error) {
+  //       alert(error);
+  //     } else {
+  //       console.log(response);
+  //       this.setState({
+  //         postDataSource: ds.cloneWithRows(customData),
+  //         loaded: true
+  //       });
+  //     }
+  //   });
+  // }
+
 
   async setUserId() {
     try {
@@ -70,31 +88,103 @@ export default class Feed extends React.Component {
   // }
 
   componentDidMount() {
-    fetchPosts();
+    fetchPosts((response, error) => {
+      if (error) {
+        alert(error);
+      } 
+      else {
+        console.log("I work :)");
+      }
+    });
+
     this.setState({
-      postDataSource: ds.cloneWithRows(customData),
+      postDataSource: ds.cloneWithRows(this.state.data),
       loaded: true
     });
-    this.setUserId();
+  }
+
+  sortPostByNewest(array, key){
+    return array.sort(function(a,b) {
+      return b.tempTime < a.tempTime ?  1
+           : b.tempTime > a.tempTime ? -1
+           : 0
+    });
+  }
+
+  sortPostByHottest(array, key){
+    return array.sort(function(a,b) {
+      return b.likes < a.likes ? -1
+           : b.likes > a.likes ?  1
+           : 0
+    });
+  }
+
+  newHeadingTabPress(){
+    sortedPosts = this.sortPostByNewest(this.state.data, "no key");
+    this.setState({
+      postDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "new"
+    });
+  }
+
+  hotHeadingTabPress(){
+    sortedPosts = this.sortPostByHottest(this.state.data, "no key");
+    this.setState({
+      postDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "hot"
+    });
+  }
+
+
+  // headingTabText: {
+  //   fontWeight: 'bold'
+  // },
+  // activeHeadingTabView: {
+  //   backgroundColor: "#886BEA"
+  // },
+  // activeHeadingTabText: {
+  //   color: 'white'
+  // },
+
+  renderHeadingTabs(){
+    return (
+      <View style={styles.headingTabBar}>
+        <TouchableHighlight
+          onPress={this.newHeadingTabPress.bind(this)}
+          style={[styles.headingTabButton, this.state.headingTabSelected == "new" && styles.activeHeadingTabView]}
+          underlayColor="white">
+          <Text style={[styles.headingTabText, this.state.headingTabSelected == "new" && styles.activeHeadingTabText]}>NEW</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          onPress={this.hotHeadingTabPress.bind(this)}
+          style={[styles.headingTabButton, this.state.headingTabSelected == "hot" && styles.activeHeadingTabView]}
+          underlayColor="white">
+          <Text style={[styles.headingTabText, this.state.headingTabSelected == "hot" && styles.activeHeadingTabText]}>HOT</Text>
+        </TouchableHighlight>
+      </View>
+    )
   }
 
   renderPostRow(post) {
+    var tempUsrImg = "https://dummyimage.com/70x70/886BEA/FFF.png&text=" + post.userName.charAt(0);
+
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
               // source={{ uri: post.meme.imgURL }}
-              source={{ uri: post.userImg }}
+              source={{ uri: tempUsrImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
             />
-            <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', marginLeft: "2%", marginTop: "3%" }}>
               {post.userName}
             </Text>
           </View>
         </View>
         <View style={styles.separatorLine} />
+
 
         <View style={styles.postContentContainer}>
           <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
@@ -107,6 +197,8 @@ export default class Feed extends React.Component {
           />
         </View>
         <View style={styles.separatorLine} />
+
+
         <View style={styles.postFooterContainer}>
           <View style={styles.postFooterIconContainer}>
             <Icon name="favorite-border" color="#cc6699" size={25} />
@@ -116,9 +208,9 @@ export default class Feed extends React.Component {
           </View>
           <View style={styles.postFooterIconContainer}>
             <Icon name="mode-comment" color="#cc6699" size={25} />
-            <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
-              {post.comments.length}
-            </Text>
+            <Text
+              style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}
+            />
           </View>
           <View>
             <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
@@ -128,25 +220,21 @@ export default class Feed extends React.Component {
     );
   }
 
-  // <StatusBarColor/>
-  // <Heading text="MiAM Feed" postButtonVisible={true} nav={this.nav}/>
-
   render() {
     return (
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
-        <ScrollView>
-          <ListView
-            initialListSize={5}
-            enableEmptySections={true}
-            dataSource={this.state.postDataSource}
-            contentContainerStyle={styles.listView}
-            renderRow={post => {
-              return this.renderPostRow(post);
-            }}
-          />
-        </ScrollView>
+        <ListView
+          initialListSize={5}
+          enableEmptySections={true}
+          dataSource={this.state.postDataSource}
+          contentContainerStyle={styles.listView}
+          renderHeader={() => this.renderHeadingTabs()}
+          renderRow={post => {
+            return this.renderPostRow(post);
+          }}
+        />
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -157,6 +245,35 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     backgroundColor: "#ffffff"
+  },
+  headingTabBar: {
+    width: "50%",
+    height: "3%",
+    borderWidth: 1,
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    alignSelf: "center",
+    margin: '3%'
+  },
+  headingTabButton: {
+    flex: 1,
+    alignItems: "stretch",
+    justifyContent: "center"
+  },
+  headingTabText: {
+    height: '100%',
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    backgroundColor: '#00000000',
+    top: '18%'
+  },
+  activeHeadingTabView: {
+    backgroundColor: "#886BEA"
+  },
+  activeHeadingTabText: {
+    color: 'white'
   },
   listView: {
     alignItems: "center"

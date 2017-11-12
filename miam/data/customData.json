@@ -2,17 +2,31 @@
   {
     "id": 1,
     "userID": 2,
+    "userImg": "",
+    "userName": "Boi-O-Boi",
     "imgURL": "https://media.giphy.com/media/xUA7b68hKy839wiVJC/giphy.gif",
     "likes": 34,
-    "comments": [1,32],
-    "hashtags": ["#miam", "#letsGo!"]
+    "hashtags": ["#Miam", "#LetsGo!"],
+    "tempTime": 13523
   },
   {
     "id": 2,
     "userID": 3,
+    "userImg": "",
+    "userName": "MaddyPatty",
     "imgURL": "https://media.giphy.com/media/3NtY188QaxDdC/giphy.gif",
-    "likes": 40,
-    "comments": [33],
-    "hashtags": ["#heySister"]
+    "likes": 90,
+    "hashtags": ["#HeySister"],
+    "tempTime": 30329
+  },
+  {
+    "id": 3,
+    "userID": 2,
+    "userImg": "",
+    "userName": "Boi-O-Boi",
+    "imgURL": "https://i.pinimg.com/736x/65/fe/35/65fe357925092930409c5bd1bbdf7793--funny-food-memes-humor-memes.jpg",
+    "likes": 49,
+    "hashtags": ["#HelpMe", "#FoodTooGood"],
+    "tempTime": 64853
   }
 ]
