@@ -98,7 +98,7 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor/>
           <Heading text="MEME Battles"/>
-          <SearchProfile />
+          <SearchProfile nav={this.props.navigation} />
           <ScrollView>
             <ListView
               initialListSize={5}

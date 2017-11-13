@@ -49,7 +49,6 @@ export default class Search extends React.Component {
     return fetch(query)
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
         if (responseJson.data.length === 0) {
         }
         let ds = new ListView.DataSource({
@@ -71,7 +70,6 @@ export default class Search extends React.Component {
     )
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
         let ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
         });
