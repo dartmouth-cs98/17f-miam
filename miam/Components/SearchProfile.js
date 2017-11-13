@@ -11,7 +11,8 @@ import {
   Dimensions,
   ActivityIndicator,
   Button,
-  TextInput
+  TextInput,
+  AsyncStorage
 } from "react-native";
 
 import { getUserProfile } from '../api';
@@ -23,13 +24,52 @@ const vw = Dimensions.get("window").width;
 export default class SearchProfile extends React.Component {
   constructor(props) {
     super(props);
+
+    this.ds = new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
+
     this.state = {
       isLoading: true,
-      text: "",
-      empty: true,
-      isLoading: false,
-    };
+      empty: false,
+      rawData: {},
+      note: '',
+      error: '',
+      text: '',
+    }
     this.fetchData = this.fetchData.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  componentDidUpdate() {
+    if (this.state.text === '') {
+      this.fetchData();
+    }
+  }
+
+  componentWillMount() {
+
+  }
+
+  async getUser() {
+    console.log(this.state.text);
+
+    try {
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
+      if (token && userId === null) {
+        getUserProfile(token, async (response, error) => {
+          if (response.data) {
+              console.log(response.data);
+          } else {
+            console.log(error);
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   fetchData() {
@@ -37,47 +77,30 @@ export default class SearchProfile extends React.Component {
       return;
     }
 
-    getUserProfile(this.state.text, (response, error) => {
-      if (error) {
-        console.log(error);
-        this.setState({
-          empty: true,
-          isLoading: false,
-        });
-      } else {
-        console.log(response);
-        this.setState({
-          dataSource: this.ds.cloneWithRows(data),
-          isLoading: false,
-          empty: false,
-          rawData: data,
-        });
-      }
-    });
-  }
+    this.getUser();
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  setSearchText(e) {
-    let text = e.nativeEvent.text;
-    this.setState({text});
-
-    // base.fetch('notes', {
-    //   context: this,
-    //   asArray: true,
-    //   then(data){
-    //     let filteredData = this.filterNotes(text, data);
+    // getUserProfile(this.state.text, (response, error) => {
+    //   if (error) {
+    //     console.log("0");
+    //     console.log(error);
     //     this.setState({
-    //       dataSource: this.ds.cloneWithRows(filteredData),
+    //       empty: true,
+    //       isLoading: false,
+    //     });
+    //   } else {
+    //     console.log("1");
+    //     console.log(response);
+    //     this.setState({
+    //       dataSource: this.ds.cloneWithRows(data),
+    //       isLoading: false,
+    //       empty: false,
     //       rawData: data,
     //     });
     //   }
     // });
   }
 
-  filterNotes(searchText, notes) {
+  filterText(searchText, notes) {
     let text = searchText.toLowerCase();
     return filter(notes, (n) => {
       let note = n.body.toLowerCase();

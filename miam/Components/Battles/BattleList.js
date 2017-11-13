@@ -15,6 +15,7 @@ import Heading from '../Heading';
 import Button from 'react-native-button';
 import Battle from './Battle';
 import NavigationBar from "../NavigationBar";
+import SearchProfile from "../SearchProfile";
 import { fetchBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -97,6 +98,7 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor/>
           <Heading text="MEME Battles"/>
+          <SearchProfile />
           <ScrollView>
             <ListView
               initialListSize={5}
