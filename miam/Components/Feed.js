@@ -8,10 +8,14 @@ import {
   TouchableHighlight,
   ListView,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage,
+  TextInput,
 } from "react-native";
+import { SearchBar } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
+import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { fetchPosts } from "../api";
@@ -33,32 +37,16 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
-
-  // componentWillMount() {
-  //   fetchPosts((response, error) => {
-  //     if (error) {
-  //       alert(error);
-  //     } else {
-  //       console.log(response);
-  //       this.setState({
-  //         postDataSource: ds.cloneWithRows(customData),
-  //         loaded: true
-  //       });
-  //     }
-  //   });
-  // }
-
-
   async setUserId() {
     try {
-      const userId = await AsyncStorage.getItem('@UserId:key');
-      const token = await AsyncStorage.getItem('@Token:key');
-      if (token && userId === null){
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
+      if (token && userId === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {
-              await AsyncStorage.setItem('@UserId:key', response.data.id);
-              console.log('Successfully saved user id');
+              await AsyncStorage.setItem("@UserId:key", response.data.id);
+              console.log("Successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }
@@ -94,6 +82,10 @@ export default class Feed extends React.Component {
       } 
       else {
         console.log("I work :)");
+        // this.setState({
+        //   postDataSource: ds.cloneWithRows(response),
+        //   loaded: true
+        // });
       }
     });
 
@@ -322,7 +314,24 @@ const styles = StyleSheet.create({
   postFooterIconContainer: {
     flexDirection: "row",
     alignItems: "center"
-  }
+  },
+  // searchBar: {
+  //   borderWidth: 3,
+  //   width: "85%",
+  //   backgroundColor: "#f2d9e6",
+  //   borderColor: "#d279a6"
+  // },
+  // searchBarContainer: {
+  //   height: "5%",
+  //   paddingTop: "1%",
+  //   flexDirection: "row"
+  // },
+  // searchBarButton: {
+  //   backgroundColor: "#993366",
+  //   height: "100%",
+  //   width: "15%",
+  //   justifyContent: "center"
+  // },
 });
 
 module.exports = Feed;
