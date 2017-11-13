@@ -127,17 +127,6 @@ export default class Feed extends React.Component {
     });
   }
 
-
-  // headingTabText: {
-  //   fontWeight: 'bold'
-  // },
-  // activeHeadingTabView: {
-  //   backgroundColor: "#886BEA"
-  // },
-  // activeHeadingTabText: {
-  //   color: 'white'
-  // },
-
   renderHeadingTabs(){
     return (
       <View style={styles.headingTabBar}>
