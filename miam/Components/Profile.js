@@ -19,6 +19,9 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
+
+import { getUserProfile } from '../api';
+
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
 
@@ -35,16 +38,44 @@ export default class Profile extends React.Component {
       dataSource: lv.cloneWithRows(['row 1', 'row 2']),
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
+      userName: 'Default',
+      score: -1,
+      followers: -1,
+      following: -1,
+      battlesWon: -1,
     };
 
     this.signOut = this.signOut.bind(this);
   }
   componentDidMount() {
+    this.getUser();
     this.setState({
       dataSource: lv.cloneWithRows(listData),
       postDataSource: ds.cloneWithRows(customData),
       loaded: true,
     });
+  }
+  async getUser() {
+    try {
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
+      getUserProfile(token, async (response, error) => {
+        if (response.data) {
+          this.setState({
+            userName: response.data.username,
+            followers: response.data.followers.length,
+            following: response.data.following.length,
+            score: response.data.score,
+            battlesWon: response.data.battlesWon.length,
+          });
+          console.log(response.data);
+        } else {
+          console.log(error);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
   async signOut(){
     try {
@@ -133,9 +164,9 @@ export default class Profile extends React.Component {
                   uri: "http://qimg.hxnews.com/2017/0912/1505204920938.jpg"
                 }}
               />
-              <Text style={styles.name}>Jasper Chan</Text>
-              <Text style={styles.score}>Score: 537</Text>
-              <Text style={styles.battlewon}>Battle Won: 6</Text>
+              <Text style={styles.name}> {this.state.userName} </Text>
+              <Text style={styles.score}>Score: {this.state.score}</Text>
+              <Text style={styles.battlewon}>Battle Won: {this.state.battlesWon}</Text>
             </View>
             <Button
               containerStyle={styles.buttonContainer}
@@ -148,7 +179,7 @@ export default class Profile extends React.Component {
           </Image>
           <View style={styles.bodyMiddle}>
             <View style={styles.box}>
-              <Text style={styles.fda}>120</Text>
+              <Text style={styles.fda}>{this.state.followers}</Text>
               <Text style={styles.fda}>Followers</Text>
             </View>
             <View style={styles.box}>
@@ -156,7 +187,7 @@ export default class Profile extends React.Component {
               <Text style={styles.fda}>Post</Text>
             </View>
             <View style={styles.box}>
-              <Text style={styles.fda}>1</Text>
+              <Text style={styles.fda}>{this.state.following}</Text>
               <Text style={styles.fda}>Followering</Text>
             </View>
           </View>
