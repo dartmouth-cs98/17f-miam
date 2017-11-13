@@ -10,9 +10,9 @@ import {
   ScrollView,
   Dimensions,
   AsyncStorage,
-  TextInput,
+  TextInput
 } from "react-native";
-import { SearchBar } from 'react-native-elements'
+import { SearchBar } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
@@ -79,8 +79,7 @@ export default class Feed extends React.Component {
     fetchPosts((response, error) => {
       if (error) {
         alert(error);
-      } 
-      else {
+      } else {
         console.log("I work :)");
         // this.setState({
         //   postDataSource: ds.cloneWithRows(response),
@@ -88,30 +87,21 @@ export default class Feed extends React.Component {
         // });
       }
     });
+  }
 
-    this.setState({
-      postDataSource: ds.cloneWithRows(this.state.data),
-      loaded: true
+  sortPostByNewest(array, key) {
+    return array.sort(function(a, b) {
+      return b.tempTime < a.tempTime ? 1 : b.tempTime > a.tempTime ? -1 : 0;
     });
   }
 
-  sortPostByNewest(array, key){
-    return array.sort(function(a,b) {
-      return b.tempTime < a.tempTime ?  1
-           : b.tempTime > a.tempTime ? -1
-           : 0
+  sortPostByHottest(array, key) {
+    return array.sort(function(a, b) {
+      return b.likes < a.likes ? -1 : b.likes > a.likes ? 1 : 0;
     });
   }
 
-  sortPostByHottest(array, key){
-    return array.sort(function(a,b) {
-      return b.likes < a.likes ? -1
-           : b.likes > a.likes ?  1
-           : 0
-    });
-  }
-
-  newHeadingTabPress(){
+  newHeadingTabPress() {
     sortedPosts = this.sortPostByNewest(this.state.data, "no key");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
@@ -119,7 +109,7 @@ export default class Feed extends React.Component {
     });
   }
 
-  hotHeadingTabPress(){
+  hotHeadingTabPress() {
     sortedPosts = this.sortPostByHottest(this.state.data, "no key");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
@@ -127,28 +117,56 @@ export default class Feed extends React.Component {
     });
   }
 
-  renderHeadingTabs(){
+  renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
         <TouchableHighlight
           onPress={this.newHeadingTabPress.bind(this)}
-          style={[styles.headingTabButton, this.state.headingTabSelected == "new" && styles.activeHeadingTabView]}
-          underlayColor="white">
-          <Text style={[styles.headingTabText, this.state.headingTabSelected == "new" && styles.activeHeadingTabText]}>NEW</Text>
+          style={[
+            styles.headingTabButton,
+            this.state.headingTabSelected == "new" &&
+              styles.activeHeadingTabView
+          ]}
+          underlayColor="white"
+        >
+          <Text
+            style={[
+              styles.headingTabText,
+              this.state.headingTabSelected == "new" &&
+                styles.activeHeadingTabText
+            ]}
+          >
+            NEW
+          </Text>
         </TouchableHighlight>
         <TouchableHighlight
           onPress={this.hotHeadingTabPress.bind(this)}
-          style={[styles.headingTabButton, this.state.headingTabSelected == "hot" && styles.activeHeadingTabView]}
-          underlayColor="white">
-          <Text style={[styles.headingTabText, this.state.headingTabSelected == "hot" && styles.activeHeadingTabText]}>HOT</Text>
+          style={[
+            styles.headingTabButton,
+            this.state.headingTabSelected == "hot" &&
+              styles.activeHeadingTabView
+          ]}
+          underlayColor="white"
+        >
+          <Text
+            style={[
+              styles.headingTabText,
+              this.state.headingTabSelected == "hot" &&
+                styles.activeHeadingTabText
+            ]}
+          >
+            HOT
+          </Text>
         </TouchableHighlight>
       </View>
-    )
+    );
   }
 
   renderPostRow(post) {
-    var tempUsrImg = "https://dummyimage.com/70x70/886BEA/FFF.png&text=" + post.userName.charAt(0);
-
+    var tempUsrImg =
+      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
+      post.userName.charAt(0);
+    console.log(post);
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
@@ -159,13 +177,19 @@ export default class Feed extends React.Component {
               style={styles.userIconStyle}
               resizeMode="contain"
             />
-            <Text style={{ fontSize: 15, fontWeight: 'bold', marginLeft: "2%", marginTop: "3%" }}>
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "bold",
+                marginLeft: "2%",
+                marginTop: "3%"
+              }}
+            >
               {post.userName}
             </Text>
           </View>
         </View>
         <View style={styles.separatorLine} />
-
 
         <View style={styles.postContentContainer}>
           <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
@@ -179,7 +203,6 @@ export default class Feed extends React.Component {
         </View>
         <View style={styles.separatorLine} />
 
-
         <View style={styles.postFooterContainer}>
           <View style={styles.postFooterIconContainer}>
             <Icon name="favorite-border" color="#cc6699" size={25} />
@@ -188,7 +211,12 @@ export default class Feed extends React.Component {
             </Text>
           </View>
           <View style={styles.postFooterIconContainer}>
-            <Icon name="mode-comment" color="#cc6699" size={25} />
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Comment", { postId: post.id })}
+            >
+              <Icon name="mode-comment" color="#cc6699" size={25} />
+            </TouchableHighlight>
             <Text
               style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}
             />
@@ -236,7 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     alignSelf: "center",
-    margin: '3%'
+    margin: "3%"
   },
   headingTabButton: {
     flex: 1,
@@ -244,17 +272,17 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   headingTabText: {
-    height: '100%',
-    alignSelf: 'center',
-    fontWeight: 'bold',
-    backgroundColor: '#00000000',
-    top: '18%'
+    height: "100%",
+    alignSelf: "center",
+    fontWeight: "bold",
+    backgroundColor: "#00000000",
+    top: "18%"
   },
   activeHeadingTabView: {
     backgroundColor: "#886BEA"
   },
   activeHeadingTabText: {
-    color: 'white'
+    color: "white"
   },
   listView: {
     alignItems: "center"
@@ -303,7 +331,7 @@ const styles = StyleSheet.create({
   postFooterIconContainer: {
     flexDirection: "row",
     alignItems: "center"
-  },
+  }
   // searchBar: {
   //   borderWidth: 3,
   //   width: "85%",
