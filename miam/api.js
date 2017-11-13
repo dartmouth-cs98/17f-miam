@@ -148,6 +148,17 @@ export function getUserProfile(token, cb) {
     });
 }
 
+export function getTargetUserProfile(userId, token, cb) {
+  axios
+    .get(`${ROOT_URL}/users/${userId}`, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function sendMessage(battleId, token, msg, cb) {
   const url = `${ROOT_URL}/battles/msg/${battleId}`;
   axios

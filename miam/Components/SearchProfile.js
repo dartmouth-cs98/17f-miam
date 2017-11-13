@@ -15,7 +15,7 @@ import {
   AsyncStorage
 } from "react-native";
 
-import { getUserProfile } from '../api';
+import { getTargetUserProfile } from '../api';
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -31,7 +31,6 @@ export default class SearchProfile extends React.Component {
       isLoading: true,
       empty: false,
       rawData: {},
-      note: '',
       error: '',
       text: '',
     }
@@ -58,15 +57,16 @@ export default class SearchProfile extends React.Component {
     try {
       const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
-      if (token && userId === null) {
-        getUserProfile(token, async (response, error) => {
-          if (response.data) {
-              console.log(response.data);
-          } else {
-            console.log(error);
-          }
-        });
-      }
+      getTargetUserProfile(this.state.text, token, async (response, error) => {
+        if (error) {
+          console.log(error);
+          alert("User not found.");
+        } else {
+          console.log("yes");
+          alert(response.username);
+          console.log(response.username);
+        }
+      });
     } catch (error) {
       console.log(error);
     }
@@ -74,37 +74,10 @@ export default class SearchProfile extends React.Component {
 
   fetchData() {
     if (this.state.text == "") {
-      alert("Please enter userID that you want to search for.");
       return;
     }
 
-    // getUserProfile(this.state.text, (response, error) => {
-    //   if (error) {
-    //     console.log(error);
-    //   } else {
-    //     this.saveSignUp(response.data.token);
-    //   }
-    // });
-
-    // getUserProfile(this.state.text, (response, error) => {
-    //   if (error) {
-    //     console.log("0");
-    //     console.log(error);
-    //     this.setState({
-    //       empty: true,
-    //       isLoading: false,
-    //     });
-    //   } else {
-    //     console.log("1");
-    //     console.log(response);
-    //     this.setState({
-    //       dataSource: this.ds.cloneWithRows(data),
-    //       isLoading: false,
-    //       empty: false,
-    //       rawData: data,
-    //     });
-    //   }
-    // });
+    this.getUser();
   }
 
   filterText(searchText, notes) {
@@ -121,7 +94,6 @@ export default class SearchProfile extends React.Component {
       <View style={styles.searchBarContainer}>
         <TextInput
           style={styles.searchBar}
-          //onChange={this.setSearchText.bind(this)}
           onChangeText={text => this.setState({ text })}
           placeholder="Search"
           value={this.state.text}
