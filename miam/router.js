@@ -38,8 +38,11 @@ import Canvas from "./Components/Canvas";
 import BattleList from "./Components/Battles/BattleList";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
+
 import Comment from "./Components/Comment";
-// import MainFiveTabs from "./Components/MainFiveTabs";
+
+import SearchProfile from "./Components/SearchProfile";
+import SearchProfileList from "./Components/SearchProfileList";
 const navBarMainColor = "#F4F5F9";
 const navBarTintColor = "#6C56BA";
 const accentColor = "#D0CCDF";
@@ -91,15 +94,17 @@ export const AuthStack = StackNavigator(
     Search: {
       screen: Search
     },
+
     Comment: {
       screen: Comment
+    },
+    SearchProfile: {
+      screen: SearchProfile
+    },
+    SearchProfileList: {
+      screen: SearchProfileList
     }
   },
-  // MainFiveTabs: {
-  //   screen: MainFiveTabs
-  // },
-  // CreatePost: {
-  //   screen: CreatePost
   {
     navigationOptions: ({ navigation }) => ({
       gesturesEnabled: false,

@@ -148,15 +148,15 @@ export function getUserProfile(token, cb) {
     });
 }
 
-export function getTargetUserProfile(userId, token, cb) {
-  axios
-    .get(`${ROOT_URL}/users/${userId}`, { headers: { Authorization: token } })
-    .then(response => {
-      cb(response.data, null);
-    })
-    .catch(error => {
-      cb(null, error);
-    });
+export function getTargetUserProfile(username, token, cb) {
+    axios
+      .post(`${ROOT_URL}/users`, { query: username })
+      .then(async response => {
+        cb(response.data, null);
+      })
+      .catch(error => {
+        cb(null, error);
+      });
 }
 
 export function sendMessage(battleId, token, msg, cb) {

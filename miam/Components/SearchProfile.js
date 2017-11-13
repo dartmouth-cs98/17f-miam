@@ -20,10 +20,11 @@ import { getTargetUserProfile } from '../api';
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 
-
 export default class SearchProfile extends React.Component {
   constructor(props) {
     super(props);
+
+    this.nav = props.nav;
 
     this.ds = new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
 
@@ -62,9 +63,8 @@ export default class SearchProfile extends React.Component {
           console.log(error);
           alert("User not found.");
         } else {
-          console.log("yes");
-          alert(response.username);
-          console.log(response.username);
+          console.log(response);
+          this.nav.navigate("SearchProfileList", { profileList: response });
         }
       });
     } catch (error) {

@@ -98,7 +98,10 @@ class Battle extends React.Component {
     }
     if (this.props.navigation.state.params) {
       this.setState({ meme: this.props.navigation.state.params.gifurl }, () => {
-        this.sendMsg();
+        this.getMyId().
+        then((value) => {
+          this.sendMsg();
+        });
       });
     }
   }
@@ -121,7 +124,7 @@ class Battle extends React.Component {
       "text" : this.state.text,
       "meme" : this.state.meme,
     };
-    console.log(this.state.meme);
+
     if (msg.text !== '' || msg.meme !== '') {
       sendMessage(this.props.battleId, this.state.token, msg, (response, error) => {
         if (error) {
@@ -174,7 +177,7 @@ class Battle extends React.Component {
 
     if (msg.text !== '' || msg.meme !== '') {
       return (
-        <View style={[{flexDirection: 'row', alignItems: 'center', margin: 5}, align]}>
+        <View style={[{flexDirection: 'row', alignItems: 'flex-start', margin: 5}, align]}>
           {leftSpacer}
           <View style={bubbleStyles}>
             {msg.text !== '' && this.renderText(msg.text, bubbleTextStyle)}
