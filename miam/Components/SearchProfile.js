@@ -74,10 +74,17 @@ export default class SearchProfile extends React.Component {
 
   fetchData() {
     if (this.state.text == "") {
+      alert("Please enter userID that you want to search for.");
       return;
     }
 
-    this.getUser();
+    // getUserProfile(this.state.text, (response, error) => {
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     this.saveSignUp(response.data.token);
+    //   }
+    // });
 
     // getUserProfile(this.state.text, (response, error) => {
     //   if (error) {
