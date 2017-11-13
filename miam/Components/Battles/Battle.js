@@ -177,7 +177,7 @@ class Battle extends React.Component {
 
     if (msg.text !== '' || msg.meme !== '') {
       return (
-        <View style={[{flexDirection: 'row', alignItems: 'center', margin: 5}, align]}>
+        <View style={[{flexDirection: 'row', alignItems: 'flex-start', margin: 5}, align]}>
           {leftSpacer}
           <View style={bubbleStyles}>
             {msg.text !== '' && this.renderText(msg.text, bubbleTextStyle)}
