@@ -19,6 +19,7 @@ import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { fetchPosts } from "../api";
+import { likePost } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -32,26 +33,40 @@ export default class Feed extends React.Component {
     this.state = {
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
-      headingTabSelected: "new"
+      headingTabSelected: "new",
+      token: ""
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
+    this.getMyId = this.getMyId.bind(this);
   }
 
   componentDidMount() {
+    this.getMyId();
     fetchPosts((response, error) => {
       if (error) {
         alert(error);
       } else {
-        this.setState({
-          data: response.data,
-          postDataSource: ds.cloneWithRows(response.data),
-          loaded: true
-        });
+        if (response.data) {
+          this.setState({
+            data: response.data,
+            postDataSource: ds.cloneWithRows(response.data),
+            loaded: true
+          });
+        }
       }
     });
   }
-
+  async getMyId() {
+    try {
+      const savedToken = await AsyncStorage.getItem("@Token:key");
+      this.setState({
+        token: savedToken
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   sortPostByNewest(array, key) {
     return array.sort(function(a, b) {
       return b.tempTime < a.tempTime ? 1 : b.tempTime > a.tempTime ? -1 : 0;
@@ -82,7 +97,17 @@ export default class Feed extends React.Component {
       headingTabSelected: "hot"
     });
   }
-  like(postID) {}
+  like(postID) {
+    console.log(postID);
+    console.log(this.state.token);
+    likePost(postID, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        alert("succeeded");
+      }
+    });
+  }
   renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
@@ -177,7 +202,7 @@ export default class Feed extends React.Component {
               <Icon name="favorite-border" color="#cc6699" size={25} />
             </TouchableHighlight>
             <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
-              {post.likes}
+              {post.likes.length}
             </Text>
           </View>
           <View style={styles.postFooterIconContainer}>
