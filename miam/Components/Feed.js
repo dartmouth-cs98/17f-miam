@@ -98,8 +98,6 @@ export default class Feed extends React.Component {
     });
   }
   like(postID) {
-    console.log(postID);
-    console.log(this.state.token);
     likePost(postID, this.state.token, (response, error) => {
       if (error) {
         alert(error);
@@ -221,7 +219,15 @@ export default class Feed extends React.Component {
             </Text>
           </View>
           <View>
-            <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
+            <TouchableHighlight
+              underlayColor="white"
+              onPress={() =>
+                this.props.navigation.navigate("Canvas", {
+                  imgURL: post.meme.imgURL
+                })}
+            >
+              <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
+            </TouchableHighlight>
           </View>
         </View>
       </View>
