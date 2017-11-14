@@ -12,7 +12,7 @@ import Heading from "../Heading";
 import Button from 'react-native-button';
 import { getBattle, sendMessage } from "../../api";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import Meme from "../Meme";
 
 class Battle extends React.Component {
 
@@ -22,7 +22,7 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: '',
-      meme: '',
+      gifUrl: '',
       participating: false,
       participant1: {},
       participant2: {}
@@ -55,6 +55,7 @@ class Battle extends React.Component {
           participant1: response.participant1,
           participant2: response.participant2
         });
+        console.log(response);
         if (this.props.myId === response.participant1._id) {
           this.setState({
             participating: true,
@@ -78,8 +79,9 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({animated: true});
     }
-    if (this.props.navigation.state.params && this.props.navigation.state.params.gifurl) {
-      this.setState({ meme: this.props.navigation.state.params.gifurl }, () => {
+    const params = this.props.navigation.state.params;
+    if ( params && params.gifurl) {
+      this.setState({ gifUrl: params.gifurl, text: params.memetext }, () => {
         this.sendMsg();
       });
     }
@@ -101,17 +103,17 @@ class Battle extends React.Component {
   sendMsg() {
     let msg = {
       "text" : this.state.text,
-      "meme" : this.state.meme,
+      "gifUrl" : this.state.gifUrl,
     };
 
-    if (msg.text !== '' || msg.meme !== '') {
+    if (msg.text !== '' || msg.gifUrl !== '') {
       sendMessage(this.props.battleId, this.props.token, msg, (response, error) => {
         if (error) {
           console.log(error);
         } else {
           this.setState({
             text: '',
-            meme: ''
+            gifUrl: ''
           });
           this.fetchBattle();
         }
@@ -123,6 +125,10 @@ class Battle extends React.Component {
 
   sendGif() {
     this.props.navigation.navigate("Search", { source: 'battle', battleId: this.props.battleId });
+  }
+
+  sendMeme() {
+    this.props.navigation.navigate("Canvas", { source: 'battle', battleId: this.props.battleId });
   }
 
 
@@ -154,13 +160,13 @@ class Battle extends React.Component {
 
     var align = isLeft ? {justifyContent: 'flex-start'} : {justifyContent: 'flex-end'};
 
-    if (msg.text !== '' || msg.meme !== '') {
+    if (msg.text !== '' || msg.gifUrl !== '' || msg.meme !== '') {
       return (
         <View style={[{flexDirection: 'row', alignItems: 'flex-start', margin: 5}, align]}>
           {leftSpacer}
           <View style={bubbleStyles}>
-            {msg.text !== '' && this.renderText(msg.text, bubbleTextStyle)}
-            {msg.meme !== '' && this.renderMeme(msg.meme)}
+            {(msg.text !== '' && msg.gifurl === '') && this.renderText(msg.text, bubbleTextStyle)}
+            {msg.gifurl !== '' && this.renderMeme(msg)}
           </View>
           {rightSpacer}
         </View>
@@ -171,12 +177,11 @@ class Battle extends React.Component {
 
   }
 
-  renderMeme(meme) {
+  renderMeme(msg) {
     return (
-      <Image
-        source= {{ uri: meme }}
-        style= { styles.memeStyle }
-        resizeMode="contain"
+      <Meme
+        imageUrl={msg.gifUrl}
+        text={msg.text}
       />
     );
   }
@@ -195,7 +200,12 @@ class Battle extends React.Component {
         <TouchableHighlight
           underlayColor="white"
           onPress={this.sendGif}>
-          <IconMaterial name="gif" color="#ac3973" size={65} />
+          <IconMaterial name="gif" color="#ac3973" size={40} />
+        </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor="white"
+          onPress={this.sendMeme}>
+          <IconMaterial name="control-point" color="#ac3973" size={35} />
         </TouchableHighlight>
         <TextInput onChangeText={(text) => this.setState({text})}
           placeholder='Say something...'

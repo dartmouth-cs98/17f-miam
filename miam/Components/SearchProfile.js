@@ -40,7 +40,7 @@ export default class SearchProfile extends React.Component {
     this.fetchData = this.fetchData.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.fetchData();
   }
 
@@ -52,7 +52,7 @@ export default class SearchProfile extends React.Component {
 
   async getUser() {
     try {
-      const userId = await AsyncStorage.getItem("@UserId:key");
+      const myId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
       getTargetUserProfile(this.state.text, token, async (response, error) => {
         if (error) {
