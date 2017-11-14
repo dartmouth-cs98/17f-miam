@@ -57,6 +57,8 @@ export default class SearchProfile extends React.Component {
       getTargetUserProfile(this.state.text, token, async (response, error) => {
         if (error) {
           console.log(error);
+          alert("You've encountered an error.");
+        } else if (response.length == 0){
           alert("User not found.");
         } else {
           console.log(response);
