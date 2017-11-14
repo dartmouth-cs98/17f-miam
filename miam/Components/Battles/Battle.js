@@ -77,6 +77,7 @@ class Battle extends React.Component {
             participating: true
           });
         }
+
       }
     });
   }
@@ -154,6 +155,7 @@ class Battle extends React.Component {
   }
 
   renderMsgRow(msg) {
+
     var isLeft = false;
 
     if (msg.sender === this.state.participant1._id) {
@@ -305,8 +307,8 @@ class Battle extends React.Component {
               return this.renderMsgRow(msg);
             }}
           />
+          {this.state.participating && this.renderInputBar()}
         </KeyboardAwareScrollView>
-        {this.state.participating && this.renderInputBar()}
       </View>
     );
   }

@@ -33,6 +33,7 @@ class Comment extends Component {
     this.renderCommentRow = this.renderCommentRow.bind(this);
     this.comment = this.comment.bind(this);
     this.getComment = this.getComment.bind(this);
+    this.sortByNewest = this.sortByNewest.bind(this);
   }
   del(commentId) {}
   componentWillMount() {
@@ -48,6 +49,11 @@ class Comment extends Component {
       }
     }
   }
+  sortByNewest(array) {
+    return array.sort(function(a, b) {
+      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf() ?  1 : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? -1 : 0;
+    });
+  }
   getComment(commentID) {
     fetchComment(commentID, (response, error) => {
       if (error) {
@@ -56,8 +62,9 @@ class Comment extends Component {
         var newArray = update(this.state.comments, {
           $push: [response.data]
         });
+        sortedComments = this.sortByNewest(newArray)
         this.setState({
-          comments: newArray
+          comments: sortedComments
         });
         this.setState({
           commentDataSource: ds.cloneWithRows(this.state.comments)
@@ -104,10 +111,10 @@ class Comment extends Component {
             {comment.user.username}
           </Text>
         </View>
-        <View style={{ marginLeft: "2%", marginTop: "2%" }}>
+        <View style={{ marginLeft: "2%", marginTop: "2%", marginRight: "2%" }}>
           <Text style={{ fontSize: 15 }}>{comment.commenttext}</Text>
-          <Text style={{ fontSize: 8 }}>{time}</Text>
         </View>
+        <Text style={{ fontSize: 8, marginLeft: "2%", top: "2%"}}>{time}</Text>
       </View>
     );
   }
@@ -171,10 +178,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   commentContainer: {
-    flexDirection: "row",
-    height: "10%",
-    marginTop: "1%",
+    flexDirection: "column",
+    flex: 1,
+    marginTop: "2.5%",
     borderBottomWidth: 0.5,
+    paddingBottom: "2.5%",
     borderBottomColor: "#9999ff"
   },
   createCommentContainer: {

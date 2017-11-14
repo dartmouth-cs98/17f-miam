@@ -96,6 +96,7 @@ export default class BattleList extends React.Component {
     this.setState({
       selectedBattle: ""
     });
+    this.props.navigation.state.params = {};
   }
 
   renderBattleRow(battle) {
