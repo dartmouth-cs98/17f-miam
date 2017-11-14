@@ -20,6 +20,7 @@ import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { fetchPosts } from "../api";
 import ViewShot from "react-native-view-shot";
+import Meme from "./Meme";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -158,11 +159,7 @@ export default class Feed extends React.Component {
           <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
             {post.hashtags}
           </Text>
-          <Image
-            source={{ uri: post.meme.imgURL }}
-            style={styles.memeStyle}
-            resizeMode="contain"
-          />
+          <Meme imgURL={post.meme.imgURL} text={post.meme.text} />
         </View>
         <View style={styles.separatorLine} />
 
@@ -287,11 +284,6 @@ const styles = StyleSheet.create({
     height: 30,
     marginLeft: "2%"
   },
-  memeStyle: {
-    width: 300,
-    height: 200,
-    alignSelf: "center"
-  },
   postFooterContainer: {
     flex: 1,
     flexDirection: "row",
@@ -305,23 +297,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   }
-  // searchBar: {
-  //   borderWidth: 3,
-  //   width: "85%",
-  //   backgroundColor: "#f2d9e6",
-  //   borderColor: "#d279a6"
-  // },
-  // searchBarContainer: {
-  //   height: "5%",
-  //   paddingTop: "1%",
-  //   flexDirection: "row"
-  // },
-  // searchBarButton: {
-  //   backgroundColor: "#993366",
-  //   height: "100%",
-  //   width: "15%",
-  //   justifyContent: "center"
-  // },
 });
 
 module.exports = Feed;

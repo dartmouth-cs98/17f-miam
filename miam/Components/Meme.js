@@ -12,15 +12,32 @@ class Meme extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: null,
-      text: ""
+      imgURL: this.props.imgURL,
+      text: this.props.text
     };
-    this.retrieveMeme = this.retrieveMeme.bind(this);
   }
-  retrieveMeme() {}
-  componentWillMount() {}
-  render() {}
+  render() {
+    return (
+      <View style={styles.memeContainer}>
+        <Image
+          source={{ uri: this.state.imgURL }}
+          style={styles.memeStyle}
+          resizeMode="contain"
+        />
+        <Text style={{ textAlign: "center", fontS: 14, fontWeight: "bold" }}>
+          {this.state.text}
+        </Text>
+      </View>
+    );
+  }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  memeContainer: {},
+  memeStyle: {
+    width: 300,
+    height: 200,
+    alignSelf: "center"
+  }
+});
 module.exports = Meme;

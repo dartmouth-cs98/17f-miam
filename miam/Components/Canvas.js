@@ -378,6 +378,5 @@ const styles = StyleSheet.create({
   gifTranslate: {
     flexDirection: "row",
     height: "30%"
-  },
-  meme: {}
+  }
 });
