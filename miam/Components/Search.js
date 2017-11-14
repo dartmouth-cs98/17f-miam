@@ -20,7 +20,7 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 const apiUrl = "http://api.giphy.com/v1/gifs/search?";
 const apiKey = "7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx";
-const limit = "10";
+const limit = "30";
 
 export default class Search extends React.Component {
   constructor(props) {
@@ -66,10 +66,11 @@ export default class Search extends React.Component {
 
   componentDidMount() {
     return fetch(
-      "http://api.giphy.com/v1/gifs/search?q=cat&api_key=7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx&limit=20"
+      "http://api.giphy.com/v1/gifs/trending?api_key=7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx"
     )
       .then(response => response.json())
       .then(responseJson => {
+        console.log(responseJson);
         let ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
         });
@@ -84,6 +85,7 @@ export default class Search extends React.Component {
   }
   selectMeme(url) {
     var params = this.props.navigation.state.params;
+
     if ( params && params.source === 'battle') {
       this.props.navigation.navigate("BattleList", { gifUrl: url, battleId: params.battleId });
     } else {
