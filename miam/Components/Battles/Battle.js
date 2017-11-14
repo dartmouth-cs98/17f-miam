@@ -1,27 +1,37 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TextInput, ListView, ScrollView, AsyncStorage, TouchableHighlight} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  ListView,
+  ScrollView,
+  AsyncStorage,
+  TouchableHighlight
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import IconMaterial from "react-native-vector-icons/MaterialIcons";
-import {findNodeHandle} from 'react-native';
+import { findNodeHandle } from "react-native";
 
-const vw = Dimensions.get('window').width;
-const vh = Dimensions.get('window').height;
+const vw = Dimensions.get("window").width;
+const vh = Dimensions.get("window").height;
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
-import Button from 'react-native-button';
+import Button from "react-native-button";
 import { getBattle, sendMessage } from "../../api";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Meme from "../Meme";
 
 class Battle extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
-      text: '',
+      text: "",
       gifUrl: null,
       participating: false,
       participant1: {},
@@ -29,8 +39,8 @@ class Battle extends React.Component {
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
-    this.channel.bind('pusher:subscription_succeeded', () => {
-      this.channel.bind('message', (data) => {
+    this.channel.bind("pusher:subscription_succeeded", () => {
+      this.channel.bind("message", data => {
         this.handleMessage(data.message);
       });
     });
@@ -44,11 +54,10 @@ class Battle extends React.Component {
     this.renderText = this.renderText.bind(this);
   }
 
-
   fetchBattle() {
     getBattle(this.props.battleId, (response, error) => {
       if (error) {
-        console.log('getBattle Error: '+error);
+        console.log("getBattle Error: " + error);
       } else {
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
@@ -79,10 +88,10 @@ class Battle extends React.Component {
 
   componentDidMount() {
     if (this.scrollView) {
-      this.scrollView.scrollToEnd({animated: true});
+      this.scrollView.scrollToEnd({ animated: true });
     }
     const params = this.props.navigation.state.params;
-    if ( params && params.gifUrl) {
+    if (params && params.gifUrl) {
       this.setState({ gifUrl: params.gifUrl, text: params.memetext }, () => {
         this.sendMsg();
       });
@@ -97,43 +106,53 @@ class Battle extends React.Component {
         messages: messages,
         msgDataSource: ds.cloneWithRows(messages)
       });
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   }
 
   sendMsg() {
     let msg = {
-      "text" : this.state.text,
-      "gifURL" : this.state.gifUrl,
+      text: this.state.text,
+      gifURL: this.state.gifUrl
     };
-    console.log('Token is'+this.props.token);
+    console.log("Token is" + this.props.token);
 
-    if (msg.text !== '' || msg.gifURL !== '') {
-      sendMessage(this.props.battleId, this.props.token, msg, (response, error) => {
-        if (error) {
-          console.log(error);
-        } else {
-          this.setState({
-            text: '',
-            gifUrl: null
-          });
-          this.fetchBattle();
+    if (msg.text !== "" || msg.gifURL !== "") {
+      sendMessage(
+        this.props.battleId,
+        this.props.token,
+        msg,
+        (response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({
+              text: "",
+              gifUrl: null
+            });
+            this.fetchBattle();
+          }
         }
-      });
+      );
     } else {
-      alert('Message cannot be empty or you have to send a Meme!');
+      alert("Message cannot be empty or you have to send a Meme!");
     }
   }
 
   sendGif() {
-    this.props.navigation.navigate("Search", { source: 'battle', battleId: this.props.battleId });
+    this.props.navigation.navigate("Search", {
+      source: "battle",
+      battleId: this.props.battleId
+    });
   }
 
   sendMeme() {
-    this.props.navigation.navigate("Canvas", { source: 'battle', battleId: this.props.battleId });
+    this.props.navigation.navigate("Canvas", {
+      source: "battle",
+      battleId: this.props.battleId
+    });
   }
-
 
   renderMsgRow(msg) {
 
@@ -143,13 +162,22 @@ class Battle extends React.Component {
       isLeft = true;
     }
 
-    const username = msg.sender === this.state.participant1._id ? this.state.participant1.username : this.state.participant2.username;
-    const atlas = username ? username.charAt(0).toUpperCase() : 'A';
-
+    const username =
+      msg.sender === this.state.participant1._id
+        ? this.state.participant1.username
+        : this.state.participant2.username;
+    const atlas = username ? username.charAt(0).toUpperCase() : "A";
 
     var avator = (
       <View style={styles.avator}>
-        <Text style={{ fontSize: 20, alignSelf: 'center', backgroundColor: 'transparent', marginTop: 5,}}>
+        <Text
+          style={{
+            fontSize: 20,
+            alignSelf: "center",
+            backgroundColor: "transparent",
+            marginTop: 5
+          }}
+        >
           {atlas}
         </Text>
       </View>
@@ -158,27 +186,39 @@ class Battle extends React.Component {
     var leftSpacer = isLeft ? avator : null;
     var rightSpacer = isLeft ? null : avator;
 
-    var bubbleStyles = isLeft ? [styles.messageBubble, styles.messageBubbleLeft] : [styles.messageBubble, styles.messageBubbleRight];
+    var bubbleStyles = isLeft
+      ? [styles.messageBubble, styles.messageBubbleLeft]
+      : [styles.messageBubble, styles.messageBubbleRight];
 
-    var bubbleTextStyle = isLeft ? styles.messageBubbleTextLeft : styles.messageBubbleTextRight;
+    var bubbleTextStyle = isLeft
+      ? styles.messageBubbleTextLeft
+      : styles.messageBubbleTextRight;
 
-    var align = isLeft ? {justifyContent: 'flex-start'} : {justifyContent: 'flex-end'};
+    var align = isLeft
+      ? { justifyContent: "flex-start" }
+      : { justifyContent: "flex-end" };
 
-    if (msg.text !== '' || msg.gifURL !== null) {
+    if (msg.text !== "" || msg.gifURL !== null) {
       return (
-        <View style={[{flexDirection: 'row', alignItems: 'flex-start', margin: 5}, align]}>
+        <View
+          style={[
+            { flexDirection: "row", alignItems: "flex-start", margin: 5 },
+            align
+          ]}
+        >
           {leftSpacer}
           <View style={bubbleStyles}>
-            {(msg.text !== '' && msg.gifURL === null) && this.renderText(msg.text, bubbleTextStyle)}
+            {msg.text !== "" &&
+              msg.gifURL === null &&
+              this.renderText(msg.text, bubbleTextStyle)}
             {msg.gifURL !== null && this.renderMeme(msg)}
           </View>
           {rightSpacer}
         </View>
       );
     } else {
-      return <View/>;
+      return <View />;
     }
-
   }
 
   renderMeme(msg) {
@@ -186,20 +226,17 @@ class Battle extends React.Component {
       return (
         <View>
           <Image
-            source= {{ uri: msg.gifURL }}
-            style= { styles.memeStyle }
+            source={{ uri: msg.gifURL }}
+            style={styles.memeStyle}
             resizeMode="contain"
           />
         </View>
-      )
+      );
     } else {
       console.log(msg.gifURL);
       return (
         <View>
-          <Meme
-            imageURL={msg.gifURL}
-            text={msg.text}
-          />
+          <Meme imgURL={msg.gifURL} text={msg.text} />
         </View>
       );
     }
@@ -207,7 +244,12 @@ class Battle extends React.Component {
 
   renderText(text, bubbleTextStyle) {
     return (
-      <Text style={[bubbleTextStyle, { fontSize: 20, marginLeft: "5%", marginTop: "3%" }]}>
+      <Text
+        style={[
+          bubbleTextStyle,
+          { fontSize: 20, marginLeft: "5%", marginTop: "3%" }
+        ]}
+      >
         {text}
       </Text>
     );
@@ -216,25 +258,24 @@ class Battle extends React.Component {
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-        <TouchableHighlight
-          underlayColor="white"
-          onPress={this.sendGif}>
+        <TouchableHighlight underlayColor="white" onPress={this.sendGif}>
           <IconMaterial name="gif" color="#ac3973" size={40} />
         </TouchableHighlight>
-        <TouchableHighlight
-          underlayColor="white"
-          onPress={this.sendMeme}>
+        <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
           <IconMaterial name="control-point" color="#ac3973" size={35} />
         </TouchableHighlight>
-        <TextInput onChangeText={(text) => this.setState({text})}
-          placeholder='Say something...'
+        <TextInput
+          onChangeText={text => this.setState({ text })}
+          placeholder="Say something..."
           value={this.state.text}
           autoCapitalize="none"
-          style={styles.textArea} />
+          style={styles.textArea}
+        />
         <TouchableHighlight
           onPress={() => this.sendMsg()}
-          style={styles.sendButton}>
-          <Text style={{color: 'white'}}>Send</Text>
+          style={styles.sendButton}
+        >
+          <Text style={{ color: "white" }}>Send</Text>
         </TouchableHighlight>
       </View>
     );
@@ -243,14 +284,21 @@ class Battle extends React.Component {
   render() {
     return (
       <View style={styles.body}>
-        <StatusBarColor/>
-        <Heading text="BATTLE TIME!" backButtonVisible={true} backFunction={this.props.returnToList}/>
+        <StatusBarColor />
+        <Heading
+          text="BATTLE TIME!"
+          backButtonVisible={true}
+          backFunction={this.props.returnToList}
+        />
         <KeyboardAwareScrollView
-          ref={(ref) => { this.scrollView = ref }}
-          onContentSizeChange={(contentWidth, contentHeight)=>{
-            this.scrollView.scrollToEnd({animated: true});
+          ref={ref => {
+            this.scrollView = ref;
           }}
-          contentContainerStyle={styles.scrollView}>
+          onContentSizeChange={(contentWidth, contentHeight) => {
+            this.scrollView.scrollToEnd({ animated: true });
+          }}
+          contentContainerStyle={styles.scrollView}
+        >
           <ListView
             initialListSize={5}
             enableEmptySections={true}
@@ -265,7 +313,6 @@ class Battle extends React.Component {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   body: {
@@ -286,22 +333,22 @@ const styles = StyleSheet.create({
 
   // Input Bar
   inputBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 5,
     paddingVertical: 3,
-    backgroundColor: '#F8F8FF',
+    backgroundColor: "#F8F8FF",
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center"
   },
   textArea: {
-    backgroundColor: 'white',
-    fontFamily: 'Gill Sans',
-    color: '#372769',
+    backgroundColor: "white",
+    fontFamily: "Gill Sans",
+    color: "#372769",
     height: 40,
-    width: vw*0.93,
+    width: vw * 0.93,
     margin: 5,
-    borderColor: 'black',
+    borderColor: "black",
     borderWidth: 1,
     borderRadius: 5,
     flex: 1,
@@ -309,69 +356,68 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   sendButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 15,
     margin: 5,
     borderRadius: 5,
-    backgroundColor: '#66db30'
+    backgroundColor: "#66db30"
   },
 
   //MessageBubble
   messageBubble: {
-      borderRadius: 10,
-      borderColor: "#000000",
-      marginTop: 8,
-      marginRight: 10,
-      marginLeft: 10,
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-      flexDirection:"column",
-      shadowColor: "#291D56",
-      shadowOffset: { height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 3,
-      maxWidth: '85%'
+    borderRadius: 10,
+    borderColor: "#000000",
+    marginTop: 8,
+    marginRight: 10,
+    marginLeft: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: "column",
+    shadowColor: "#291D56",
+    shadowOffset: { height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    maxWidth: "85%"
   },
 
   messageBubbleLeft: {
-    backgroundColor: '#d5d8d4',
-    alignSelf: 'flex-start',
+    backgroundColor: "#d5d8d4",
+    alignSelf: "flex-start"
   },
 
   messageBubbleTextLeft: {
-    color: 'black',
+    color: "black"
   },
 
   messageBubbleRight: {
-    backgroundColor: '#66db30',
-    alignSelf: 'flex-end'
+    backgroundColor: "#66db30",
+    alignSelf: "flex-end"
   },
 
   messageBubbleTextRight: {
-    color: 'white',
+    color: "white"
   },
 
   scrollView: {
-    flexDirection: 'column',
+    flexDirection: "column",
     marginBottom: 25,
-    justifyContent: 'space-between'
+    justifyContent: "space-between"
   },
 
   avator: {
     flex: 0,
     width: 32,
     height: 32,
-    borderRadius: 32/2,
-    backgroundColor: '#d5d8d4',
-    marginTop: 8,
+    borderRadius: 32 / 2,
+    backgroundColor: "#d5d8d4",
+    marginTop: 8
   },
 
   memeStyle: {
     width: 250,
     height: 150
-  },
+  }
 });
-
 
 export default Battle;

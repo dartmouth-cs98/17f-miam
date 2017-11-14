@@ -15,6 +15,7 @@ import { postComment } from "../api";
 import { fetchComment } from "../api";
 import update from "react-addons-update";
 import moment from "moment";
+import { KeyboardAwareView } from "react-native-keyboard-aware-view";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 class Comment extends Component {
   constructor(props) {
@@ -51,7 +52,11 @@ class Comment extends Component {
   }
   sortByNewest(array) {
     return array.sort(function(a, b) {
-      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf() ?  1 : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? -1 : 0;
+      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
+        ? 1
+        : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf()
+          ? -1
+          : 0;
     });
   }
   getComment(commentID) {
@@ -62,7 +67,7 @@ class Comment extends Component {
         var newArray = update(this.state.comments, {
           $push: [response.data]
         });
-        sortedComments = this.sortByNewest(newArray)
+        sortedComments = this.sortByNewest(newArray);
         this.setState({
           comments: sortedComments
         });
@@ -114,7 +119,7 @@ class Comment extends Component {
         <View style={{ marginLeft: "2%", marginTop: "2%", marginRight: "2%" }}>
           <Text style={{ fontSize: 15 }}>{comment.commenttext}</Text>
         </View>
-        <Text style={{ fontSize: 8, marginLeft: "2%", top: "2%"}}>{time}</Text>
+        <Text style={{ fontSize: 8, marginLeft: "2%", top: "2%" }}>{time}</Text>
       </View>
     );
   }
@@ -127,47 +132,49 @@ class Comment extends Component {
           backButtonVisible={true}
           nav={this.props.navigation}
         />
-        <ListView
-          initialListSize={5}
-          enableEmptySections={true}
-          dataSource={this.state.commentDataSource}
-          renderRow={comment => {
-            return this.renderCommentRow(comment);
-          }}
-        />
-        <View style={styles.createCommentContainer}>
-          <TextInput
-            style={{
-              width: "80%",
-              borderColor: "gray",
-              borderWidth: 1,
-              height: "100%"
+        <KeyboardAwareView animated={true}>
+          <ListView
+            initialListSize={5}
+            enableEmptySections={true}
+            dataSource={this.state.commentDataSource}
+            renderRow={comment => {
+              return this.renderCommentRow(comment);
             }}
-            onChangeText={comment => this.setState({ comment: comment })}
-            value={this.state.comment}
           />
-          <TouchableHighlight
-            onPress={this.comment}
-            underlayColor="white"
-            style={{
-              width: "20%",
-              justifyContent: "center",
-              height: "100%"
-            }}
-          >
-            <View
+          <View style={styles.createCommentContainer}>
+            <TextInput
               style={{
-                backgroundColor: "#9999ff",
-                height: "100%",
-                justifyContent: "center"
+                width: "80%",
+                borderColor: "gray",
+                borderWidth: 1,
+                height: "100%"
+              }}
+              onChangeText={comment => this.setState({ comment: comment })}
+              value={this.state.comment}
+            />
+            <TouchableHighlight
+              onPress={this.comment}
+              underlayColor="white"
+              style={{
+                width: "20%",
+                justifyContent: "center",
+                height: "100%"
               }}
             >
-              <Text style={{ textAlign: "center", color: "#ffffff" }}>
-                comment
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
+              <View
+                style={{
+                  backgroundColor: "#9999ff",
+                  height: "100%",
+                  justifyContent: "center"
+                }}
+              >
+                <Text style={{ textAlign: "center", color: "#ffffff" }}>
+                  comment
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </KeyboardAwareView>
       </View>
     );
   }
@@ -186,7 +193,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#9999ff"
   },
   createCommentContainer: {
-    height: "5%",
+    height: 30,
     flexDirection: "row"
   }
 });

@@ -17,6 +17,7 @@ import { ImagePicker } from "expo";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import ViewShot from "react-native-view-shot";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { captureRef } from "react-native-view-shot";
 import { createPost } from "../api";
 import { uploadImage } from "../api";
@@ -92,9 +93,13 @@ class Canvas extends React.Component {
 
   createMeme() {
     var params = this.props.navigation.state.params;
-    if ( params && params.source === 'battle') {
+    if (params && params.source === "battle") {
       console.log(this.state.image);
-      this.props.navigation.navigate("BattleList", { gifUrl: this.state.image, memetext: this.state.text, battleId: params.battleId });
+      this.props.navigation.navigate("BattleList", {
+        gifUrl: this.state.image,
+        memetext: this.state.text,
+        battleId: params.battleId
+      });
     } else {
       const postObj = {
         imgURL: this.state.image,
@@ -208,121 +213,124 @@ class Canvas extends React.Component {
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
-        <View style={styles.canvasContainer}>
-          <View style={styles.canvas}>
-            <View style={styles.canvasHeading}>
-              <View />
-              <View>
-                <Text style={{ fontSize: 25, color: "#cc66cc" }}>Canvas</Text>
-              </View>
-              <View>
-                <TouchableHighlight
-                  onPress={this.sendPost}
-                  underlayColor="#ffffff"
-                >
-                  <Icon name="send" color="#ac3973" size={28} />
-                </TouchableHighlight>
-              </View>
-            </View>
-            <View style={{ height: "20%" }}>
-              <Isao
-                label={"Translate words to a Gif!"}
-                // this is applied as active border and label color
-                activeColor={"#da7071"}
-                // this is applied as passive border and label color
-                passiveColor={"#e6b3cc"}
-                onChangeText={text => this.setState({ gifWords: text })}
-                onSubmitEditing={this.translate}
-                value={this.state.gifWords}
-                defaultValue="Sup"
-              />
-            </View>
-            <View style={{ height: "80%", marginTop: "2%" }}>
-              {this.state.image && (
-                <View style={styles.meme}>
-                  <Image
-                    source={{ uri: this.state.image }}
-                    style={styles.imagePreview}
-                    resizeMode="contain"
-                    ref={ref => (this.meme = ref)}
-                  />
-
-                  <View
-                    style={{
-                      width: 300,
-                      justifyContent: "center"
-                    }}
-                  >
-                    <Text style={{ textAlign: "center" }}>
-                      {this.state.text}
-                    </Text>
-                  </View>
-                </View>
-              )}
-
-              {this.state.res && (
+        <KeyboardAwareScrollView>
+          <View style={styles.canvasContainer}>
+            <View style={styles.canvas}>
+              <View style={styles.canvasHeading}>
+                <View />
                 <View>
-                  <Image
-                    source={{ uri: this.state.res }}
-                    style={styles.imagePreview}
-                    resizeMode="contain"
-                  />
-                  <View
+                  <Text style={{ fontSize: 25, color: "#cc66cc" }}>Canvas</Text>
+                </View>
+                <View>
+                  <TouchableHighlight
+                    onPress={this.sendPost}
+                    underlayColor="#ffffff"
+                  >
+                    <Icon name="send" color="#ac3973" size={28} />
+                  </TouchableHighlight>
+                </View>
+              </View>
+              <View style={{ height: "20%" }}>
+                <Isao
+                  label={"Translate words to a Gif!"}
+                  // this is applied as active border and label color
+                  activeColor={"#da7071"}
+                  // this is applied as passive border and label color
+                  passiveColor={"#e6b3cc"}
+                  onChangeText={text => this.setState({ gifWords: text })}
+                  onSubmitEditing={this.translate}
+                  value={this.state.gifWords}
+                  defaultValue="Sup"
+                />
+              </View>
+              <View style={{ height: "80%", marginTop: "2%" }}>
+                {this.state.image && (
+                  <View style={styles.meme}>
+                    <Image
+                      source={{ uri: this.state.image }}
+                      style={styles.imagePreview}
+                      resizeMode="contain"
+                      ref={ref => (this.meme = ref)}
+                    />
+
+                    <View
+                      style={{
+                        width: 300,
+                        justifyContent: "center"
+                      }}
+                    >
+                      <Text style={{ textAlign: "center" }}>
+                        {this.state.text}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {this.state.res && (
+                  <View>
+                    <Image
+                      source={{ uri: this.state.res }}
+                      style={styles.imagePreview}
+                      resizeMode="contain"
+                    />
+                    <View
+                      style={{
+                        width: 300,
+                        justifyContent: "center"
+                      }}
+                    >
+                      <Text style={{ textAlign: "center" }}>
+                        {this.state.text}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+              </View>
+            </View>
+            <View style={styles.tools}>
+              <View style={styles.textInput}>
+                <View style={styles.textIcon}>
+                  <Text
                     style={{
-                      width: 300,
-                      justifyContent: "center"
+                      fontSize: 20,
+                      color: "#cc66cc",
+                      textAlign: "center"
                     }}
                   >
-                    <Text style={{ textAlign: "center" }}>
-                      {this.state.text}
-                    </Text>
-                  </View>
+                    T
+                  </Text>
                 </View>
-              )}
-            </View>
-          </View>
-          <View style={styles.tools}>
-            <View style={styles.textInput}>
-              <View style={styles.textIcon}>
-                <Text
+                <TextInput
                   style={{
-                    fontSize: 20,
-                    color: "#cc66cc",
-                    textAlign: "center"
+                    width: "75%",
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    height: "100%"
                   }}
-                >
-                  T
-                </Text>
+                  maxLength={50}
+                  onChangeText={text => this.setState({ text })}
+                  value={this.state.text}
+                />
               </View>
-              <TextInput
-                style={{
-                  width: "75%",
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  height: "100%"
-                }}
-                maxLength={50}
-                onChangeText={text => this.setState({ text })}
-                value={this.state.text}
-              />
+            </View>
+
+            <View style={styles.mainIcons}>
+              <TouchableHighlight
+                onPress={this.getImageFromRoll}
+                underlayColor="white"
+              >
+                <Icon name="photo" color="#ac3973" size={40} />
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                onPress={this.getImageFromGiphy}
+                underlayColor="white"
+              >
+                <Icon name="gif" color="#ac3973" size={40} />
+              </TouchableHighlight>
             </View>
           </View>
-          <View style={styles.mainIcons}>
-            <TouchableHighlight
-              onPress={this.getImageFromRoll}
-              underlayColor="white"
-            >
-              <Icon name="photo" color="#ac3973" size={40} />
-            </TouchableHighlight>
-
-            <TouchableHighlight
-              onPress={this.getImageFromGiphy}
-              underlayColor="white"
-            >
-              <Icon name="gif" color="#ac3973" size={40} />
-            </TouchableHighlight>
-          </View>
-        </View>
+        </KeyboardAwareScrollView>
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -342,7 +350,7 @@ const styles = StyleSheet.create({
   },
   canvas: {
     width: "90%",
-    height: "60%",
+    height: 370,
     marginTop: "10%",
     borderWidth: 1,
     borderRadius: 3,
@@ -357,7 +365,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginTop: "2%",
     marginBottom: "1%",
-    height: "10%",
+    height: 50,
     width: "90%",
     borderWidth: 0.5,
     borderRadius: 1,
@@ -376,12 +384,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flexDirection: "row",
-    height: "50%",
+    height: "70%",
     marginTop: "1%",
     justifyContent: "center"
   },
   mainIcons: {
-    flexDirection: "row"
+    flexDirection: "row",
+    height: "10%"
   },
   textIcon: {
     width: "5%",
