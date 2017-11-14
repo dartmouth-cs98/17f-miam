@@ -20,6 +20,8 @@ import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { fetchPosts } from "../api";
 import ViewShot from "react-native-view-shot";
+import Meme from "./Meme";
+import moment from "moment";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -28,41 +30,14 @@ export default class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: require("../data/customData.json"),
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
       headingTabSelected: "new"
     };
-
     this.nav = props.nav;
+    this.like = this.like.bind(this);
   }
 
-  // async setUserId() {
-  //   try {
-  //     const userId = await AsyncStorage.getItem("@UserId:key");
-  //     const token = await AsyncStorage.getItem("@Token:key");
-  //     if (token && userId === null) {
-  //       getUserProfile(token, async (response, error) => {
-  //         if (response.data) {
-  //           try {
-  //             await AsyncStorage.setItem("@UserId:key", response.data.id);
-  //             console.log("Successfully saved user id");
-  //           } catch (error) {
-  //             console.log(`Cannot save userId. ${error}`);
-  //           }
-  //         } else {
-  //           console.log(error);
-  //         }
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // componentWillMount() {
-  //   this.setUserId();
-  // }
   componentDidMount() {
     fetchPosts((response, error) => {
       if (error) {
@@ -74,11 +49,6 @@ export default class Feed extends React.Component {
           loaded: true
         });
       }
-    });
-
-    this.setState({
-      postDataSource: ds.cloneWithRows(this.state.data),
-      loaded: true
     });
   }
 
@@ -112,7 +82,7 @@ export default class Feed extends React.Component {
       headingTabSelected: "hot"
     });
   }
-
+  like(postID) {}
   renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
@@ -162,13 +132,13 @@ export default class Feed extends React.Component {
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
       post.user.username.charAt(0);
+    const time = moment(post.createdAt).fromNow();
 
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
-              // source={{ uri: post.meme.imgURL }}
               source={{ uri: tempUsrImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
@@ -184,6 +154,9 @@ export default class Feed extends React.Component {
               {post.user.username}
             </Text>
           </View>
+          <View style={{ alignSelf: "flex-end" }}>
+            <Text style={{ fontSize: 8 }}>{time}</Text>
+          </View>
         </View>
         <View style={styles.separatorLine} />
 
@@ -191,17 +164,18 @@ export default class Feed extends React.Component {
           <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
             {post.hashtags}
           </Text>
-          <Image
-            source={{ uri: post.meme.imgURL }}
-            style={styles.memeStyle}
-            resizeMode="contain"
-          />
+          <Meme imgURL={post.meme.imgURL} text={post.meme.text} />
         </View>
         <View style={styles.separatorLine} />
 
         <View style={styles.postFooterContainer}>
           <View style={styles.postFooterIconContainer}>
-            <Icon name="favorite-border" color="#cc6699" size={25} />
+            <TouchableHighlight
+              underlayColor="white"
+              onPress={() => this.like(post._id)}
+            >
+              <Icon name="favorite-border" color="#cc6699" size={25} />
+            </TouchableHighlight>
             <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
               {post.likes}
             </Text>
@@ -315,11 +289,6 @@ const styles = StyleSheet.create({
     height: 30,
     marginLeft: "2%"
   },
-  memeStyle: {
-    width: 300,
-    height: 200,
-    alignSelf: "center"
-  },
   postFooterContainer: {
     flex: 1,
     flexDirection: "row",
@@ -333,23 +302,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   }
-  // searchBar: {
-  //   borderWidth: 3,
-  //   width: "85%",
-  //   backgroundColor: "#f2d9e6",
-  //   borderColor: "#d279a6"
-  // },
-  // searchBarContainer: {
-  //   height: "5%",
-  //   paddingTop: "1%",
-  //   flexDirection: "row"
-  // },
-  // searchBarButton: {
-  //   backgroundColor: "#993366",
-  //   height: "100%",
-  //   width: "15%",
-  //   justifyContent: "center"
-  // },
 });
 
 module.exports = Feed;
