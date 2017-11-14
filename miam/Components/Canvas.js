@@ -17,6 +17,7 @@ import { ImagePicker } from "expo";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import ViewShot from "react-native-view-shot";
+import { KeyboardAwareView } from "react-native-keyboard-aware-view";
 import { captureRef } from "react-native-view-shot";
 import { createPost } from "../api";
 import { uploadImage } from "../api";
@@ -92,9 +93,13 @@ class Canvas extends React.Component {
 
   createMeme() {
     var params = this.props.navigation.state.params;
-    if ( params && params.source === 'battle') {
+    if (params && params.source === "battle") {
       console.log(this.state.image);
-      this.props.navigation.navigate("BattleList", { gifUrl: this.state.image, memetext: this.state.text, battleId: params.battleId });
+      this.props.navigation.navigate("BattleList", {
+        gifUrl: this.state.image,
+        memetext: this.state.text,
+        battleId: params.battleId
+      });
     } else {
       const postObj = {
         imgURL: this.state.image,
@@ -307,6 +312,7 @@ class Canvas extends React.Component {
               />
             </View>
           </View>
+
           <View style={styles.mainIcons}>
             <TouchableHighlight
               onPress={this.getImageFromRoll}
@@ -381,7 +387,8 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   mainIcons: {
-    flexDirection: "row"
+    flexDirection: "row",
+    height: "10%"
   },
   textIcon: {
     width: "5%",
