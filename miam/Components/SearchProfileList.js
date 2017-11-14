@@ -77,7 +77,9 @@ export default class SearchProfileList extends React.Component {
   renderProfile(profile) {
     return (
       <View style={styles.profileContainer}>
-        <Text style={styles.emailText}>{profile.email}</Text>
+        <View>
+          <Text style={styles.emailText}>{profile.email}</Text>
+        </View>
         <TouchableHighlight
           onPress={() => this.onChallenge(profile.id)}
           style={styles.challengeButton}
@@ -128,33 +130,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff"
   },
+  listView: {
+    alignItems: "center"
+  },
   profileContainer: {
-    flex: 1,
     backgroundColor: "#ffffff",
-    borderColor: "#000000",
+    borderColor: "#993366",
+    borderWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     width: 0.9 * vw,
-    height: 50,
-    margin: 7,
-    borderRadius: 10
+    borderRadius: 6
   },
   emailText: {
     fontSize: 20,
     textAlign: "center"
   },
   challengeText: {
-    fontSize: 20,
+    fontSize: 16,
     textAlign: "center",
     color: "white"
   },
   challengeButton: {
     justifyContent: "center",
     alignItems: "center",
-    padding: 15,
     borderRadius: 5,
     backgroundColor: "#993366",
-    height: 30
+    height: "10%",
+    width: "30%"
   },
   headingTabBar: {
     height: 40

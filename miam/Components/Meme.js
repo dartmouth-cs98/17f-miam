@@ -19,11 +19,14 @@ class Meme extends React.Component {
   render() {
     return (
       <View style={styles.memeContainer}>
-        <Image
-          source={{ uri: this.state.imgURL }}
-          style={styles.memeStyle}
-          resizeMode="contain"
-        />
+        {this.state.imgURL != "" && (
+          <Image
+            source={{ uri: this.state.imgURL }}
+            style={styles.memeStyle}
+            resizeMode="contain"
+          />
+        )}
+
         <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
           {this.state.text}
         </Text>

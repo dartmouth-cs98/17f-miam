@@ -59,14 +59,17 @@ export default class Feed extends React.Component {
 
   async setUserId() {
     try {
-      const userId = await AsyncStorage.getItem('@UserId:key');
-      const token = await AsyncStorage.getItem('@Token:key');
-      if (token && userId === null){
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
+      this.setState({
+        token: token
+      });
+      if (token && userId === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {
-              await AsyncStorage.setItem('@UserId:key', response.data.id);
-              console.log('Successfully saved user id');
+              await AsyncStorage.setItem("@UserId:key", response.data.id);
+              console.log("Successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }
@@ -111,11 +114,13 @@ export default class Feed extends React.Component {
     });
   }
   like(postID) {
+    console.log(postID);
+    console.log(this.state.token);
     likePost(postID, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
-        alert("succeeded");
+        this.forceUpdate();
       }
     });
   }
