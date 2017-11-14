@@ -25,7 +25,7 @@ class Meme extends React.Component {
     return (
       <View style={styles.memeContainer}>
         <Image
-          source={{ uri: this.props.imageURL }}
+          source={{ uri: this.state.imgURL }}
           style={styles.memeStyle}
           resizeMode="contain"
         />
