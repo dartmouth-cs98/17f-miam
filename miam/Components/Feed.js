@@ -18,7 +18,7 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile } from "../api";
+import { fetchPosts, getUserProfile, likePost } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -32,7 +32,8 @@ export default class Feed extends React.Component {
     this.state = {
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
-      headingTabSelected: "new"
+      headingTabSelected: "new",
+      token: ""
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
@@ -44,11 +45,13 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-        this.setState({
-          data: response.data,
-          postDataSource: ds.cloneWithRows(response.data),
-          loaded: true
-        });
+        if (response.data) {
+          this.setState({
+            data: response.data,
+            postDataSource: ds.cloneWithRows(response.data),
+            loaded: true
+          });
+        }
       }
     });
     this.setUserId();
@@ -107,7 +110,15 @@ export default class Feed extends React.Component {
       headingTabSelected: "hot"
     });
   }
-  like(postID) {}
+  like(postID) {
+    likePost(postID, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        alert("succeeded");
+      }
+    });
+  }
   renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
@@ -202,7 +213,7 @@ export default class Feed extends React.Component {
               <Icon name="favorite-border" color="#cc6699" size={25} />
             </TouchableHighlight>
             <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
-              {post.likes}
+              {post.likes.length}
             </Text>
           </View>
           <View style={styles.postFooterIconContainer}>
@@ -221,7 +232,15 @@ export default class Feed extends React.Component {
             </Text>
           </View>
           <View>
-            <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
+            <TouchableHighlight
+              underlayColor="white"
+              onPress={() =>
+                this.props.navigation.navigate("Canvas", {
+                  imgURL: post.meme.imgURL
+                })}
+            >
+              <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
+            </TouchableHighlight>
           </View>
         </View>
       </View>

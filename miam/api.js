@@ -74,13 +74,14 @@ export function uploadImage(file) {
 
 export function createBattle(participants, token, cb) {
   const url = `${ROOT_URL}/battles`;
-  axios.post(url, participants, { headers: { Authorization: token} })
-  .then(response => {
-    cb(response, null);
-  })
-  .catch(error => {
-    cb(null, error)
-  });
+  axios
+    .post(url, participants, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function createPost(postObj, token, cb) {
@@ -184,6 +185,18 @@ export function fetchComment(commentID, cb) {
   const url = `${ROOT_URL}/posts/comments/${commentID}`;
   axios
     .get(url)
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function likePost(postID, token, cb) {
+  const url = `${ROOT_URL}/posts/${postID}`;
+  axios
+    .put(url, { action: "like" }, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })

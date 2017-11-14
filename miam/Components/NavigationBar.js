@@ -14,10 +14,15 @@ import { Icon } from "react-native-elements";
 
 export default class NavigationBar extends React.Component {
   render() {
+    const { state } = this.props.navigation;
     return (
       <View style={styles.Navigation}>
         <TouchableHighlight
-          onPress={() => this.props.navigation.navigate("Feed")}
+          onPress={() => {
+            if (state.routeName !== "Feed") {
+              this.props.navigation.navigate("Feed");
+            }
+          }}
           underlayColor="#f2d9d9"
         >
           <View>
@@ -26,7 +31,11 @@ export default class NavigationBar extends React.Component {
         </TouchableHighlight>
 
         <TouchableHighlight
-          onPress={() => this.props.navigation.navigate("Canvas")}
+          onPress={() => {
+            if (state.routeName !== "Canvas") {
+              this.props.navigation.navigate("Canvas");
+            }
+          }}
           underlayColor="#f2d9d9"
         >
           <View>
@@ -35,7 +44,11 @@ export default class NavigationBar extends React.Component {
         </TouchableHighlight>
 
         <TouchableHighlight
-          onPress={() => this.props.navigation.navigate("BattleList")}
+          onPress={() => {
+            if (state.routeName !== "Battle") {
+              this.props.navigation.navigate("BattleList");
+            }
+          }}
           underlayColor="#f2d9d9"
         >
           <View>
@@ -44,7 +57,11 @@ export default class NavigationBar extends React.Component {
         </TouchableHighlight>
 
         <TouchableHighlight
-          onPress={() => this.props.navigation.navigate("Profile")}
+          onPress={() => {
+            if (state.routeName !== "Profile") {
+              this.props.navigation.navigate("Profile");
+            }
+          }}
           underlayColor="#f2d9d9"
         >
           <View>

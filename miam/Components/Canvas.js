@@ -31,7 +31,6 @@ class Canvas extends React.Component {
     super(props);
     this.state = {
       image: null,
-      imageURI: "",
       isLocalPhoto: false,
 
       tags: [],
@@ -57,11 +56,17 @@ class Canvas extends React.Component {
 
   componentDidMount() {
     if (this.props.navigation.state.params) {
-      this.setState({
-        image: this.props.navigation.state.params.gifurl,
-        imageURI: this.props.navigation.state.params.gifurl,
-        isLocalPhoto: false
-      });
+      if (this.props.navigation.state.params.gifurl) {
+        this.setState({
+          image: this.props.navigation.state.params.gifurl,
+          isLocalPhoto: false
+        });
+      } else if (this.props.navigation.state.params.imgURL) {
+        this.setState({
+          image: this.props.navigation.state.params.imgURL,
+          isLocalPhoto: false
+        });
+      }
     }
   }
 
