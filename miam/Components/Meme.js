@@ -17,15 +17,16 @@ class Meme extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({imgURL: nextProps.imgURL, text: nextProps.text});
-  }
+  // componentWillMount() {
+  //   this.setState({imgURL: this.props.imgURL, text: this.props.text});
+  // }
 
   render() {
+    console.log(this.props.imageURL);
     return (
       <View style={styles.memeContainer}>
         <Image
-          source={{ uri: this.state.imgURL }}
+          source={{ uri: this.props.imageURL }}
           style={styles.memeStyle}
           resizeMode="contain"
         />
