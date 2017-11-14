@@ -15,12 +15,12 @@ import {
   AsyncStorage
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import StatusBarColor from './StatusBarColor';
-import Heading from './Heading';
+import StatusBarColor from "./StatusBarColor";
+import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import SearchProfile from "./SearchProfile";
-import Battle from "./Battles/Battle"
-import { getTargetUserProfile, createBattle } from '../api';
+import Battle from "./Battles/Battle";
+import { getTargetUserProfile, createBattle } from "../api";
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -31,13 +31,15 @@ export default class SearchProfileList extends React.Component {
 
     //this.nav = props.nav;
 
-    this.ds = new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
+    this.ds = new ListView.DataSource({
+      rowHasChanged: (row1, row2) => row1 !== row2
+    });
 
     this.state = {
       profileList: ds.cloneWithRows([]),
-      myId: '',
-      token: ''
-    }
+      myId: "",
+      token: ""
+    };
   }
 
   componentDidMount() {
@@ -52,7 +54,6 @@ export default class SearchProfileList extends React.Component {
   }
 
   onChallenge(opponentId) {
-    console.log("challenge him!");
     if (opponentId !== this.state.myId) {
       const participants = {
         participant1: this.state.myId,
@@ -63,15 +64,15 @@ export default class SearchProfileList extends React.Component {
           console.log(error);
         } else {
           console.log(response.data.battle_id);
-          this.props.navigation.navigate('BattleList', { battleId: response.data.battle_id });
+          this.props.navigation.navigate("BattleList", {
+            battleId: response.data.battle_id
+          });
         }
       });
-
     } else {
-      alert('You cannot challenge yourself');
+      alert("You cannot challenge yourself");
     }
   }
-
 
   renderProfile(profile) {
     return (
@@ -79,14 +80,15 @@ export default class SearchProfileList extends React.Component {
         <Text style={styles.emailText}>{profile.email}</Text>
         <TouchableHighlight
           onPress={() => this.onChallenge(profile.id)}
-          style={styles.challengeButton}>
+          style={styles.challengeButton}
+        >
           <Text style={styles.challengeText}>Challenge</Text>
         </TouchableHighlight>
       </View>
     );
   }
 
-  renderHeadingTabs(){
+  renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
         <Text style={styles.headingText}>Users We Found: </Text>
@@ -97,8 +99,12 @@ export default class SearchProfileList extends React.Component {
   render() {
     return (
       <View style={styles.body}>
-        <StatusBarColor/>
-        <Heading text="MEME Battles"/>
+        <StatusBarColor />
+        <Heading
+          text="MEME Battles"
+          backButtonVisible={true}
+          nav={this.props.navigation}
+        />
         <SearchProfile />
         <ScrollView>
           <ListView
@@ -131,30 +137,30 @@ const styles = StyleSheet.create({
     width: 0.9 * vw,
     height: 50,
     margin: 7,
-    borderRadius: 10,
+    borderRadius: 10
   },
   emailText: {
     fontSize: 20,
-    textAlign: "center",
+    textAlign: "center"
   },
   challengeText: {
     fontSize: 20,
     textAlign: "center",
-    color: "white",
+    color: "white"
   },
   challengeButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 15,
     borderRadius: 5,
-    backgroundColor: '#993366',
-    height: 30,
+    backgroundColor: "#993366",
+    height: 30
   },
   headingTabBar: {
-    height: 40,
+    height: 40
   },
   headingText: {
-    fontSize: 30,
+    fontSize: 12
   }
 });
 

@@ -20,13 +20,13 @@ import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 
-import { getUserProfile } from '../api';
+import { getUserProfile } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
-const lv = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+const lv = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
 const vw = Dimensions.get("window").width;
 
@@ -35,14 +35,14 @@ export default class Profile extends React.Component {
     super(props);
 
     this.state = {
-      dataSource: lv.cloneWithRows(['row 1', 'row 2']),
+      dataSource: lv.cloneWithRows(["row 1", "row 2"]),
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
-      userName: 'Default',
+      userName: "Default",
       score: -1,
       followers: -1,
       following: -1,
-      battlesWon: -1,
+      battlesWon: -1
     };
 
     this.signOut = this.signOut.bind(this);
@@ -52,7 +52,7 @@ export default class Profile extends React.Component {
     this.setState({
       dataSource: lv.cloneWithRows(listData),
       postDataSource: ds.cloneWithRows(customData),
-      loaded: true,
+      loaded: true
     });
   }
   async getUser() {
@@ -66,7 +66,7 @@ export default class Profile extends React.Component {
             followers: response.data.followers.length,
             following: response.data.following.length,
             score: response.data.score,
-            battlesWon: response.data.battlesWon.length,
+            battlesWon: response.data.battlesWon.length
           });
           console.log(response.data);
         } else {
@@ -77,12 +77,12 @@ export default class Profile extends React.Component {
       console.log(error);
     }
   }
-  async signOut(){
+  async signOut() {
     try {
-      await AsyncStorage.removeItem('@Token:key');
-      await AsyncStorage.removeItem('@UserId:key');
-      console.log('Successfully log out');
-      this.props.navigation.navigate('LogIn');
+      await AsyncStorage.removeItem("@Token:key");
+      await AsyncStorage.removeItem("@UserId:key");
+      console.log("Successfully log out");
+      this.props.navigation.navigate("LogIn");
     } catch (error) {
       console.log(`Cannot log out. ${error}`);
     }
@@ -111,11 +111,11 @@ export default class Profile extends React.Component {
   renderListView(post) {
     var message = "";
 
-    if (post.event == "follow"){
+    if (post.event == "follow") {
       message = "is now following you.";
     }
 
-    if (post.event == "challenge"){
+    if (post.event == "challenge") {
       message = "challenged you!";
     }
 
@@ -123,15 +123,13 @@ export default class Profile extends React.Component {
       <View style={styles.singleListContainer}>
         <Image
           style={styles.audienceProfile}
-          source={{uri: post.userProfile}}
+          source={{ uri: post.userProfile }}
         />
         <View style={styles.audienceBox}>
           <Text style={styles.message}>
             {post.userName} {message}
           </Text>
-          <Text style={styles.time}>
-            {post.time}
-          </Text>
+          <Text style={styles.time}>{post.time}</Text>
         </View>
       </View>
     );
@@ -140,9 +138,9 @@ export default class Profile extends React.Component {
   render() {
     return (
       <View style={styles.body}>
-        <StatusBarColor/>
-        <Heading text="MiAM Profile"/>
-        <View style={{flex: 1}}>
+        <StatusBarColor />
+        <Heading text="MiAM Profile" />
+        <View style={{ flex: 1 }}>
           <Image
             style={styles.profile}
             source={{
@@ -166,7 +164,9 @@ export default class Profile extends React.Component {
               />
               <Text style={styles.name}> {this.state.userName} </Text>
               <Text style={styles.score}>Score: {this.state.score}</Text>
-              <Text style={styles.battlewon}>Battle Won: {this.state.battlesWon}</Text>
+              <Text style={styles.battlewon}>
+                Battle Won: {this.state.battlesWon}
+              </Text>
             </View>
             <Button
               containerStyle={styles.buttonContainer}
@@ -199,14 +199,12 @@ export default class Profile extends React.Component {
             renderRow={post => {
               return this.renderListView(post);
             }}
-            renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+            renderSeparator={(sectionId, rowId) => (
+              <View key={rowId} style={styles.separator} />
+            )}
           />
         </View>
-        <Button
-          onPress={this.signOut}
-        >
-          Sign Out
-        </Button>
+        <Button onPress={this.signOut}>Sign Out</Button>
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -220,10 +218,10 @@ const styles = StyleSheet.create({
   },
   profile: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    height: 200
   },
   buttonContainer: {
     height: 35,
@@ -273,46 +271,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     height: 50,
-    borderColor: "#D3D3D3"
+    borderColor: "#D3D3D3",
+    backgroundColor: "#886BEA"
   },
   box: {
     justifyContent: "center",
     alignItems: "center",
     height: 50,
-    borderColor:'#D3D3D3',
-    marginHorizontal: 20,
+    borderColor: "#D3D3D3",
+    marginHorizontal: 20
   },
   listviewcontainer: {
     flex: 2,
     padding: 12,
-    flexDirection: 'column',
-    height: 200,
+    flexDirection: "column",
+    height: 200
   },
   singleListContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 3,
-    height: 40,
+    height: 40
   },
   audienceProfile: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    marginRight: 15,
+    marginRight: 15
   },
   message: {
-    fontSize: 15,
+    fontSize: 15
   },
   time: {
     fontSize: 10,
-    color: "grey",
+    color: "grey"
   },
   separator: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#8E8E8E',
+    backgroundColor: "#8E8E8E"
   },
   audienceBox: {
-    justifyContent: 'space-around',
+    justifyContent: "space-around"
+  },
+  fda: {
+    color: "#ffffff"
   }
 });
 
