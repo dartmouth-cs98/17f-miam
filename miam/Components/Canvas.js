@@ -140,7 +140,8 @@ class Canvas extends React.Component {
     // Returning promise
     uploadImage(file)
       .then(function(datum) {
-        canvasObj.setState({ imageURI: datum.url });
+        canvasObj.setState({ image: datum.url });
+        console.log(datum.url);
         canvasObj.createMeme();
       })
       .catch(function(err) {
