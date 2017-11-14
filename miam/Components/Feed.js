@@ -87,6 +87,11 @@ export default class Feed extends React.Component {
         // });
       }
     });
+
+    this.setState({
+      postDataSource: ds.cloneWithRows(this.state.data),
+      loaded: true
+    });
   }
 
   sortPostByNewest(array, key) {
@@ -212,6 +217,7 @@ export default class Feed extends React.Component {
           </View>
           <View style={styles.postFooterIconContainer}>
             <TouchableHighlight
+              underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Comment", { postId: post.id })}
             >

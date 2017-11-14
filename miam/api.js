@@ -31,7 +31,7 @@ export function signUpUser(email, password, username, cb) {
   const params = {
     email: email.toLowerCase(),
     password: password,
-    username: username,
+    username: username
   };
   axios
     .post(ROOT_URL + "/users/signup", params)
@@ -149,20 +149,36 @@ export function getUserProfile(token, cb) {
 }
 
 export function getTargetUserProfile(username, token, cb) {
-    axios
-      .post(`${ROOT_URL}/users`, { query: username })
-      .then(async response => {
-        cb(response.data, null);
-      })
-      .catch(error => {
-        cb(null, error);
-      });
+  axios
+    .post(`${ROOT_URL}/users`, { query: username })
+    .then(async response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
 }
 
 export function sendMessage(battleId, token, msg, cb) {
   const url = `${ROOT_URL}/battles/msg/${battleId}`;
   axios
     .put(url, { message: msg }, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function postComment(postID, comment, token, cb) {
+  const url = `${ROOT_URL}/posts/comments`;
+  axios
+    .post(
+      url,
+      { postID: postID, comment: comment },
+      { headers: { Authorization: token } }
+    )
     .then(response => {
       cb(response, null);
     })

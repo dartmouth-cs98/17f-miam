@@ -38,9 +38,7 @@ import Canvas from "./Components/Canvas";
 import BattleList from "./Components/Battles/BattleList";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
-
 import Comment from "./Components/Comment";
-
 import SearchProfile from "./Components/SearchProfile";
 import SearchProfileList from "./Components/SearchProfileList";
 const navBarMainColor = "#F4F5F9";
@@ -94,7 +92,6 @@ export const AuthStack = StackNavigator(
     Search: {
       screen: Search
     },
-
     Comment: {
       screen: Comment
     },

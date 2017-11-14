@@ -35,7 +35,6 @@ class Canvas extends React.Component {
       showCaption: false,
       gifWords: "Sup",
       res: null,
-      showText: false,
       token: ""
     };
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
@@ -69,14 +68,25 @@ class Canvas extends React.Component {
     }
   }
   createMeme() {
-    const postObj = { imgURL: this.state.image, hashtags: "" };
+    const postObj = {
+      imgURL: this.state.image,
+      hashtags: "",
+      memetext: this.state.text,
+      posttext: ""
+    };
     console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
-        console.log("succeeded");
-        console.log(response);
+        this.setState({
+          image: null,
+          tags: [],
+          text: "",
+          showCaption: false,
+          res: null
+        });
+        alert("Successfully posted your meme!");
       }
     });
   }
@@ -272,6 +282,7 @@ class Canvas extends React.Component {
                 }}
                 maxLength={50}
                 onChangeText={text => this.setState({ text })}
+                value={this.state.text}
               />
             </View>
           </View>
