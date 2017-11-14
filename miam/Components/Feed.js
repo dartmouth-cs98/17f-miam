@@ -24,13 +24,14 @@ import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
 var customData = require("../data/customData.json");
-const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
+const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
 const vw = Dimensions.get("window").width;
 
 export default class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      data: null,
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
       headingTabSelected: "new",
@@ -67,9 +68,10 @@ export default class Feed extends React.Component {
       console.log(error);
     }
   }
+
   sortPostByNewest(array, key) {
     return array.sort(function(a, b) {
-      return b.tempTime < a.tempTime ? 1 : b.tempTime > a.tempTime ? -1 : 0;
+      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf() ? -1 : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
     });
   }
 
@@ -80,7 +82,10 @@ export default class Feed extends React.Component {
   }
 
   newHeadingTabPress() {
-    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
+    sortedPosts = this.sortPostByNewest(
+      this.state.data, 
+      "ignore this for now"
+    );
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "new"
@@ -152,10 +157,14 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
+    console.log(post);
+
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
       post.user.username.charAt(0);
     const time = moment(post.createdAt).fromNow();
+
+    let meme = <Meme imgURL={post.meme.imgURL} text={post.meme.text} />;
 
     return (
       <View style={styles.postContainer}>
