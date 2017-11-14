@@ -18,8 +18,6 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts } from "../api";
-import { likePost } from "../api";
 import { fetchPosts, getUserProfile, likePost } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
