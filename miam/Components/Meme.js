@@ -17,13 +17,21 @@ class Meme extends React.Component {
     };
   }
 
+<<<<<<< HEAD
   componentWillReceiveProps(nextProps) {
     this.setState({ imgURL: nextProps.imgURL, text: nextProps.text });
   }
+=======
+  // componentWillMount() {
+  //   this.setState({imgURL: this.props.imgURL, text: this.props.text});
+  // }
+>>>>>>> a6ceed9bf8476836dbbda1e49532e35076a1c512
 
   render() {
+    console.log(this.props.imageURL);
     return (
       <View style={styles.memeContainer}>
+<<<<<<< HEAD
         {this.state.imgURL != "" && (
           <Image
             source={{ uri: this.state.imgURL }}
@@ -31,6 +39,13 @@ class Meme extends React.Component {
             resizeMode="contain"
           />
         )}
+=======
+        <Image
+          source={{ uri: this.props.imageURL }}
+          style={styles.memeStyle}
+          resizeMode="contain"
+        />
+>>>>>>> a6ceed9bf8476836dbbda1e49532e35076a1c512
         <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
           {this.state.text}
         </Text>
