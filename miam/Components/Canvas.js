@@ -86,27 +86,32 @@ class Canvas extends React.Component {
   }
 
   createMeme() {
-    const postObj = {
-      imgURL: this.state.image,
-      hashtags: "",
-      memetext: this.state.text,
-      posttext: ""
-    };
-    console.log(this.state.token);
-    createPost(postObj, this.state.token, (response, error) => {
-      if (error) {
-        alert(error);
-      } else {
-        this.setState({
-          image: null,
-          tags: [],
-          text: "",
-          showCaption: false,
-          res: null
-        });
-        alert("Successfully posted your meme!");
-      }
-    });
+    var params = this.props.navigation.state.params;
+    if ( params && params.source === 'battle') {
+      this.props.navigation.navigate("BattleList", { gifUrl: this.state.image, memetext: this.state.text, battleId: params.battleId });
+    } else {
+      const postObj = {
+        imgURL: this.state.image,
+        hashtags: "",
+        memetext: this.state.text,
+        posttext: ""
+      };
+      console.log(this.state.token);
+      createPost(postObj, this.state.token, (response, error) => {
+        if (error) {
+          alert(error);
+        } else {
+          this.setState({
+            image: null,
+            tags: [],
+            text: "",
+            showCaption: false,
+            res: null
+          });
+          alert("Successfully posted your meme!");
+        }
+      });
+    }
   }
 
   uploadLocalPhoto() {

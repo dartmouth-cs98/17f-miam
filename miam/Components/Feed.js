@@ -18,7 +18,7 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts } from "../api";
+import { fetchPosts, getUserProfile } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -36,6 +36,7 @@ export default class Feed extends React.Component {
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
+    this.setUserId = this.setUserId.bind(this);
   }
 
   componentDidMount() {
@@ -50,6 +51,30 @@ export default class Feed extends React.Component {
         });
       }
     });
+    this.setUserId();
+  }
+
+  async setUserId() {
+    try {
+      const userId = await AsyncStorage.getItem('@UserId:key');
+      const token = await AsyncStorage.getItem('@Token:key');
+      if (token && userId === null){
+        getUserProfile(token, async (response, error) => {
+          if (response.data) {
+            try {
+              await AsyncStorage.setItem('@UserId:key', response.data.id);
+              console.log('Successfully saved user id');
+            } catch (error) {
+              console.log(`Cannot save userId. ${error}`);
+            }
+          } else {
+            console.log(error);
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   sortPostByNewest(array, key) {
