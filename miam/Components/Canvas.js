@@ -55,17 +55,18 @@ class Canvas extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.navigation.state.params.gifurl) {
-      this.setState({
-        image: this.props.navigation.state.params.gifurl,
-        isLocalPhoto: false
-      });
-    }
-    if (this.props.navigation.state.params.imgURL) {
-      this.setState({
-        image: this.props.navigation.state.params.imgURL,
-        isLocalPhoto: false
-      });
+    if (this.props.navigation.state.params) {
+      if (this.props.navigation.state.params.gifurl) {
+        this.setState({
+          image: this.props.navigation.state.params.gifurl,
+          isLocalPhoto: false
+        });
+      } else if (this.props.navigation.state.params.imgURL) {
+        this.setState({
+          image: this.props.navigation.state.params.imgURL,
+          isLocalPhoto: false
+        });
+      }
     }
   }
 
