@@ -18,7 +18,7 @@ class Meme extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({imgURL: nextProps.imgURL, text: nextProps.text});
+    this.setState({ imgURL: nextProps.imgURL, text: nextProps.text });
   }
 
   render() {
@@ -31,7 +31,6 @@ class Meme extends React.Component {
             resizeMode="contain"
           />
         )}
-
         <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
           {this.state.text}
         </Text>
