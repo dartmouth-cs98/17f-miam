@@ -20,7 +20,7 @@ import Heading from './Heading';
 import NavigationBar from "./NavigationBar";
 import SearchProfile from "./SearchProfile";
 import Battle from "./Battles/Battle"
-import { getTargetUserProfile } from '../api';
+import { getTargetUserProfile, createBattle } from '../api';
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -35,27 +35,50 @@ export default class SearchProfileList extends React.Component {
 
     this.state = {
       profileList: ds.cloneWithRows([]),
+      myId: '',
+      token: ''
     }
   }
 
   componentDidMount() {
     if (this.props.navigation.state.params) {
-      var lists = this.props.navigation.state.params.profileList;
-      this.setState({ profileList: ds.cloneWithRows(lists) });
+      var params = this.props.navigation.state.params;
+      this.setState({
+        profileList: ds.cloneWithRows(params.profileList),
+        token: params.token,
+        myId: params.myId
+      });
     }
   }
 
-  onChallenge() {
+  onChallenge(opponentId) {
     console.log("challenge him!");
-    this.props.navigation.navigate('Battle');
+    if (opponentId !== this.state.myId) {
+      const participants = {
+        participant1: this.state.myId,
+        participant2: opponentId
+      };
+      createBattle(participants, this.state.token, (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(response.data.battle_id);
+          this.props.navigation.navigate('BattleList', { battleId: response.data.battle_id });
+        }
+      });
+
+    } else {
+      alert('You cannot challenge yourself');
+    }
   }
+
 
   renderProfile(profile) {
     return (
       <View style={styles.profileContainer}>
         <Text style={styles.emailText}>{profile.email}</Text>
         <TouchableHighlight
-          onPress={() => this.onChallenge()}
+          onPress={() => this.onChallenge(profile.id)}
           style={styles.challengeButton}>
           <Text style={styles.challengeText}>Challenge</Text>
         </TouchableHighlight>

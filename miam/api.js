@@ -72,6 +72,17 @@ export function uploadImage(file) {
   });
 }
 
+export function createBattle(participants, token, cb) {
+  const url = `${ROOT_URL}/battles`;
+  axios.post(url, participants, { headers: { Authorization: token} })
+  .then(response => {
+    cb(response, null);
+  })
+  .catch(error => {
+    cb(null, error)
+  });
+}
+
 export function createPost(postObj, token, cb) {
   const url = `${ROOT_URL}/posts`;
   console.log(postObj.imgURL);

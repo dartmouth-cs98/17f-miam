@@ -60,7 +60,7 @@ export default class SearchProfile extends React.Component {
           alert("User not found.");
         } else {
           console.log(response);
-          this.nav.navigate("SearchProfileList", { profileList: response });
+          this.nav.navigate("SearchProfileList", { profileList: response, myId: this.props.myId, token: token });
         }
       });
     } catch (error) {
