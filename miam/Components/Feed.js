@@ -37,41 +37,30 @@ export default class Feed extends React.Component {
     this.nav = props.nav;
   }
 
-  async setUserId() {
-    try {
-      const userId = await AsyncStorage.getItem("@UserId:key");
-      const token = await AsyncStorage.getItem("@Token:key");
-      if (token && userId === null) {
-        getUserProfile(token, async (response, error) => {
-          if (response.data) {
-            try {
-              await AsyncStorage.setItem("@UserId:key", response.data.id);
-              console.log("Successfully saved user id");
-            } catch (error) {
-              console.log(`Cannot save userId. ${error}`);
-            }
-          } else {
-            console.log(error);
-          }
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  // componentWillMount() {
-  //   fetchPosts((response, error) => {
-  //     if (error) {
-  //       alert(error);
-  //     } else {
-  //       console.log(response);
-  //       this.setState({
-  //         postDataSource: ds.cloneWithRows(response),
-  //         loaded: true
+  // async setUserId() {
+  //   try {
+  //     const userId = await AsyncStorage.getItem("@UserId:key");
+  //     const token = await AsyncStorage.getItem("@Token:key");
+  //     if (token && userId === null) {
+  //       getUserProfile(token, async (response, error) => {
+  //         if (response.data) {
+  //           try {
+  //             await AsyncStorage.setItem("@UserId:key", response.data.id);
+  //             console.log("Successfully saved user id");
+  //           } catch (error) {
+  //             console.log(`Cannot save userId. ${error}`);
+  //           }
+  //         } else {
+  //           console.log(error);
+  //         }
   //       });
   //     }
-  //   });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  // componentWillMount() {
   //   this.setUserId();
   // }
 
@@ -79,12 +68,13 @@ export default class Feed extends React.Component {
     fetchPosts((response, error) => {
       if (error) {
         alert(error);
-      } else {
-        console.log("I work :)");
-        // this.setState({
-        //   postDataSource: ds.cloneWithRows(response),
-        //   loaded: true
-        // });
+      } 
+      else {
+        this.setState({
+          data: response.data,
+          postDataSource: ds.cloneWithRows(response.data),
+          loaded: true
+        });
       }
     });
   }
@@ -101,16 +91,16 @@ export default class Feed extends React.Component {
     });
   }
 
-  newHeadingTabPress() {
-    sortedPosts = this.sortPostByNewest(this.state.data, "no key");
+  newHeadingTabPress(){
+    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "new"
     });
   }
 
-  hotHeadingTabPress() {
-    sortedPosts = this.sortPostByHottest(this.state.data, "no key");
+  hotHeadingTabPress(){
+    sortedPosts = this.sortPostByHottest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "hot"
@@ -163,10 +153,11 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
-    var tempUsrImg =
-      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
-      post.userName.charAt(0);
-    console.log(post);
+
+    var tempUsrImg = 
+      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" + 
+      post.user.username.charAt(0);
+
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
@@ -185,7 +176,7 @@ export default class Feed extends React.Component {
                 marginTop: "3%"
               }}
             >
-              {post.userName}
+              {post.user.username}
             </Text>
           </View>
         </View>
@@ -196,7 +187,7 @@ export default class Feed extends React.Component {
             {post.hashtags}
           </Text>
           <Image
-            source={{ uri: post.imgURL }}
+            source={{ uri: post.meme.imgURL }}
             style={styles.memeStyle}
             resizeMode="contain"
           />
@@ -257,7 +248,7 @@ const styles = StyleSheet.create({
   },
   headingTabBar: {
     width: "50%",
-    height: "3%",
+    height: 28,
     borderWidth: 1,
     borderRadius: 5,
     flexDirection: "row",
@@ -317,7 +308,8 @@ const styles = StyleSheet.create({
   },
   memeStyle: {
     width: 300,
-    height: 200
+    height: 200,
+    alignSelf: 'center'
   },
   postFooterContainer: {
     flex: 1,
