@@ -28,7 +28,6 @@ export default class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: require("../data/customData.json"),
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
       headingTabSelected: "new"
@@ -43,16 +42,10 @@ export default class Feed extends React.Component {
         alert(error);
       } else {
         this.setState({
-          data: response.data,
           postDataSource: ds.cloneWithRows(response.data),
           loaded: true
         });
       }
-    });
-
-    this.setState({
-      postDataSource: ds.cloneWithRows(this.state.data),
-      loaded: true
     });
   }
 
@@ -147,18 +140,16 @@ export default class Feed extends React.Component {
               style={styles.userIconStyle}
               resizeMode="contain"
             />
-            {post.user.username && (
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  marginLeft: "2%",
-                  marginTop: "3%"
-                }}
-              >
-                {post.user.username}
-              </Text>
-            )}
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "bold",
+                marginLeft: "2%",
+                marginTop: "3%"
+              }}
+            >
+              {post.user.username}
+            </Text>
           </View>
         </View>
         <View style={styles.separatorLine} />
