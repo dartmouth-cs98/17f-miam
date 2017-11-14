@@ -67,16 +67,27 @@ function getSignedRequest(file) {
 }
 
 function uploadFileToS3(signedRequest, file, url) {
-  return new Promise((fulfill, reject) => {
-    axios
-      .put(signedRequest, file, { headers: { "Content-Type": file.type } })
-      .then(response => {
-        fulfill(url);
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', signedRequest);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if(xhr.status === 200) {
+          resolve({
+            status: 200,
+            url: url
+          });
+        } 
+        else {
+          reject({
+            status: 401,
+            msg: "Could not upload image"
+          });
+        }
+      }
+    };
+    xhr.send(file);
+    });
 }
 
 export function uploadImage(file) {
@@ -93,7 +104,7 @@ export function createPost(postObj, token, cb) {
   axios
     .post(
       url,
-      { imgURL: postObj.imgURL, hashtags: postObj.hashtags },
+      postObj,
       { headers: { Authorization: token } }
     )
     .then(response => {
