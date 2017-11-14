@@ -18,7 +18,7 @@ export default class NavigationBar extends React.Component {
       <View style={styles.Navigation}>
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Feed")}
-          underlayColor="white"
+          underlayColor="#f2d9d9"
         >
           <View>
             <Icon name="stars" color="#862d59" size={30} />
@@ -27,7 +27,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Canvas")}
-          underlayColor="white"
+          underlayColor="#f2d9d9"
         >
           <View>
             <Icon name="control-point" color="#862d59" size={30} />
@@ -36,7 +36,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("BattleList")}
-          underlayColor="white"
+          underlayColor="#f2d9d9"
         >
           <View>
             <Icon name="whatshot" color="#862d59" size={30} />
@@ -45,13 +45,12 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => this.props.navigation.navigate("Profile")}
-          underlayColor="white"
+          underlayColor="#f2d9d9"
         >
           <View>
             <Icon name="account-circle" color="#862d59" size={30} />
           </View>
         </TouchableHighlight>
-
       </View>
     );
   }
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
   Navigation: {
     width: "100%",
     height: "5%",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#f2d9d9",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center"

@@ -10,16 +10,16 @@ import {
   Dimensions
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import StatusBarColor from '../StatusBarColor';
-import Heading from '../Heading';
-import Button from 'react-native-button';
-import Battle from './Battle';
+import StatusBarColor from "../StatusBarColor";
+import Heading from "../Heading";
+import Button from "react-native-button";
+import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
 import { fetchBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
-import Pusher from 'pusher-js/react-native';
+import Pusher from "pusher-js/react-native";
 
 // Enable pusher logging - don't include this in production
 // Pusher.logToConsole = true;
@@ -28,9 +28,9 @@ export default class BattleList extends React.Component {
   constructor(props) {
     super(props);
 
-    var battleId = '';
+    var battleId = "";
     var params = this.props.navigation.state.params;
-    if (params && params.battleId !== '') {
+    if (params && params.battleId !== "") {
       battleId = params.battleId;
     }
 
@@ -41,8 +41,8 @@ export default class BattleList extends React.Component {
       pusher: {}
     };
 
-    this.pusher = new Pusher('8bf10764c83bdb2f6afd', {
-      cluster: 'us2',
+    this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
+      cluster: "us2",
       encrypted: true
     });
 
@@ -60,7 +60,7 @@ export default class BattleList extends React.Component {
           loaded: true
         });
       }
-    })
+    });
   }
 
   selectBattle(battleId) {
@@ -79,13 +79,14 @@ export default class BattleList extends React.Component {
     return (
       <View style={styles.battleContainer}>
         <View style={styles.battleContentContainer}>
-          <Text style={{ fontSize: 20, marginLeft: "5%"}}>
+          <Text style={{ fontSize: 20, marginLeft: "5%" }}>
             {battle.participant1.username} VS. {battle.participant2.username}
           </Text>
           <TouchableHighlight
             onPress={() => this.selectBattle(battle._id)}
-            style={styles.joinButton}>
-            <Text style={{color: 'white'}}>JOIN</Text>
+            style={styles.joinButton}
+          >
+            <Text style={{ color: "white" }}>JOIN</Text>
           </TouchableHighlight>
         </View>
       </View>
@@ -96,8 +97,8 @@ export default class BattleList extends React.Component {
     if (this.state.selectedBattle === "") {
       return (
         <View style={styles.body}>
-          <StatusBarColor/>
-          <Heading text="MEME Battles"/>
+          <StatusBarColor />
+          <Heading text="MEME Battles" />
           <SearchProfile nav={this.props.navigation} />
           <ScrollView>
             <ListView
@@ -115,7 +116,12 @@ export default class BattleList extends React.Component {
     } else {
       return (
         <View style={styles.body}>
-          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} pusher={this.pusher} navigation={this.props.navigation}/>
+          <Battle
+            battleId={this.state.selectedBattle}
+            returnToList={this.returnToList}
+            pusher={this.pusher}
+            navigation={this.props.navigation}
+          />
         </View>
       );
     }
@@ -125,7 +131,7 @@ export default class BattleList extends React.Component {
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#5c5c8a"
   },
   battleContainer: {
     backgroundColor: "#ffffff",
@@ -144,7 +150,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingBottom: "1%",
-    alignItems: 'center'
+    alignItems: "center"
   },
   iconContainer: {
     flex: 1,
@@ -162,14 +168,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#ecc6ec"
   },
   joinButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 15,
     margin: 10,
     borderRadius: 5,
-    backgroundColor: '#66db30',
-    height: 30,
-  },
+    backgroundColor: "#66db30",
+    height: 30
+  }
 });
 
 module.exports = BattleList;
