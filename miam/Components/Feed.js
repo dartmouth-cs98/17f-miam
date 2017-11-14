@@ -70,8 +70,6 @@ export default class Feed extends React.Component {
         alert(error);
       } 
       else {
-        console.log("WHHY");
-        console.log(response.data);
         this.setState({
           data: response.data,
           postDataSource: ds.cloneWithRows(response.data),
