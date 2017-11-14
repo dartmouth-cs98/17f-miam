@@ -99,12 +99,12 @@ class Comment extends Component {
     const time = moment(comment.createdAt).fromNow();
     return (
       <View style={styles.commentContainer}>
-        <View style={{ marginLeft: "2%" }}>
+        <View style={{ marginLeft: "2%", marginTop: "2%" }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000000" }}>
             {comment.user.username}
           </Text>
         </View>
-        <View style={{ marginLeft: "2%" }}>
+        <View style={{ marginLeft: "2%", marginTop: "2%" }}>
           <Text style={{ fontSize: 15 }}>{comment.commenttext}</Text>
           <Text style={{ fontSize: 8 }}>{time}</Text>
         </View>

@@ -17,8 +17,12 @@ class Meme extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.setState({imgURL: this.props.imgURL, text: this.props.text});
+  // componentWillMount() {
+  //   this.setState({imgURL: this.props.imgURL, text: this.props.text});
+  // }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ imgURL: nextProps.imgURL, text: nextProps.text });
   }
 
   render() {
