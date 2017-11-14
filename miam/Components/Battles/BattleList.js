@@ -68,18 +68,20 @@ export default class BattleList extends React.Component {
 
   componentWillMount() {
     if (this.state.myId === '' || this.state.token === '') {
-      this.getMyId();
-    }
-    fetchBattles((response, error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        this.setState({
-          battleDataSource: ds.cloneWithRows(response),
-          loaded: true
+      this.getMyId().
+      then((value) => {
+        fetchBattles((response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({
+              battleDataSource: ds.cloneWithRows(response),
+              loaded: true
+            });
+          }
         });
-      }
-    });
+      });
+    }
   }
 
 
@@ -154,7 +156,7 @@ export default class BattleList extends React.Component {
           <NavigationBar navigation={this.props.navigation} />
         </View>
       );
-    } else {
+    } else if (this.state.token && this.state.myId) {
       return (
         <View style={styles.body}>
           <Battle
@@ -167,6 +169,8 @@ export default class BattleList extends React.Component {
           />
         </View>
       );
+    } else {
+      return <View/>;
     }
   }
 }
