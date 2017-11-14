@@ -7,7 +7,8 @@ import {
   TouchableHighlight,
   ListView,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "../StatusBarColor";
@@ -38,7 +39,9 @@ export default class BattleList extends React.Component {
       battleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
-      pusher: {}
+      pusher: {},
+      myId: '',
+      token: ''
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -50,7 +53,23 @@ export default class BattleList extends React.Component {
     this.returnToList = this.returnToList.bind(this);
   }
 
+  async getMyId() {
+    try {
+      const userId = await AsyncStorage.getItem('@UserId:key');
+      const token = await AsyncStorage.getItem('@Token:key');
+      this.setState({
+        myId: userId,
+        token: token
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   componentWillMount() {
+    if (this.state.myId === '' || this.state.token === '') {
+      this.getMyId();
+    }
     fetchBattles((response, error) => {
       if (error) {
         console.log(error);
@@ -62,6 +81,8 @@ export default class BattleList extends React.Component {
       }
     });
   }
+
+
 
   selectBattle(battleId) {
     this.setState({
@@ -115,7 +136,10 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading text="MEME Battles" />
-          <SearchProfile nav={this.props.navigation} />
+          <SearchProfile
+            nav={this.props.navigation}
+            token={this.state.token}
+            myId={this.state.myId}/>
           <ScrollView>
             <ListView
               contentContainerStyle={styles.battlelist}
@@ -138,6 +162,8 @@ export default class BattleList extends React.Component {
             returnToList={this.returnToList}
             pusher={this.pusher}
             navigation={this.props.navigation}
+            myId={this.state.myId}
+            token={this.state.token}
           />
         </View>
       );

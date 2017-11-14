@@ -23,8 +23,6 @@ class Battle extends React.Component {
       messages: [],
       text: '',
       meme: '',
-      myId: '',
-      token: '',
       participating: false,
       participant1: {},
       participant2: {}
@@ -46,23 +44,10 @@ class Battle extends React.Component {
   }
 
 
-  async getMyId() {
-    try {
-      const userId = await AsyncStorage.getItem('@UserId:key');
-      const token = await AsyncStorage.getItem('@Token:key');
-      this.setState({
-        myId: userId,
-        token: token
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   fetchBattle() {
     getBattle(this.props.battleId, (response, error) => {
       if (error) {
-        console.log(error);
+        console.log('getBattle Error: '+error);
       } else {
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
@@ -70,13 +55,13 @@ class Battle extends React.Component {
           participant1: response.participant1,
           participant2: response.participant2
         });
-        if (this.state.myId === response.participant1._id) {
+        if (this.props.myId === response.participant1._id) {
           this.setState({
             participating: true,
             participant1: this.state.participant2,
             participant2: this.state.participant1
           });
-        } else if (this.state.myId === response.participant2._id) {
+        } else if (this.props.myId === response.participant2._id) {
           this.setState({
             participating: true
           });
@@ -86,9 +71,6 @@ class Battle extends React.Component {
   }
 
   componentWillMount() {
-    if (this.state.myId === '') {
-      this.getMyId();
-    }
     this.fetchBattle();
   }
 
@@ -96,12 +78,9 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({animated: true});
     }
-    if (this.props.navigation.state.params) {
+    if (this.props.navigation.state.params && this.props.navigation.state.params.gifurl) {
       this.setState({ meme: this.props.navigation.state.params.gifurl }, () => {
-        this.getMyId().
-        then((value) => {
-          this.sendMsg();
-        });
+        this.sendMsg();
       });
     }
   }
@@ -126,7 +105,7 @@ class Battle extends React.Component {
     };
 
     if (msg.text !== '' || msg.meme !== '') {
-      sendMessage(this.props.battleId, this.state.token, msg, (response, error) => {
+      sendMessage(this.props.battleId, this.props.token, msg, (response, error) => {
         if (error) {
           console.log(error);
         } else {
@@ -242,7 +221,7 @@ class Battle extends React.Component {
           onContentSizeChange={(contentWidth, contentHeight)=>{
             this.scrollView.scrollToEnd({animated: true});
           }}
-          style={styles.scrollView}>
+          contentContainerStyle={styles.scrollView}>
           <ListView
             initialListSize={5}
             enableEmptySections={true}
@@ -251,8 +230,8 @@ class Battle extends React.Component {
               return this.renderMsgRow(msg);
             }}
           />
-          {this.state.participating && this.renderInputBar()}
         </KeyboardAwareScrollView>
+        {this.state.participating && this.renderInputBar()}
       </View>
     );
   }
@@ -284,7 +263,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     backgroundColor: '#F8F8FF',
     marginTop: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   textArea: {
     backgroundColor: 'white',
@@ -346,7 +325,8 @@ const styles = StyleSheet.create({
 
   scrollView: {
     flexDirection: 'column',
-    marginBottom: 25
+    marginBottom: 25,
+    justifyContent: 'space-between'
   },
 
   avator: {
