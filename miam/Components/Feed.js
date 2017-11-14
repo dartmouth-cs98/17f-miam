@@ -33,36 +33,10 @@ export default class Feed extends React.Component {
       loaded: false,
       headingTabSelected: "new"
     };
-
     this.nav = props.nav;
+    this.like = this.like.bind(this);
   }
 
-  // async setUserId() {
-  //   try {
-  //     const userId = await AsyncStorage.getItem("@UserId:key");
-  //     const token = await AsyncStorage.getItem("@Token:key");
-  //     if (token && userId === null) {
-  //       getUserProfile(token, async (response, error) => {
-  //         if (response.data) {
-  //           try {
-  //             await AsyncStorage.setItem("@UserId:key", response.data.id);
-  //             console.log("Successfully saved user id");
-  //           } catch (error) {
-  //             console.log(`Cannot save userId. ${error}`);
-  //           }
-  //         } else {
-  //           console.log(error);
-  //         }
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // componentWillMount() {
-  //   this.setUserId();
-  // }
   componentDidMount() {
     fetchPosts((response, error) => {
       if (error) {
@@ -112,7 +86,7 @@ export default class Feed extends React.Component {
       headingTabSelected: "hot"
     });
   }
-
+  like(postID) {}
   renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
@@ -201,7 +175,12 @@ export default class Feed extends React.Component {
 
         <View style={styles.postFooterContainer}>
           <View style={styles.postFooterIconContainer}>
-            <Icon name="favorite-border" color="#cc6699" size={25} />
+            <TouchableHighlight
+              underlayColor="white"
+              onPress={() => this.like(post._id)}
+            >
+              <Icon name="favorite-border" color="#cc6699" size={25} />
+            </TouchableHighlight>
             <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
               {post.likes}
             </Text>
