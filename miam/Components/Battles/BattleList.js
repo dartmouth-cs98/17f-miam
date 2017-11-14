@@ -78,17 +78,33 @@ export default class BattleList extends React.Component {
   renderBattleRow(battle) {
     return (
       <View style={styles.battleContainer}>
-        <View style={styles.battleContentContainer}>
-          <Text style={{ fontSize: 20, marginLeft: "5%" }}>
-            {battle.participant1.username} VS. {battle.participant2.username}
+        <View style={styles.contenders}>
+          <Text style={{ fontSize: 20, color: "#ffffff" }}>
+            {battle.participant1.username}
           </Text>
-          <TouchableHighlight
-            onPress={() => this.selectBattle(battle._id)}
-            style={styles.joinButton}
-          >
-            <Text style={{ color: "white" }}>JOIN</Text>
-          </TouchableHighlight>
+          <View style={{ alignSelf: "center" }}>
+            <Icon name="toys" color="#ffffff" size={40} />
+          </View>
+          <View style={{ alignSelf: "flex-end" }}>
+            <Text style={{ fontSize: 20, color: "#ffffff" }}>
+              {battle.participant2.username}
+            </Text>
+          </View>
         </View>
+        <TouchableHighlight
+          onPress={() => this.selectBattle(battle._id)}
+          underlayColor="#732673"
+        >
+          <Text
+            style={{
+              color: "#ffffff",
+              textAlign: "center",
+              fontWeight: "bold"
+            }}
+          >
+            JOIN
+          </Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -102,6 +118,7 @@ export default class BattleList extends React.Component {
           <SearchProfile nav={this.props.navigation} />
           <ScrollView>
             <ListView
+              contentContainerStyle={styles.battlelist}
               initialListSize={5}
               enableEmptySections={true}
               dataSource={this.state.battleDataSource}
@@ -133,24 +150,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#5c5c8a"
   },
+  battlelist: {
+    alignItems: "center"
+  },
   battleContainer: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#732673",
     borderColor: "#000000",
     flexDirection: "column",
     width: 0.9 * vw,
-    margin: 13,
-    borderRadius: 10,
+    borderRadius: 3,
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    padding: 10
-  },
-  battleContentContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingBottom: "1%",
-    alignItems: "center"
+    marginTop: "2%",
+    flexDirection: "column",
+    paddingBottom: "1%"
   },
   iconContainer: {
     flex: 1,
@@ -167,14 +182,10 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ecc6ec"
   },
-  joinButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 15,
-    margin: 10,
-    borderRadius: 5,
-    backgroundColor: "#66db30",
-    height: 30
+  contenders: {
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between"
   }
 });
 
