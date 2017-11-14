@@ -156,14 +156,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     backgroundColor: "#993366",
-    height: "10%",
-    width: "30%"
+    height: 30
   },
   headingTabBar: {
-    height: 40
+    marginTop: 5,
+    height: 30
   },
   headingText: {
-    fontSize: 12
+    fontSize: 25,
+    fontWeight: "bold"
   }
 });
 
