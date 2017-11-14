@@ -10,16 +10,16 @@ import {
   Dimensions
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import StatusBarColor from '../StatusBarColor';
-import Heading from '../Heading';
-import Button from 'react-native-button';
-import Battle from './Battle';
+import StatusBarColor from "../StatusBarColor";
+import Heading from "../Heading";
+import Button from "react-native-button";
+import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
 import { fetchBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
-import Pusher from 'pusher-js/react-native';
+import Pusher from "pusher-js/react-native";
 
 // Enable pusher logging - don't include this in production
 // Pusher.logToConsole = true;
@@ -28,9 +28,9 @@ export default class BattleList extends React.Component {
   constructor(props) {
     super(props);
 
-    var battleId = '';
+    var battleId = "";
     var params = this.props.navigation.state.params;
-    if (params && params.battleId !== '') {
+    if (params && params.battleId !== "") {
       battleId = params.battleId;
     }
 
@@ -41,8 +41,8 @@ export default class BattleList extends React.Component {
       pusher: {}
     };
 
-    this.pusher = new Pusher('8bf10764c83bdb2f6afd', {
-      cluster: 'us2',
+    this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
+      cluster: "us2",
       encrypted: true
     });
 
@@ -60,7 +60,7 @@ export default class BattleList extends React.Component {
           loaded: true
         });
       }
-    })
+    });
   }
 
   selectBattle(battleId) {
@@ -78,16 +78,33 @@ export default class BattleList extends React.Component {
   renderBattleRow(battle) {
     return (
       <View style={styles.battleContainer}>
-        <View style={styles.battleContentContainer}>
-          <Text style={{ fontSize: 20, marginLeft: "5%"}}>
-            {battle.participant1.username} VS. {battle.participant2.username}
+        <View style={styles.contenders}>
+          <Text style={{ fontSize: 20, color: "#ffffff" }}>
+            {battle.participant1.username}
           </Text>
-          <TouchableHighlight
-            onPress={() => this.selectBattle(battle._id)}
-            style={styles.joinButton}>
-            <Text style={{color: 'white'}}>JOIN</Text>
-          </TouchableHighlight>
+          <View style={{ alignSelf: "center" }}>
+            <Icon name="toys" color="#ffffff" size={40} />
+          </View>
+          <View style={{ alignSelf: "flex-end" }}>
+            <Text style={{ fontSize: 20, color: "#ffffff" }}>
+              {battle.participant2.username}
+            </Text>
+          </View>
         </View>
+        <TouchableHighlight
+          onPress={() => this.selectBattle(battle._id)}
+          underlayColor="#732673"
+        >
+          <Text
+            style={{
+              color: "#ffffff",
+              textAlign: "center",
+              fontWeight: "bold"
+            }}
+          >
+            JOIN
+          </Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -96,11 +113,12 @@ export default class BattleList extends React.Component {
     if (this.state.selectedBattle === "") {
       return (
         <View style={styles.body}>
-          <StatusBarColor/>
-          <Heading text="MEME Battles"/>
+          <StatusBarColor />
+          <Heading text="MEME Battles" />
           <SearchProfile nav={this.props.navigation} />
           <ScrollView>
             <ListView
+              contentContainerStyle={styles.battlelist}
               initialListSize={5}
               enableEmptySections={true}
               dataSource={this.state.battleDataSource}
@@ -115,7 +133,12 @@ export default class BattleList extends React.Component {
     } else {
       return (
         <View style={styles.body}>
-          <Battle battleId={this.state.selectedBattle} returnToList={this.returnToList} pusher={this.pusher} navigation={this.props.navigation}/>
+          <Battle
+            battleId={this.state.selectedBattle}
+            returnToList={this.returnToList}
+            pusher={this.pusher}
+            navigation={this.props.navigation}
+          />
         </View>
       );
     }
@@ -125,26 +148,24 @@ export default class BattleList extends React.Component {
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#5c5c8a"
+  },
+  battlelist: {
+    alignItems: "center"
   },
   battleContainer: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#732673",
     borderColor: "#000000",
     flexDirection: "column",
     width: 0.9 * vw,
-    margin: 13,
-    borderRadius: 10,
+    borderRadius: 3,
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    padding: 10
-  },
-  battleContentContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingBottom: "1%",
-    alignItems: 'center'
+    marginTop: "2%",
+    flexDirection: "column",
+    paddingBottom: "1%"
   },
   iconContainer: {
     flex: 1,
@@ -161,15 +182,11 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ecc6ec"
   },
-  joinButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 15,
-    margin: 10,
-    borderRadius: 5,
-    backgroundColor: '#66db30',
-    height: 30,
-  },
+  contenders: {
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between"
+  }
 });
 
 module.exports = BattleList;
