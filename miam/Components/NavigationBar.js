@@ -45,7 +45,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => {
-            if (state.routeName !== "Battle") {
+            if (state.routeName !== "BattleList") {
               this.props.navigation.navigate("BattleList");
             }
           }}

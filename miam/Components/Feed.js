@@ -33,7 +33,7 @@ export default class Feed extends React.Component {
       data: null,
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
-      headingTabSelected: "hot",
+      headingTabSelected: "new",
       token: ""
     };
     this.nav = props.nav;

@@ -111,7 +111,7 @@ class Comment extends Component {
             {comment.user.username}
           </Text>
         </View>
-        <View style={{ marginLeft: "2%", marginTop: "2%" }}>
+        <View style={{ marginLeft: "2%", marginTop: "2%", marginRight: "2%" }}>
           <Text style={{ fontSize: 15 }}>{comment.commenttext}</Text>
         </View>
         <Text style={{ fontSize: 8, marginLeft: "2%", top: "2%"}}>{time}</Text>
