@@ -47,9 +47,11 @@ export default class Feed extends React.Component {
         alert(error);
       } else {
         if (response.data) {
+
+          sortedData = this.sortPostByNewest(response.data);
           this.setState({
-            data: response.data,
-            postDataSource: ds.cloneWithRows(response.data),
+            data: sortedData,
+            postDataSource: ds.cloneWithRows(sortedData),
             loaded: true
           });
         }
@@ -92,7 +94,7 @@ export default class Feed extends React.Component {
 
   sortPostByHottest(array, key) {
     return array.sort(function(a, b) {
-      return b.likes < a.likes ? -1 : b.likes > a.likes ? 1 : 0;
+      return b.likes.length < a.likes.length ? -1 : b.likes.length > a.likes.length ? 1 : 0;
     });
   }
 
