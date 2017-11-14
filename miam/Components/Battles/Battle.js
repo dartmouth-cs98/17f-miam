@@ -22,7 +22,7 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: '',
-      gifUrl: '',
+      gifUrl: null,
       participating: false,
       participant1: {},
       participant2: {}
@@ -39,6 +39,7 @@ class Battle extends React.Component {
     this.fetchBattle = this.fetchBattle.bind(this);
     this.renderInputBar = this.renderInputBar.bind(this);
     this.sendGif = this.sendGif.bind(this);
+    this.sendMeme = this.sendMeme.bind(this);
     this.renderMeme = this.renderMeme.bind(this);
     this.renderText = this.renderText.bind(this);
   }
@@ -80,8 +81,8 @@ class Battle extends React.Component {
       this.scrollView.scrollToEnd({animated: true});
     }
     const params = this.props.navigation.state.params;
-    if ( params && params.gifurl) {
-      this.setState({ gifUrl: params.gifurl, text: params.memetext }, () => {
+    if ( params && params.gifUrl) {
+      this.setState({ gifUrl: params.gifUrl, text: params.memetext }, () => {
         this.sendMsg();
       });
     }
@@ -103,17 +104,18 @@ class Battle extends React.Component {
   sendMsg() {
     let msg = {
       "text" : this.state.text,
-      "gifUrl" : this.state.gifUrl,
+      "gifURL" : this.state.gifUrl,
     };
+    console.log('Token is'+this.props.token);
 
-    if (msg.text !== '' || msg.gifUrl !== '') {
+    if (msg.text !== '' || msg.gifURL !== '') {
       sendMessage(this.props.battleId, this.props.token, msg, (response, error) => {
         if (error) {
           console.log(error);
         } else {
           this.setState({
             text: '',
-            gifUrl: ''
+            gifUrl: null
           });
           this.fetchBattle();
         }
@@ -160,13 +162,13 @@ class Battle extends React.Component {
 
     var align = isLeft ? {justifyContent: 'flex-start'} : {justifyContent: 'flex-end'};
 
-    if (msg.text !== '' || msg.gifUrl !== '' || msg.meme !== '') {
+    if (msg.text !== '' || msg.gifURL !== null) {
       return (
         <View style={[{flexDirection: 'row', alignItems: 'flex-start', margin: 5}, align]}>
           {leftSpacer}
           <View style={bubbleStyles}>
-            {(msg.text !== '' && msg.gifurl === '') && this.renderText(msg.text, bubbleTextStyle)}
-            {msg.gifurl !== '' && this.renderMeme(msg)}
+            {(msg.text !== '' && msg.gifURL === null) && this.renderText(msg.text, bubbleTextStyle)}
+            {msg.gifURL !== null && this.renderMeme(msg)}
           </View>
           {rightSpacer}
         </View>
@@ -178,12 +180,27 @@ class Battle extends React.Component {
   }
 
   renderMeme(msg) {
-    return (
-      <Meme
-        imageUrl={msg.gifUrl}
-        text={msg.text}
-      />
-    );
+    if (msg.text === null) {
+      return (
+        <View>
+          <Image
+            source= {{ uri: msg.gifURL }}
+            style= { styles.memeStyle }
+            resizeMode="contain"
+          />
+        </View>
+      )
+    } else {
+      console.log(msg.gifURL);
+      return (
+        <View>
+          <Meme
+            imageURL={msg.gifURL}
+            text={msg.text}
+          />
+        </View>
+      );
+    }
   }
 
   renderText(text, bubbleTextStyle) {

@@ -93,6 +93,7 @@ class Canvas extends React.Component {
   createMeme() {
     var params = this.props.navigation.state.params;
     if ( params && params.source === 'battle') {
+      console.log(this.state.image);
       this.props.navigation.navigate("BattleList", { gifUrl: this.state.image, memetext: this.state.text, battleId: params.battleId });
     } else {
       const postObj = {
