@@ -19,6 +19,7 @@ import StatusBarColor from './StatusBarColor';
 import Heading from './Heading';
 import NavigationBar from "./NavigationBar";
 import SearchProfile from "./SearchProfile";
+import Battle from "./Battles/Battle"
 import { getTargetUserProfile } from '../api';
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
@@ -27,6 +28,8 @@ const vw = Dimensions.get("window").width;
 export default class SearchProfileList extends React.Component {
   constructor(props) {
     super(props);
+
+    //this.nav = props.nav;
 
     this.ds = new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
 
@@ -42,16 +45,20 @@ export default class SearchProfileList extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-  }
-
-  componentWillMount() {
+  onChallenge() {
+    console.log("challenge him!");
+    this.props.navigation.navigate('Battle');
   }
 
   renderProfile(profile) {
     return (
-      <View style={styles.postContainer}>
-        <Text>{profile.email}</Text>
+      <View style={styles.profileContainer}>
+        <Text style={styles.emailText}>{profile.email}</Text>
+        <TouchableHighlight
+          onPress={() => this.onChallenge()}
+          style={styles.challengeButton}>
+          <Text style={styles.challengeText}>Challenge</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -59,7 +66,7 @@ export default class SearchProfileList extends React.Component {
   renderHeadingTabs(){
     return (
       <View style={styles.headingTabBar}>
-        <Text>Users: </Text>
+        <Text style={styles.headingText}>Users We Found: </Text>
       </View>
     );
   }
@@ -92,23 +99,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff"
   },
-  separatorLine: {
-    height: 1,
-    backgroundColor: "#ecc6ec"
-  },
-  postContainer: {
+  profileContainer: {
+    flex: 1,
     backgroundColor: "#ffffff",
     borderColor: "#000000",
-    flexDirection: "column",
+    flexDirection: "row",
+    justifyContent: "space-between",
     width: 0.9 * vw,
-    height: 10,
+    height: 50,
     margin: 7,
     borderRadius: 10,
-    shadowColor: "#291D56",
-    shadowOffset: { height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3
   },
+  emailText: {
+    fontSize: 20,
+    textAlign: "center",
+  },
+  challengeText: {
+    fontSize: 20,
+    textAlign: "center",
+    color: "white",
+  },
+  challengeButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 5,
+    backgroundColor: '#993366',
+    height: 30,
+  },
+  headingTabBar: {
+    height: 40,
+  },
+  headingText: {
+    fontSize: 30,
+  }
 });
 
 module.exports = SearchProfileList;

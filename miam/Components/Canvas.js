@@ -19,7 +19,8 @@ import NavigationBar from "./NavigationBar";
 import ViewShot from "react-native-view-shot";
 import { captureRef } from "react-native-view-shot";
 import { createPost } from "../api";
-import { RNS3 } from "react-native-aws3";
+import { uploadImage } from "../api";
+// import { RNS3 } from "react-native-aws3";
 import Expo from "expo";
 
 const apiUrl = "http://api.giphy.com/v1/gifs/translate?";
@@ -30,6 +31,9 @@ class Canvas extends React.Component {
     super(props);
     this.state = {
       image: null,
+      imageURI: "",
+      isLocalPhoto: false,
+
       tags: [],
       text: "",
       showCaption: false,
@@ -39,17 +43,21 @@ class Canvas extends React.Component {
     };
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
+
+    this.sendPost = this.sendPost.bind(this);
     this.createMeme = this.createMeme.bind(this);
     this.uploadLocalPhoto = this.uploadLocalPhoto.bind(this);
     this.translate = this.translate.bind(this);
     this.retrieveToken = this.retrieveToken.bind(this);
   }
+
   componentWillMount() {
     this.retrieveToken();
   }
+
   componentDidMount() {
     if (this.props.navigation.state.params) {
-      this.setState({ image: this.props.navigation.state.params.gifurl });
+      this.setState({ image: this.props.navigation.state.params.gifurl, imageURI: this.props.navigation.state.params.gifurl, isLocalPhoto: false});
     }
   }
 
@@ -67,18 +75,31 @@ class Canvas extends React.Component {
       console.log(error);
     }
   }
+
+  sendPost(){
+    if(this.state.isLocalPhoto)
+      this.uploadLocalPhoto();
+    else
+      this.createMeme();
+  }
+
   createMeme() {
+<<<<<<< HEAD
     const postObj = {
       imgURL: this.state.image,
       hashtags: "",
       memetext: this.state.text,
       posttext: ""
     };
+=======
+    const postObj = { imgURL: this.state.imageURI, hashtags: "", memetext: "memetext placeholder", posttext: this.state.text };
+>>>>>>> f24852016b00c8c8931d5280a7e3f93b6f27b1ad
     console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
+<<<<<<< HEAD
         this.setState({
           image: null,
           tags: [],
@@ -87,46 +108,35 @@ class Canvas extends React.Component {
           res: null
         });
         alert("Successfully posted your meme!");
+=======
+        console.log("succeeded");
+        console.log(response);
+        this.props.navigation.navigate("Feed");
+>>>>>>> f24852016b00c8c8931d5280a7e3f93b6f27b1ad
       }
     });
   }
 
-  uploadLocalPhoto() {
-    console.log(this.state.image);
+  uploadLocalPhoto(){
+    pseudoRandomFileName = Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+    typeExtension = this.state.image.substr(this.state.image.length - 3)
 
     const file = {
-      // `uri` can also be a file system path (i.e. file://)
       uri: this.state.image,
-      name: "image.jpg",
-      type: "image/jpg"
+      name: pseudoRandomFileName + "." + typeExtension,
+      type: "image/" + typeExtension
     };
 
-    const options = {
-      keyPrefix: "uploads/",
-      bucket: "miam-assests",
-      region: "us-east-ohio",
-      accessKey: "AKIAIXEGKQ623CZ4T4OQ",
-      secretKey: "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",
-      successActionStatus: 201
-    };
+    canvasObj = this;
 
-    RNS3.put(file, options).then(response => {
-      if (response.status !== 201) {
-        console.log(response.body);
-        throw new Error("Failed to upload image to S3");
-      }
-
-      console.log(response.body);
-      /**
-   * {
-   *   postResponse: {
-   *     bucket: "your-bucket",
-   *     etag : "9f620878e06d28774406017480a59fd4",
-   *     key: "uploads/image.png",
-   *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-   *   }
-   * }
-   */
+    // Returning promise
+    uploadImage(file)
+    .then(function(datum) {
+      canvasObj.setState({imageURI: datum.url});
+      canvasObj.createMeme();
+    })
+    .catch(function(err) {
+      console.log(err);
     });
   }
 
@@ -154,7 +164,8 @@ class Canvas extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri });
+      this.setState({ image: result.uri, isLocalPhoto: true });
+      console.log(result);
     }
   };
 
@@ -196,7 +207,7 @@ class Canvas extends React.Component {
               </View>
               <View>
                 <TouchableHighlight
-                  onPress={this.createMeme}
+                  onPress={this.sendPost}
                   underlayColor="#ffffff"
                 >
                   <Icon name="send" color="#ac3973" size={28} />
