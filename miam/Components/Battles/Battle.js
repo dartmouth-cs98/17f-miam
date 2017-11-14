@@ -101,14 +101,10 @@ class Battle extends React.Component {
   handleMessage(message) {
     const messages = this.state.messages.slice();
     messages.push(message);
-    try {
       this.setState({
         messages: messages,
         msgDataSource: ds.cloneWithRows(messages)
       });
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   sendMsg() {
@@ -158,7 +154,9 @@ class Battle extends React.Component {
 
     var isLeft = false;
 
-    if (msg.sender === this.state.participant1._id) {
+    if (this.state.participating && msg.sender === this.props.myId) {
+      isLeft = false;
+    } else {
       isLeft = true;
     }
 
