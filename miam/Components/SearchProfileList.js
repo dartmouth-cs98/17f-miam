@@ -52,7 +52,8 @@ export default class SearchProfileList extends React.Component {
   }
 
   onChallenge(opponentId) {
-    console.log("challenge him!");
+    console.log(this.props.navigation.state.params.myId);
+    console.log(this.state.myId);
     if (opponentId !== this.state.myId) {
       const participants = {
         participant1: this.state.myId,
