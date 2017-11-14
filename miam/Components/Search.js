@@ -85,7 +85,7 @@ export default class Search extends React.Component {
   selectMeme(url) {
     var params = this.props.navigation.state.params;
     if ( params && params.source === 'battle') {
-      this.props.navigation.navigate("BattleList", { gifurl: url, battleId: params.battleId });
+      this.props.navigation.navigate("BattleList", { gifUrl: url, battleId: params.battleId });
     } else {
       this.props.navigation.navigate("Canvas", { gifurl: url });
     }
