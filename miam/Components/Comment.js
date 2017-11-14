@@ -96,7 +96,6 @@ class Comment extends Component {
   }
 
   renderCommentRow(comment) {
-    console.log(comment);
     const time = moment(comment.createdAt).fromNow();
     return (
       <View style={styles.commentContainer}>

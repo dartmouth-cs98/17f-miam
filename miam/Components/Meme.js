@@ -24,7 +24,7 @@ class Meme extends React.Component {
           style={styles.memeStyle}
           resizeMode="contain"
         />
-        <Text style={{ textAlign: "center", fontS: 14, fontWeight: "bold" }}>
+        <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
           {this.state.text}
         </Text>
       </View>
@@ -33,7 +33,9 @@ class Meme extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  memeContainer: {},
+  memeContainer: {
+    marginBottom: "2%"
+  },
   memeStyle: {
     width: 300,
     height: 200,

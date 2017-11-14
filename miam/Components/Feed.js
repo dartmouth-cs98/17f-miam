@@ -21,6 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { fetchPosts } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
+import moment from "moment";
 var customData = require("../data/customData.json");
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -43,6 +44,7 @@ export default class Feed extends React.Component {
         alert(error);
       } else {
         this.setState({
+          data: response.data,
           postDataSource: ds.cloneWithRows(response.data),
           loaded: true
         });
@@ -130,13 +132,13 @@ export default class Feed extends React.Component {
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
       post.user.username.charAt(0);
+    const time = moment(post.createdAt).fromNow();
 
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
             <Image
-              // source={{ uri: post.meme.imgURL }}
               source={{ uri: tempUsrImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
@@ -151,6 +153,9 @@ export default class Feed extends React.Component {
             >
               {post.user.username}
             </Text>
+          </View>
+          <View style={{ alignSelf: "flex-end" }}>
+            <Text style={{ fontSize: 8 }}>{time}</Text>
           </View>
         </View>
         <View style={styles.separatorLine} />
