@@ -106,8 +106,8 @@ class Comment extends Component {
     const time = moment(comment.createdAt).fromNow();
     return (
       <View style={styles.commentContainer}>
-        <View style={{ marginLeft: "2%", marginTop: "2%" }}>
-          <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000000" }}>
+        <View style={{ marginLeft: "2%"}}>
+          <Text style={{ fontSize: 12, fontWeight: "bold", color: "#000000" }}>
             {comment.user.username}
           </Text>
         </View>
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
     marginTop: "2.5%",
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     paddingBottom: "2.5%",
     borderBottomColor: "#9999ff"
   },
