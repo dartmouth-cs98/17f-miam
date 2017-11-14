@@ -63,13 +63,11 @@ export default class Feed extends React.Component {
   // componentWillMount() {
   //   this.setUserId();
   // }
-
   componentDidMount() {
     fetchPosts((response, error) => {
       if (error) {
         alert(error);
-      } 
-      else {
+      } else {
         this.setState({
           data: response.data,
           postDataSource: ds.cloneWithRows(response.data),
@@ -96,7 +94,7 @@ export default class Feed extends React.Component {
     });
   }
 
-  newHeadingTabPress(){
+  newHeadingTabPress() {
     sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
@@ -104,8 +102,11 @@ export default class Feed extends React.Component {
     });
   }
 
-  hotHeadingTabPress(){
-    sortedPosts = this.sortPostByHottest(this.state.data, "ignore this for now");
+  hotHeadingTabPress() {
+    sortedPosts = this.sortPostByHottest(
+      this.state.data,
+      "ignore this for now"
+    );
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "hot"
@@ -158,9 +159,8 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
-
-    var tempUsrImg = 
-      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" + 
+    var tempUsrImg =
+      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
       post.user.username.charAt(0);
 
     return (
@@ -210,13 +210,16 @@ export default class Feed extends React.Component {
             <TouchableHighlight
               underlayColor="white"
               onPress={() =>
-                this.props.navigation.navigate("Comment", { postId: post.id })}
+                this.props.navigation.navigate("Comment", {
+                  postID: post._id,
+                  comments: post.comments
+                })}
             >
               <Icon name="mode-comment" color="#cc6699" size={25} />
             </TouchableHighlight>
-            <Text
-              style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}
-            />
+            <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
+              {post.comments.length}
+            </Text>
           </View>
           <View>
             <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
@@ -315,7 +318,7 @@ const styles = StyleSheet.create({
   memeStyle: {
     width: 300,
     height: 200,
-    alignSelf: 'center'
+    alignSelf: "center"
   },
   postFooterContainer: {
     flex: 1,

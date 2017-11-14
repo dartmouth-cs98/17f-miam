@@ -57,7 +57,11 @@ class Canvas extends React.Component {
 
   componentDidMount() {
     if (this.props.navigation.state.params) {
-      this.setState({ image: this.props.navigation.state.params.gifurl, imageURI: this.props.navigation.state.params.gifurl, isLocalPhoto: false});
+      this.setState({
+        image: this.props.navigation.state.params.gifurl,
+        imageURI: this.props.navigation.state.params.gifurl,
+        isLocalPhoto: false
+      });
     }
   }
 
@@ -76,30 +80,23 @@ class Canvas extends React.Component {
     }
   }
 
-  sendPost(){
-    if(this.state.isLocalPhoto)
-      this.uploadLocalPhoto();
-    else
-      this.createMeme();
+  sendPost() {
+    if (this.state.isLocalPhoto) this.uploadLocalPhoto();
+    else this.createMeme();
   }
 
   createMeme() {
-<<<<<<< HEAD
     const postObj = {
       imgURL: this.state.image,
       hashtags: "",
       memetext: this.state.text,
       posttext: ""
     };
-=======
-    const postObj = { imgURL: this.state.imageURI, hashtags: "", memetext: "memetext placeholder", posttext: this.state.text };
->>>>>>> f24852016b00c8c8931d5280a7e3f93b6f27b1ad
     console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
-<<<<<<< HEAD
         this.setState({
           image: null,
           tags: [],
@@ -108,18 +105,19 @@ class Canvas extends React.Component {
           res: null
         });
         alert("Successfully posted your meme!");
-=======
-        console.log("succeeded");
-        console.log(response);
-        this.props.navigation.navigate("Feed");
->>>>>>> f24852016b00c8c8931d5280a7e3f93b6f27b1ad
       }
     });
   }
 
-  uploadLocalPhoto(){
-    pseudoRandomFileName = Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
-    typeExtension = this.state.image.substr(this.state.image.length - 3)
+  uploadLocalPhoto() {
+    pseudoRandomFileName =
+      Math.random()
+        .toString(36)
+        .substr(2) +
+      Math.random()
+        .toString(36)
+        .substr(2);
+    typeExtension = this.state.image.substr(this.state.image.length - 3);
 
     const file = {
       uri: this.state.image,
@@ -131,13 +129,13 @@ class Canvas extends React.Component {
 
     // Returning promise
     uploadImage(file)
-    .then(function(datum) {
-      canvasObj.setState({imageURI: datum.url});
-      canvasObj.createMeme();
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
+      .then(function(datum) {
+        canvasObj.setState({ imageURI: datum.url });
+        canvasObj.createMeme();
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
   }
 
   translate() {

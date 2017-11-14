@@ -12,6 +12,9 @@ import {
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import { postComment } from "../api";
+import { fetchComment } from "../api";
+import update from "react-addons-update";
+import moment from "moment";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 class Comment extends Component {
   constructor(props) {
@@ -19,49 +22,93 @@ class Comment extends Component {
     this.state = {
       userId: "",
       commentDataSource: ds.cloneWithRows([]),
-      comment: ""
+      comments: [],
+      comment: "",
+      postID: null,
+      token: null
     };
 
     this.del = this.del.bind(this);
     this.getMyId = this.getMyId.bind(this);
     this.renderCommentRow = this.renderCommentRow.bind(this);
     this.comment = this.comment.bind(this);
+    this.getComment = this.getComment.bind(this);
   }
   del(commentId) {}
   componentWillMount() {
     this.getMyId();
   }
-  comment(postID) {
+  componentDidMount() {
+    if (this.props.navigation.state.params) {
+      this.setState({
+        postID: this.props.navigation.state.params.postID
+      });
+      for (i = 0; i < this.props.navigation.state.params.comments.length; i++) {
+        this.getComment(this.props.navigation.state.params.comments[i]);
+      }
+    }
+  }
+  getComment(commentID) {
+    fetchComment(commentID, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        var newArray = update(this.state.comments, {
+          $push: [response.data]
+        });
+        this.setState({
+          comments: newArray
+        });
+        this.setState({
+          commentDataSource: ds.cloneWithRows(this.state.comments)
+        });
+      }
+    });
+  }
+  comment() {
     postComment(
-      postID,
+      this.state.postID,
       this.state.comment,
       this.state.token,
       (response, error) => {
         if (error) {
           alert(error);
         } else {
-          alert("Successfully posted your comment!");
+          this.setState({
+            comment: ""
+          });
+          this.getComment(response.data.comment_id);
         }
       }
     );
   }
   async getMyId() {
     try {
+      const savedToken = await AsyncStorage.getItem("@Token:key");
       const userId = await AsyncStorage.getItem("@UserId:key");
       this.setState({
-        userId: userId
+        userId: userId,
+        token: savedToken
       });
     } catch (error) {
       console.log(error);
     }
   }
+
   renderCommentRow(comment) {
-    const user = comment.user;
+    console.log(comment);
+    const time = moment(comment.createdAt).fromNow();
     return (
       <View style={styles.commentContainer}>
-        <View style={styles.user} />
-        <View style={styles.content} />
-        {user == this.state.userId && <View />}
+        <View style={{ marginLeft: "2%" }}>
+          <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000000" }}>
+            {comment.user.username}
+          </Text>
+        </View>
+        <View style={{ marginLeft: "2%" }}>
+          <Text style={{ fontSize: 15 }}>{comment.commenttext}</Text>
+          <Text style={{ fontSize: 8 }}>{time}</Text>
+        </View>
       </View>
     );
   }
@@ -85,7 +132,7 @@ class Comment extends Component {
         <View style={styles.createCommentContainer}>
           <TextInput
             style={{
-              width: "75%",
+              width: "80%",
               borderColor: "gray",
               borderWidth: 1,
               height: "100%"
@@ -97,7 +144,7 @@ class Comment extends Component {
             onPress={this.comment}
             underlayColor="white"
             style={{
-              width: "18%",
+              width: "20%",
               justifyContent: "center",
               height: "100%"
             }}
@@ -121,16 +168,19 @@ class Comment extends Component {
 }
 const styles = StyleSheet.create({
   body: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "#ffffff"
   },
   commentContainer: {
+    flexDirection: "row",
+    height: "10%",
+    marginTop: "1%",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#9999ff"
+  },
+  createCommentContainer: {
+    height: "5%",
     flexDirection: "row"
-  },
-  user: {
-    flex: 1
-  },
-  content: {
-    flex: 9
   }
 });
 module.exports = Comment;

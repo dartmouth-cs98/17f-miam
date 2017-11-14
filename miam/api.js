@@ -69,16 +69,15 @@ function getSignedRequest(file) {
 function uploadFileToS3(signedRequest, file, url) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('PUT', signedRequest);
+    xhr.open("PUT", signedRequest);
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
-        if(xhr.status === 200) {
+        if (xhr.status === 200) {
           resolve({
             status: 200,
             url: url
           });
-        } 
-        else {
+        } else {
           reject({
             status: 401,
             msg: "Could not upload image"
@@ -87,7 +86,7 @@ function uploadFileToS3(signedRequest, file, url) {
       }
     };
     xhr.send(file);
-    });
+  });
 }
 
 export function uploadImage(file) {
@@ -102,11 +101,7 @@ export function createPost(postObj, token, cb) {
   console.log(postObj.imgURL);
   console.log(token);
   axios
-    .post(
-      url,
-      postObj,
-      { headers: { Authorization: token } }
-    )
+    .post(url, postObj, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })
@@ -187,9 +182,21 @@ export function postComment(postID, comment, token, cb) {
   axios
     .post(
       url,
-      { postID: postID, comment: comment },
+      { postID: postID, commenttext: comment },
       { headers: { Authorization: token } }
     )
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function fetchComment(commentID, cb) {
+  const url = `${ROOT_URL}/posts/comments/${commentID}`;
+  axios
+    .get(url)
     .then(response => {
       cb(response, null);
     })
