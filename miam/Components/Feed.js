@@ -147,16 +147,18 @@ export default class Feed extends React.Component {
               style={styles.userIconStyle}
               resizeMode="contain"
             />
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: "bold",
-                marginLeft: "2%",
-                marginTop: "3%"
-              }}
-            >
-              {post.user.username}
-            </Text>
+            {post.user.username && (
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  marginLeft: "2%",
+                  marginTop: "3%"
+                }}
+              >
+                {post.user.username}
+              </Text>
+            )}
           </View>
         </View>
         <View style={styles.separatorLine} />
