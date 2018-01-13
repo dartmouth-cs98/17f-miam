@@ -7,7 +7,8 @@ import {
   TextInput,
   ListView,
   AsyncStorage,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from "react-native";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
@@ -78,21 +79,25 @@ class Comment extends Component {
     });
   }
   comment() {
-    postComment(
-      this.state.postID,
-      this.state.comment,
-      this.state.token,
-      (response, error) => {
-        if (error) {
-          alert(error);
-        } else {
-          this.setState({
-            comment: ""
-          });
-          this.getComment(response.data.comment_id);
+    if (this.state.comment) {
+      postComment(
+        this.state.postID,
+        this.state.comment,
+        this.state.token,
+        (response, error) => {
+          if (error) {
+            alert(error);
+          } else {
+            this.setState({
+              comment: ""
+            });
+            this.getComment(response.data.comment_id);
+          }
         }
-      }
-    );
+      );
+    } else {
+      Alert.alert("Comment is empty.");
+    }
   }
   async getMyId() {
     try {
@@ -111,7 +116,7 @@ class Comment extends Component {
     const time = moment(comment.createdAt).fromNow();
     return (
       <View style={styles.commentContainer}>
-        <View style={{ marginLeft: "2%"}}>
+        <View style={{ marginLeft: "2%" }}>
           <Text style={{ fontSize: 12, fontWeight: "bold", color: "#000000" }}>
             {comment.user.username}
           </Text>

@@ -29,7 +29,6 @@ class SignUp extends React.Component {
     this.saveSignUp = this.saveSignUp.bind(this);
   }
 
-
   async saveSignUp(token) {
     try {
       await AsyncStorage.setItem("@Token:key", token);
@@ -43,13 +42,18 @@ class SignUp extends React.Component {
     e.preventDefault();
 
     if (this.state.email !== "" && this.state.password !== "") {
-      signUpUser(this.state.email, this.state.password, this.state.username, (response, error) => {
-        if (error) {
-          console.log(error);
-        } else {
-          this.saveSignUp(response.data.token);
+      signUpUser(
+        this.state.email,
+        this.state.password,
+        this.state.username,
+        (response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.saveSignUp(response.data.token);
+          }
         }
-      });
+      );
     } else {
       alert("Please sign up with valid email and password");
     }
