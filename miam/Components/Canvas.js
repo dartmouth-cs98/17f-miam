@@ -41,6 +41,7 @@ class Canvas extends React.Component {
       res: null,
       token: ""
     };
+    
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
 
@@ -101,6 +102,11 @@ class Canvas extends React.Component {
         battleId: params.battleId
       });
     } else {
+      if(this.state.image == null){
+        alert("Please select an image or gif.");
+        return;
+      }
+
       const postObj = {
         imgURL: this.state.image,
         hashtags: "",
@@ -147,7 +153,6 @@ class Canvas extends React.Component {
     uploadImage(file)
       .then(function(datum) {
         canvasObj.setState({ image: datum.url });
-        console.log(datum.url);
         canvasObj.createMeme();
       })
       .catch(function(err) {
