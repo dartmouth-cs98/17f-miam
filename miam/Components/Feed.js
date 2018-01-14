@@ -34,7 +34,8 @@ export default class Feed extends React.Component {
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
       headingTabSelected: "new",
-      token: ""
+      token: "",
+      key: 1
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
@@ -126,7 +127,21 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-        this.forceUpdate();
+        fetchPosts((response, error) => {
+          if (error) {
+            alert(error);
+          } else {
+            if (response.data) {
+
+              sortedData = this.sortPostByNewest(response.data);
+              this.setState({
+                data: sortedData,
+                postDataSource: ds.cloneWithRows(sortedData),
+                loaded: true
+              });
+            }
+          }
+        });
       }
     });
   }
@@ -268,6 +283,7 @@ export default class Feed extends React.Component {
         <StatusBarColor />
         <Heading text="MiAM" />
         <ListView
+          key={this.state.key}
           initialListSize={5}
           enableEmptySections={true}
           dataSource={this.state.postDataSource}

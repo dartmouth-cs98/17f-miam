@@ -120,6 +120,7 @@ class Canvas extends React.Component {
         } else {
           this.setState({
             image: null,
+            isLocalPhoto: false,
             tags: [],
             text: "",
             showCaption: false,
