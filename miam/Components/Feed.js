@@ -132,8 +132,10 @@ export default class Feed extends React.Component {
             alert(error);
           } else {
             if (response.data) {
-
-              sortedData = this.sortPostByNewest(response.data);
+              var sortedData = (this.state.headingTabSelected == "new") ? 
+                                this.sortPostByNewest(response.data) : 
+                                this.sortPostByHottest(response.data);
+              
               this.setState({
                 data: sortedData,
                 postDataSource: ds.cloneWithRows(sortedData),
