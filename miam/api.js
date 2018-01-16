@@ -193,10 +193,10 @@ export function fetchComment(commentID, cb) {
     });
 }
 
-export function likePost(postID, token, cb) {
+export function likePost(postID, action, token, cb) {
   const url = `${ROOT_URL}/posts/${postID}`;
   axios
-    .put(url, { action: "like" }, { headers: { Authorization: token } })
+    .put(url, { action: action }, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })

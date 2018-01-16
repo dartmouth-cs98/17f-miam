@@ -35,6 +35,7 @@ export default class Feed extends React.Component {
       loaded: false,
       headingTabSelected: "new",
       token: "",
+      userId: "",
       key: 1
     };
     this.nav = props.nav;
@@ -66,6 +67,7 @@ export default class Feed extends React.Component {
       const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
       this.setState({
+        userId: userId,
         token: token
       });
       if (token && userId === null) {
@@ -120,13 +122,15 @@ export default class Feed extends React.Component {
       headingTabSelected: "hot"
     });
   }
-  like(postID) {
+  like(postID, action) {
     console.log(postID);
     console.log(this.state.token);
-    likePost(postID, this.state.token, (response, error) => {
+    likePost(postID, action, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
+        
+        // Re-fetching posts
         fetchPosts((response, error) => {
           if (error) {
             alert(error);
@@ -200,6 +204,17 @@ export default class Feed extends React.Component {
       post.user.username.charAt(0);
     const time = moment(post.createdAt).fromNow();
 
+    const likeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "like")}>
+                        <Icon name="favorite-border" color="#cc6699" size={25} />
+                       </TouchableHighlight>;
+    const unlikeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "unlike")}>
+                          <Icon name="favorite" color="#cc6699" size={25} />
+                         </TouchableHighlight>;
+    var id = this.state.userId;
+    var postLiked = post.likes.some(function (likeId) {
+      return likeId === id;
+    });
+
     let meme = <Meme imgURL={post.meme.imgURL} text={post.meme.text} />;
 
     return (
@@ -238,12 +253,7 @@ export default class Feed extends React.Component {
 
         <View style={styles.postFooterContainer}>
           <View style={styles.postFooterIconContainer}>
-            <TouchableHighlight
-              underlayColor="white"
-              onPress={() => this.like(post._id)}
-            >
-              <Icon name="favorite-border" color="#cc6699" size={25} />
-            </TouchableHighlight>
+            {postLiked ? unlikeButton : likeButton}
             <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
               {post.likes.length}
             </Text>
