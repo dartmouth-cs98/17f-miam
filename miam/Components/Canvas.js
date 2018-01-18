@@ -41,7 +41,7 @@ class Canvas extends React.Component {
       res: null,
       token: ""
     };
-    
+
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
 
