@@ -50,6 +50,8 @@ class Canvas extends React.Component {
     this.uploadLocalPhoto = this.uploadLocalPhoto.bind(this);
     this.translate = this.translate.bind(this);
     this.retrieveToken = this.retrieveToken.bind(this);
+
+    this.editImage = this.editImage.bind(this);
   }
 
   componentWillMount() {
@@ -214,6 +216,16 @@ class Canvas extends React.Component {
     }
   }
 
+  editImage() {
+    if(this.state.image != null){
+      var imgURL = this.state.image;
+      this.props.navigation.navigate("Editor", { imgURL: imgURL });
+    }
+    else{
+      alert("Select an image before entering Editor Mode");
+    }
+  }
+
   render() {
     return (
       <View style={styles.body}>
@@ -333,6 +345,13 @@ class Canvas extends React.Component {
                 underlayColor="white"
               >
                 <Icon name="gif" color="#ac3973" size={40} />
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                onPress={this.editImage}
+                underlayColor="white"
+              >
+                <Icon name="edit" color="#ac3973" size={40} />
               </TouchableHighlight>
             </View>
           </View>

@@ -281,7 +281,7 @@ export default class Feed extends React.Component {
                   imgURL: post.meme.imgURL
                 })}
             >
-              <Icon name="subdirectory-arrow-right" color="#cc6699" size={25} />
+              <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
           </View>
         </View>

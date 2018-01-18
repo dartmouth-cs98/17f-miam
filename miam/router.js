@@ -41,6 +41,7 @@ import Search from "./Components/Search";
 import Comment from "./Components/Comment";
 import SearchProfile from "./Components/SearchProfile";
 import SearchProfileList from "./Components/SearchProfileList";
+import Editor from "./Components/Editor";
 const navBarMainColor = "#F4F5F9";
 const navBarTintColor = "#6C56BA";
 const accentColor = "#D0CCDF";
@@ -100,6 +101,9 @@ export const AuthStack = StackNavigator(
     },
     SearchProfileList: {
       screen: SearchProfileList
+    },
+    Editor: {
+      screen: Editor
     }
   },
   {
