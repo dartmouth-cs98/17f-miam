@@ -21,6 +21,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { captureRef } from "react-native-view-shot";
 import { createPost } from "../api";
 import { uploadImage } from "../api";
+import Test from "./CanvasObjects/TestCanvasObj.js";
 // import { RNS3 } from "react-native-aws3";
 import Expo from "expo";
 
@@ -56,21 +57,18 @@ class Editor extends React.Component {
           backButtonVisible={true}
           nav={this.props.navigation}
         />
+        <View>
         <Image
           source={{ uri: this.state.imgURL }}
           style={styles.memeStyle}
           resizeMode="contain"
-        />
-        <Text style={
-          {
-            color: "#FFFFFF",
-            fontSize: 30,
-            fontWeight: 'bold',
-            textAlign: "center"
-          }
-        }>
-          Hello World! I am still under construction :)
-        </Text>
+        >
+          <Text style={styles.testStyle}>
+            Hello World!
+          </Text>
+          <Test/>
+        </Image>
+        </View>
       </View>
     );
   }
@@ -87,5 +85,19 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     alignSelf: "center"
+  },
+  testStyle: {
+    position: 'absolute',
+    overflow: 'visible',
+    color: "#FF0000",
+    fontSize: 30,
+    fontWeight: 'bold',
+    textAlign: "center",
+    backgroundColor: '#00000000',
+    transform: [
+          {translateX: 0},
+          {translateY: 0},
+          {rotate: '0deg'}
+    ]
   }
 });
