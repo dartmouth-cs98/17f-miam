@@ -1,0 +1,22 @@
+[
+  {
+    "_id": "adsfsdfsadfhdsjakfjklsdjf",
+    "theme": "dartmouth life",
+    "startTime": "01/18/2018 13:00",
+    "participants": [
+      { "userId": "asdsdfasldkfjsdaklfjklsadjfklasdj" },
+      { "userId": "sadfasdfdsfads" }
+    ],
+    "messages": [
+      {
+        "memeId": "asd312211kljlk1j3lk213",
+        "text": "Hi",
+        "likes": [],
+        "sender": "asdfsadfakldsfjsdklfjsda",
+        "time": "17:00 PM"
+      }
+    ],
+    "winner": "",
+    "initiatedBy": "fgfdgdfgfdgrtretret"
+  }
+]

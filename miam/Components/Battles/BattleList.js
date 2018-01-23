@@ -22,8 +22,11 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
 
-// Enable pusher logging - don't include this in production
-// Pusher.logToConsole = true;
+// <SearchProfile
+//            nav={this.props.navigation}
+//            token={this.state.token}
+//            myId={this.state.myId}
+//          />
 
 export default class BattleList extends React.Component {
   constructor(props) {
@@ -40,8 +43,9 @@ export default class BattleList extends React.Component {
       loaded: false,
       selectedBattle: battleId,
       pusher: {},
-      myId: '',
-      token: ''
+      myId: "",
+      token: "",
+      headingTabSelected: "hot"
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -55,8 +59,8 @@ export default class BattleList extends React.Component {
 
   async getMyId() {
     try {
-      const userId = await AsyncStorage.getItem('@UserId:key');
-      const token = await AsyncStorage.getItem('@Token:key');
+      const userId = await AsyncStorage.getItem("@UserId:key");
+      const token = await AsyncStorage.getItem("@Token:key");
       this.setState({
         myId: userId,
         token: token
@@ -67,9 +71,8 @@ export default class BattleList extends React.Component {
   }
 
   componentWillMount() {
-    if (this.state.myId === '' || this.state.token === '') {
-      this.getMyId().
-      then((value) => {
+    if (this.state.myId === "" || this.state.token === "") {
+      this.getMyId().then(value => {
         fetchBattles((response, error) => {
           if (error) {
             console.log(error);
@@ -84,14 +87,14 @@ export default class BattleList extends React.Component {
     }
   }
 
-
-
   selectBattle(battleId) {
     this.setState({
       selectedBattle: battleId
     });
   }
+  newHeadingTabPress() {}
 
+  hotHeadingTabPress() {}
   returnToList() {
     this.setState({
       selectedBattle: ""
@@ -100,16 +103,32 @@ export default class BattleList extends React.Component {
   }
 
   renderBattleRow(battle) {
+    var tempUsrImg =
+      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
+      battle.participant1.username.charAt(0);
     return (
       <View style={styles.battleContainer}>
         <View style={styles.contenders}>
-          <Text style={{ fontSize: 20, color: "#ffffff" }}>
-            {battle.participant1.username}
-          </Text>
-          <View style={{ alignSelf: "center" }}>
-            <Icon name="toys" color="#ffffff" size={40} />
+          <View style={styles.iconContainer}>
+            <Image
+              source={{ uri: tempUsrImg }}
+              style={styles.userIconStyle}
+              resizeMode="contain"
+            />
+            <Text>Challenger</Text>
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "bold",
+                marginLeft: "2%",
+                marginTop: "3%"
+              }}
+            >
+              {battle.participant1.username}
+            </Text>
           </View>
-          <View style={{ alignSelf: "flex-end" }}>
+          <View>
+            <Text>Participants</Text>
             <Text style={{ fontSize: 20, color: "#ffffff" }}>
               {battle.participant2.username}
             </Text>
@@ -139,21 +158,60 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading text="MEME Battles" />
-          <SearchProfile
-            nav={this.props.navigation}
-            token={this.state.token}
-            myId={this.state.myId}/>
+          <View style={styles.headingTabBar}>
+            <TouchableHighlight
+              onPress={this.newHeadingTabPress.bind(this)}
+              style={[
+                styles.headingTabButton,
+                this.state.headingTabSelected == "new" &&
+                  styles.activeHeadingTabView
+              ]}
+              underlayColor="white"
+            >
+              <Text
+                style={[
+                  styles.headingTabText,
+                  this.state.headingTabSelected == "new" &&
+                    styles.activeHeadingTabText
+                ]}
+              >
+                NEW
+              </Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={this.hotHeadingTabPress.bind(this)}
+              style={[
+                styles.headingTabButton,
+                this.state.headingTabSelected == "hot" &&
+                  styles.activeHeadingTabView
+              ]}
+              underlayColor="white"
+            >
+              <Text
+                style={[
+                  styles.headingTabText,
+                  this.state.headingTabSelected == "hot" &&
+                    styles.activeHeadingTabText
+                ]}
+              >
+                HOT
+              </Text>
+            </TouchableHighlight>
+          </View>
           <ScrollView>
-            <ListView
-              contentContainerStyle={styles.battlelist}
-              initialListSize={5}
-              enableEmptySections={true}
-              dataSource={this.state.battleDataSource}
-              renderRow={battle => {
-                return this.renderBattleRow(battle);
-              }}
-            />
+            {this.state.battleDataSource.getRowCount() !== 0 && (
+              <ListView
+                contentContainerStyle={styles.battlelist}
+                initialListSize={5}
+                enableEmptySections={true}
+                dataSource={this.state.battleDataSource}
+                renderRow={battle => {
+                  return this.renderBattleRow(battle);
+                }}
+              />
+            )}
           </ScrollView>
+
           <NavigationBar navigation={this.props.navigation} />
         </View>
       );
@@ -171,21 +229,27 @@ export default class BattleList extends React.Component {
         </View>
       );
     } else {
-      return <View/>;
+      return <View />;
     }
   }
 }
 
 const styles = StyleSheet.create({
   body: {
-    flex: 1,
-    backgroundColor: "#5c5c8a"
+    flex: 1
   },
   battlelist: {
-    alignItems: "center"
+    alignItems: "center",
+    marginLeft: "2%",
+    marginRight: "2%",
+    paddingTop: "3%",
+    paddingHorizontal: "2%",
+    backgroundColor: "#eee6ff",
+    borderColor: "#5c5c8a",
+    borderRadius: 0.5,
+    borderWidth: 2
   },
   battleContainer: {
-    backgroundColor: "#732673",
     borderColor: "#000000",
     flexDirection: "column",
     width: 0.9 * vw,
@@ -217,6 +281,43 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     justifyContent: "space-between"
+  },
+  headingTabBar: {
+    width: "50%",
+    height: 28,
+    borderWidth: 1,
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    alignSelf: "center",
+    margin: "3%"
+  },
+  headingTabButton: {
+    flex: 1,
+    alignItems: "stretch",
+    justifyContent: "center"
+  },
+  headingTabText: {
+    height: "100%",
+    alignSelf: "center",
+    fontWeight: "bold",
+    backgroundColor: "#00000000",
+    top: "18%"
+  },
+  activeHeadingTabView: {
+    backgroundColor: "#886BEA"
+  },
+  activeHeadingTabText: {
+    color: "white"
+  },
+  imagePreview: {
+    width: 300,
+    height: 200,
+    marginTop: "10%",
+    alignSelf: "center",
+    shadowOpacity: 0.3,
+    shadowRadius: 3
   }
 });
 
