@@ -210,6 +210,39 @@ export default class BattleList extends React.Component {
                 }}
               />
             )}
+            {this.state.battleDataSource.getRowCount() === 0 && (
+              <View>
+                <Text
+                  style={{
+                    color: "#000000",
+                    textAlign: "center",
+                    fontWeight: "bold"
+                  }}
+                >
+                  Oh no!! Nothing here yet...
+                </Text>
+                <Text
+                  style={{
+                    color: "#000000",
+                    textAlign: "center",
+                    fontWeight: "bold"
+                  }}
+                >
+                  Initiate a battle yourself!
+                </Text>
+                <View style={styles.meme}>
+                  <Image
+                    source={{
+                      uri:
+                        "https://media.giphy.com/media/X0QKGRNCxnwWs/giphy.gif"
+                    }}
+                    style={styles.imagePreview}
+                    resizeMode="contain"
+                    ref={ref => (this.meme = ref)}
+                  />
+                </View>
+              </View>
+            )}
           </ScrollView>
 
           <NavigationBar navigation={this.props.navigation} />
