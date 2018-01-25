@@ -22,6 +22,8 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
 
+var mockData = require("../../mock_data/mockBattleData.json");
+
 // Enable pusher logging - don't include this in production
 // Pusher.logToConsole = true;
 
@@ -36,7 +38,7 @@ export default class BattleList extends React.Component {
     }
 
     this.state = {
-      battleDataSource: ds.cloneWithRows([]),
+      battleDataSource: ds.cloneWithRows(mockData),
       loaded: false,
       selectedBattle: battleId,
       pusher: {},
