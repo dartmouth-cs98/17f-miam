@@ -21,6 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
 import { getUserProfile } from "../api";
+import { uploadProfile } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -61,7 +62,7 @@ export default class Profile extends React.Component {
 
   async getUser() {
     try {
-      const userId = await AsyncStorage.getItem("@UserId:key");
+      // const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
       getUserProfile(token, async (response, error) => {
         if (response.data) {
@@ -71,9 +72,8 @@ export default class Profile extends React.Component {
             following: response.data.following.length,
             score: response.data.score,
             battlesWon: response.data.battlesWon.length,
-            image: response.data.profileUrl,
+            image: response.data.profilePic,
           });
-          console.log(response.data);
         } else {
           console.log(error);
         }
@@ -115,9 +115,30 @@ export default class Profile extends React.Component {
 
     if (!result.cancelled) {
       this.setState({ image: result.uri });
-      console.log(result);
+      if (this.state.image !== null) {
+        const token = await AsyncStorage.getItem("@Token:key");
+        uploadProfile(
+          result.uri,
+          token,
+          (response, error) => {
+            if (error) {
+              console.log(error);
+            } else {
+              //this.saveProfile(response.data.token);
+            }
+          }
+        );
+      }
     }
   };
+
+  async saveProfile(token) {
+    try {
+      await AsyncStorage.setItem("@Token:key", token);
+    } catch (error) {
+      console.log(`Cannot save Profile. ${error}`);
+    }
+  }
 
   onChallenge() {
     console.log("onChallenge hasnt been finished!");
