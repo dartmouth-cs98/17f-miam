@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   Dimensions,
   TextInput,
-  AsyncStorage
+  AsyncStorage,
+  Slider
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Isao } from "react-native-textinput-effects";
@@ -53,6 +54,9 @@ class Editor extends React.Component {
   }
 
   render() {
+
+    // Layer processing
+
     return (
       <View style={styles.body}>
         <StatusBarColor />
@@ -66,12 +70,51 @@ class Editor extends React.Component {
           style={styles.memeStyle}
           resizeMode="contain"
         >
-          {this.state.selectedType == "text" && 
-            <Text style={styles.testStyle}> Text.obj was selected! </Text>
-          }
+          {/* TODO: Place Meme Objects HERE */}
           <Test/>
           <TextObj editor={this} text="Hello World!"/>
         </Image>
+
+        <View style={styles.mainEditorDrawer}>
+
+          <Text style={styles.mainEditorDrawerTitleText}> EDITOR DRAWER </Text>
+
+          <View style={styles.mainEditorDrawerRow}>
+            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="text-fields" color="#FFFFFF" size={25}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Add Text</Text>
+              </View>
+            </TouchableHighlight>
+
+            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="collections" color="#FFFFFF" size={25}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+
+          <View style={styles.mainEditorDrawerRow}>
+            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#B1D877"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="gif" color="#FFFFFF" size={25}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
+              </View>
+            </TouchableHighlight>
+
+            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="layers" color="#FFFFFF" size={25}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Layers</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </View>
+
+        {
+          // this.state.selectedType == "text" && 
+        }
       </View>
     );
   }
@@ -83,6 +126,52 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     backgroundColor: "#000000"
+  },
+  mainEditorDrawer: {
+    alignSelf: 'center',
+    backgroundColor: "#000000",
+    borderColor: "#FFFFFF",
+    borderBottomWidth: 2,
+    borderTopWidth: 2,
+    marginTop: 50,
+    width: "75%",
+    flexDirection: "column",
+    paddingTop: 5,
+    paddingBottom: 5,
+    overflow: "visible"
+  },
+  mainEditorDrawerTitleText: {
+    position: "absolute", 
+    top: -20, 
+    color: "#FFFFFF", 
+    fontWeight: "bold"
+  },
+  mainEditorDrawerRow: {
+    flexDirection: "row",
+    alignSelf: "center"
+  },
+  mainEditorDrawerButton: {
+    margin: 3, 
+    padding: 5, 
+    borderRadius: 3
+  },
+  mainEditorDrawerButtonView: {
+    alignItems: 'center',
+    width: 125,
+    flexDirection: "row"
+  },
+  mainEditorDrawerButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "bold"
+  },
+  editBox: {
+    alignSelf: 'center',
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    position: 'absolute',
+    width: "90%",
+    bottom: "2%"
   },
   memeStyle: {
     width: 300,

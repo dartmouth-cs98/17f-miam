@@ -14,13 +14,14 @@ import {
 
 import AvatarEditor from "react-avatar-editor";
 import Button from "react-native-button";
-
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
+import { ImagePicker } from "expo";
 
 import { getUserProfile } from "../api";
+import { uploadProfile } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -42,22 +43,26 @@ export default class Profile extends React.Component {
       score: -1,
       followers: -1,
       following: -1,
-      battlesWon: -1
+      battlesWon: -1,
+      image: null,
     };
 
     this.signOut = this.signOut.bind(this);
+    this.onChangeProfile = this.onChangeProfile.bind(this);
   }
+
   componentDidMount() {
     this.getUser();
     this.setState({
       dataSource: lv.cloneWithRows(listData),
       postDataSource: ds.cloneWithRows(customData),
-      loaded: true
+      loaded: true,
     });
   }
+
   async getUser() {
     try {
-      const userId = await AsyncStorage.getItem("@UserId:key");
+      // const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
       getUserProfile(token, async (response, error) => {
         if (response.data) {
@@ -66,9 +71,9 @@ export default class Profile extends React.Component {
             followers: response.data.followers.length,
             following: response.data.following.length,
             score: response.data.score,
-            battlesWon: response.data.battlesWon.length
+            battlesWon: response.data.battlesWon.length,
+            image: response.data.profilePic,
           });
-          console.log(response.data);
         } else {
           console.log(error);
         }
@@ -102,8 +107,41 @@ export default class Profile extends React.Component {
     console.log("onAdd hasnt been finished!");
   }
 
-  onMessage() {
-    console.log("onMessage hasnt been finished!");
+  onChangeProfile = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3]
+    });
+
+    if (!result.cancelled) {
+      this.setState({ image: result.uri });
+      if (this.state.image !== null) {
+        const token = await AsyncStorage.getItem("@Token:key");
+        uploadProfile(
+          result.uri,
+          token,
+          (response, error) => {
+            if (error) {
+              console.log(error);
+            } else {
+              //this.saveProfile(response.data.token);
+            }
+          }
+        );
+      }
+    }
+  };
+
+  async saveProfile(token) {
+    try {
+      await AsyncStorage.setItem("@Token:key", token);
+    } catch (error) {
+      console.log(`Cannot save Profile. ${error}`);
+    }
+  }
+
+  onChallenge() {
+    console.log("onChallenge hasnt been finished!");
   }
 
   setEditorRef = editor => (this.editor = editor);
@@ -136,6 +174,10 @@ export default class Profile extends React.Component {
   }
 
   render() {
+    let imageUrl = "https://thebenclark.files.wordpress.com/2014/03/facebook-default-no-profile-pic.jpg";
+    if (this.state.image != null) {
+      imageUrl = this.state.image;
+    }
     return (
       <View style={styles.body}>
         <StatusBarColor />
@@ -153,15 +195,22 @@ export default class Profile extends React.Component {
               styleDisabled={{ color: "red" }}
               onPress={() => this.onAdd()}
             >
-              +
+              Follow
             </Button>
             <View style={styles.profiles}>
               <Image
                 style={styles.profilePicture}
                 source={{
-                  uri: "http://qimg.hxnews.com/2017/0912/1505204920938.jpg"
+                  uri: imageUrl
                 }}
               />
+              <Button
+                containerStyle={styles.profileButtonContainer}
+                style={styles.profileButton}
+                onPress={() => this.onChangeProfile()}
+              >
+                Change Profile
+              </Button>
               <Text style={styles.name}> {this.state.userName} </Text>
               <Text style={styles.score}>Score: {this.state.score}</Text>
               <Text style={styles.battlewon}>
@@ -172,9 +221,9 @@ export default class Profile extends React.Component {
               containerStyle={styles.buttonContainer}
               style={styles.messageButton}
               styleDisabled={{ color: "red" }}
-              onPress={() => this.onMessage()}
+              onPress={() => this.onChallenge()}
             >
-              M
+              Challenge
             </Button>
           </Image>
           <View style={styles.bodyMiddle}>
@@ -224,19 +273,19 @@ const styles = StyleSheet.create({
     height: 200
   },
   buttonContainer: {
-    height: 35,
-    width: 35,
+    height: 20,
+    width: 70,
     overflow: "hidden",
-    borderRadius: 20,
-    backgroundColor: "white"
+    borderRadius: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
   },
   addButton: {
-    fontSize: 30,
-    color: "black"
+    fontSize: 20,
+    color: "grey"
   },
   messageButton: {
-    fontSize: 30,
-    color: "black"
+    fontSize: 20,
+    color: "grey"
   },
   profiles: {
     justifyContent: "center",
@@ -315,6 +364,18 @@ const styles = StyleSheet.create({
   },
   fda: {
     color: "#ffffff"
+  },
+  profileButtonContainer: {
+    height: 20,
+    width: 100,
+    marginTop: 5,
+    overflow: "hidden",
+    borderRadius: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+  },
+  profileButton: {
+    fontSize: 12,
+    color: "grey"
   }
 });
 

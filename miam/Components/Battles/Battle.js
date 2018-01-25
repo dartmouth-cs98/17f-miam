@@ -24,6 +24,7 @@ import Button from "react-native-button";
 import { getBattle, sendMessage } from "../../api";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Meme from "../Meme";
+import moment from "moment";
 
 class Battle extends React.Component {
   constructor(props) {
@@ -32,10 +33,7 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: "",
-      gifUrl: null,
-      participating: false,
-      participant1: {},
-      participant2: {}
+      memeId: "",
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
@@ -46,10 +44,12 @@ class Battle extends React.Component {
     });
 
     this.sendMsg = this.sendMsg.bind(this);
+    this.sendTextMsg = this.sendTextMsg.bind(this);
+    this.sendMemeMsg = this.sendMemeMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
     this.renderInputBar = this.renderInputBar.bind(this);
-    this.sendGif = this.sendGif.bind(this);
-    this.sendMeme = this.sendMeme.bind(this);
+    // this.sendGif = this.sendGif.bind(this);
+    // this.sendMeme = this.sendMeme.bind(this);
     this.renderMeme = this.renderMeme.bind(this);
     this.renderText = this.renderText.bind(this);
   }
@@ -62,22 +62,8 @@ class Battle extends React.Component {
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
           messages: response.messages,
-          participant1: response.participant1,
-          participant2: response.participant2
         });
         console.log(response);
-        if (this.props.myId === response.participant1._id) {
-          this.setState({
-            participating: true,
-            participant1: this.state.participant2,
-            participant2: this.state.participant1
-          });
-        } else if (this.props.myId === response.participant2._id) {
-          this.setState({
-            participating: true
-          });
-        }
-
       }
     });
   }
@@ -90,128 +76,133 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({ animated: true });
     }
-    const params = this.props.navigation.state.params;
-    if (params && params.gifUrl) {
-      this.setState({ gifUrl: params.gifUrl, text: params.memetext }, () => {
-        this.sendMsg();
-      });
-    }
+    // const params = this.props.navigation.state.params;
+    // if (params && params.gifUrl) {
+    //   this.setState({ gifUrl: params.gifUrl, text: params.memetext }, () => {
+    //     this.sendMsg();
+    //   });
+    // }
   }
 
   handleMessage(message) {
     const messages = this.state.messages.slice();
     messages.push(message);
-      this.setState({
-        messages: messages,
-        msgDataSource: ds.cloneWithRows(messages)
-      });
+    this.setState({
+      messages: messages,
+      msgDataSource: ds.cloneWithRows(messages)
+    });
   }
 
-  sendMsg() {
-    let msg = {
-      text: this.state.text,
-      gifURL: this.state.gifUrl
-    };
-    console.log("Token is" + this.props.token);
-
-    if (msg.text !== "" || msg.gifURL !== "") {
-      sendMessage(
-        this.props.battleId,
-        this.props.token,
-        msg,
-        (response, error) => {
-          if (error) {
-            console.log(error);
-          } else {
-            this.setState({
-              text: "",
-              gifUrl: null
-            });
-            this.fetchBattle();
-          }
+  sendMsg(msg) {
+    sendMessage(
+      this.props.battleId,
+      this.props.token,
+      msg,
+      (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          this.setState({
+            text: "",
+            memeId: ""
+          });
         }
-      );
+      }
+    );
+  }
+
+  sendTextMsg() {
+    if (this.state.text !== "") {
+      let msg = {
+        text: this.state.text,
+        memeId: ''
+      };
+      this.sendMsg(msg);
     } else {
-      alert("Message cannot be empty or you have to send a Meme!");
+      alert("Message cannot be empty!");
     }
   }
 
-  sendGif() {
-    this.props.navigation.navigate("Search", {
-      source: "battle",
-      battleId: this.props.battleId
-    });
+  sendMemeMsg() {
+    if (this.state.text !== "") {
+      let msg = {
+        text: '',
+        memeId: this.state.memeId
+      };
+      this.sendMsg(msg);
+    } else {
+      alert("You have to select a Meme!");
+    }
   }
 
-  sendMeme() {
-    this.props.navigation.navigate("Canvas", {
-      source: "battle",
-      battleId: this.props.battleId
-    });
-  }
+  // sendGif() {
+  //   this.props.navigation.navigate("Search", {
+  //     source: "battle",
+  //     battleId: this.props.battleId
+  //   });
+  // }
+  //
+  // sendMeme() {
+  //   this.props.navigation.navigate("Canvas", {
+  //     source: "battle",
+  //     battleId: this.props.battleId
+  //   });
+  // }
 
   renderMsgRow(msg) {
 
-    var isLeft = false;
+    // if (this.state.participating && msg.sender === this.props.myId) {
+    //   isLeft = false;
+    // } else {
+    //   isLeft = true;
+    // }
 
-    if (this.state.participating && msg.sender === this.props.myId) {
-      isLeft = false;
-    } else {
-      isLeft = true;
-    }
+    // const atlas = username ? username.charAt(0).toUpperCase() : "A";
+    //
+    // var avator = (
+    //   <View style={styles.avator}>
+    //     <Text
+    //       style={{
+    //         fontSize: 20,
+    //         alignSelf: "center",
+    //         backgroundColor: "transparent",
+    //         marginTop: 5
+    //       }}
+    //     >
+    //       {atlas}
+    //     </Text>
+    //   </View>
+    // );
 
-    const username =
-      msg.sender === this.state.participant1._id
-        ? this.state.participant1.username
-        : this.state.participant2.username;
-    const atlas = username ? username.charAt(0).toUpperCase() : "A";
+    var likeButton = (<IconMaterial name="favorite-border" color="#cc6699" size={25} />);
 
-    var avator = (
-      <View style={styles.avator}>
-        <Text
-          style={{
-            fontSize: 20,
-            alignSelf: "center",
-            backgroundColor: "transparent",
-            marginTop: 5
-          }}
-        >
-          {atlas}
-        </Text>
-      </View>
-    );
+    // var bubbleStyles = isLeft
+    //   ? [styles.messageBubble, styles.messageBubbleLeft]
+    //   : [styles.messageBubble, styles.messageBubbleRight];
 
-    var leftSpacer = isLeft ? avator : null;
-    var rightSpacer = isLeft ? null : avator;
+    // var bubbleTextStyle = isLeft
+    //   ? styles.messageBubbleTextLeft
+    //   : styles.messageBubbleTextRight;
 
-    var bubbleStyles = isLeft
-      ? [styles.messageBubble, styles.messageBubbleLeft]
-      : [styles.messageBubble, styles.messageBubbleRight];
+    // var align = { justifyContent: "flex-start" };
 
-    var bubbleTextStyle = isLeft
-      ? styles.messageBubbleTextLeft
-      : styles.messageBubbleTextRight;
 
-    var align = isLeft
-      ? { justifyContent: "flex-start" }
-      : { justifyContent: "flex-end" };
+    // const time = moment(msg.createdAt).fromNow();
 
-    if (msg.text !== "" || msg.gifURL !== null) {
+    if (msg.text !== "" || msg.memeId !== "") {
       return (
-        <View
-          style={[
-            { flexDirection: "row", alignItems: "flex-start", margin: 5 },
-            align
-          ]}
-        >
-          {leftSpacer}
-          <View style={bubbleStyles}>
-            {msg.text !== "" &&
-              msg.gifURL === null &&
-              this.renderText(msg.text, bubbleTextStyle)}
-            {msg.gifURL !== null && this.renderMeme(msg)}
+        <View style={styles.messageContainer}>
+          <View>
+            <Text>
+              {msg.user.username}
+            </Text>
           </View>
-          {rightSpacer}
+          <View>
+            {msg.text !== "" && this.renderText(msg.text)}
+            {msg.memeId !== "" && this.renderMeme(msg.memeId)}
+          </View>
+          <Text>{time}</Text>
+          {likeButton}
         </View>
       );
     } else {
@@ -219,25 +210,29 @@ class Battle extends React.Component {
     }
   }
 
-  renderMeme(msg) {
-    if (msg.text === null) {
-      return (
-        <View>
-          <Image
-            source={{ uri: msg.gifURL }}
-            style={styles.memeStyle}
-            resizeMode="contain"
-          />
-        </View>
-      );
-    } else {
-      console.log(msg.gifURL);
-      return (
-        <View>
-          <Meme imgURL={msg.gifURL} text={msg.text} />
-        </View>
-      );
-    }
+
+
+  renderMeme(memeId) {
+    // if (msg.text === null) {
+    //   return (
+    //     <View>
+    //       <Image
+    //         source={{ uri: msg.gifURL }}
+    //         style={styles.memeStyle}
+    //         resizeMode="contain"
+    //       />
+    //     </View>
+    //   );
+    // } else {
+    //   console.log(msg.gifURL);
+      // return (
+      //   <View>
+      //     <Meme imgURL={msg.gifURL} text={msg.text} />
+      //   </View>
+      // );
+    // }
+
+    return <View />;
   }
 
   renderText(text, bubbleTextStyle) {
@@ -253,15 +248,16 @@ class Battle extends React.Component {
     );
   }
 
+  // <TouchableHighlight underlayColor="white" onPress={this.sendGif}>
+  //   <IconMaterial name="gif" color="#ac3973" size={40} />
+  // </TouchableHighlight>
+  // <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
+  //   <IconMaterial name="control-point" color="#ac3973" size={35} />
+  // </TouchableHighlight>
+
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-        <TouchableHighlight underlayColor="white" onPress={this.sendGif}>
-          <IconMaterial name="gif" color="#ac3973" size={40} />
-        </TouchableHighlight>
-        <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
-          <IconMaterial name="control-point" color="#ac3973" size={35} />
-        </TouchableHighlight>
         <TextInput
           onChangeText={text => this.setState({ text })}
           placeholder="Say something..."
@@ -270,7 +266,7 @@ class Battle extends React.Component {
           style={styles.textArea}
         />
         <TouchableHighlight
-          onPress={() => this.sendMsg()}
+          onPress={() => this.sendTextMsg()}
           style={styles.sendButton}
         >
           <Text style={{ color: "white" }}>Send</Text>
@@ -305,7 +301,7 @@ class Battle extends React.Component {
               return this.renderMsgRow(msg);
             }}
           />
-          {this.state.participating && this.renderInputBar()}
+          {this.renderInputBar()}
         </KeyboardAwareScrollView>
       </View>
     );
@@ -316,17 +312,6 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     backgroundColor: "#ffffff"
-  },
-  heading: {
-    height: "8%",
-    width: "100%",
-    backgroundColor: "#bf80ff",
-    justifyContent: "center"
-  },
-  logo: {
-    color: "#ffffff",
-    fontSize: 40,
-    textAlign: "center"
   },
 
   // Input Bar
@@ -360,6 +345,16 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 5,
     backgroundColor: "#66db30"
+  },
+
+  messageContainer: {
+    flexDirection: "column",
+    flex: 1,
+    marginTop: "2.5%",
+    borderBottomWidth: 1,
+    paddingBottom: "2.5%",
+    borderBottomColor: "#9999ff",
+    marginLeft: "2%"
   },
 
   //MessageBubble
