@@ -124,7 +124,7 @@ export default class Profile extends React.Component {
             if (error) {
               console.log(error);
             } else {
-              this.saveProfile(response.data.token);
+              //this.saveProfile(response.data.token);
             }
           }
         );
