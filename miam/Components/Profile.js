@@ -175,7 +175,7 @@ export default class Profile extends React.Component {
 
   render() {
     let imageUrl = "https://thebenclark.files.wordpress.com/2014/03/facebook-default-no-profile-pic.jpg";
-    if (this.state.image != null ) {
+    if (this.state.image != null) {
       imageUrl = this.state.image;
     }
     return (
