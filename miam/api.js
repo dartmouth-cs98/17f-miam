@@ -84,10 +84,10 @@ export function uploadImage(file) {
   });
 }
 
-export function createBattle(participants, token, cb) {
+export function createBattle(theme, token, cb) {
   const url = `${ROOT_URL}/battles`;
   axios
-    .post(url, participants, { headers: { Authorization: token } })
+    .post(url, { theme }, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })
