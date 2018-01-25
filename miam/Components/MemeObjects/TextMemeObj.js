@@ -9,15 +9,18 @@ import {
     Dimensions
 } from 'react-native';
 
-var {
-  height: deviceHeight,
-  width: deviceWidth
-} = Dimensions.get('window');
-
-// Help from http://browniefed.com/react-native-animation-book/basic/DRAG.html
-class TextCanvasObj extends React.Component{
+class TextMemeObj extends React.Component{
 	constructor(props){
 	    super(props);
+	    this.state = {
+	    	type: "text",
+	    	color: '#FFFFFF',
+	    	fontSize: 20,
+	    	editor: props.editor || null,
+	    	text: props.text || ""
+	    };
+
+	    this.id = props.id;
 	}
 
 	componentWillMount(){
@@ -26,8 +29,13 @@ class TextCanvasObj extends React.Component{
 
 	    this._animatedValue.addListener((value) => this._value = value);
 	    this._panResponder = PanResponder.create({
+	    	onStartShouldSetPanResponder: (evt, gestureState) => true,
+      		onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
 	        onMoveShouldSetResponderCapture: () => true, //Tell iOS that we are allowing the movement
 	        onMoveShouldSetPanResponderCapture: () => true, // Same here, tell iOS that we allow dragging
+	        onPanResponderStart: (e, gestureState) => {
+			  this.state.editor.setState({ selected: this, selectedType: "text" });
+	        },
 	        onPanResponderGrant: (e, gestureState) => {
 	          this._animatedValue.setOffset({x: this._value.x, y: this._value.y});
 	          this._animatedValue.setValue({x: 0, y: 0});
@@ -42,51 +50,41 @@ class TextCanvasObj extends React.Component{
 	}
 
     render(){
-
-		var interpolatedColorAnimation = this._animatedValue.y.interpolate({
-		      inputRange: [0, deviceHeight - 300],
-		      outputRange: ['rgba(229,27,66,1)', 'rgba(28,170,190,1)'],
-		      extrapolate: 'clamp'
-		    });
-
-	    var interpolatedRotateAnimation = this._animatedValue.x.interpolate({
-		      inputRange: [0, deviceWidth/2, deviceWidth],
-		      outputRange: ['-360deg', '0deg', '360deg']
-		    });
-
         return (
-            <View style={styles.container}>
 	        <Animated.View 
-	          style={[
-	              styles.box, 
+	          style={
 	              {
 	                transform: [
 	                  {translateX: this._animatedValue.x},
 	                  {translateY: this._animatedValue.y},
-	                  {rotate: interpolatedRotateAnimation}
 	                ],
-	                backgroundColor: interpolatedColorAnimation
-	              }
-	            ]} 
-	            {...this._panResponder.panHandlers} 
-	          />
-	      	</View>
+	                backgroundColor: '#00000000',
+	                position: 'absolute',
+	                alignSelf: 'center',
+	                bottom: '50%'
+	              }} 
+	            {...this._panResponder.panHandlers}>
+	            <Text style={
+	            	{
+	            		color: this.state.color,
+	            		fontSize: this.state.fontSize,
+	            		fontWeight: 'bold',
+	            		textAlign: "center"
+	            	}
+	            }>
+	            	{this.state.text}
+	            </Text>
+	        </Animated.View>
         );
     }
 }
 
-const CIRCLE_RADIUS = 36;
-const Window = Dimensions.get('window');
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  box: {
-    width: 100,
-    height: 100
-  }
+const styles = StyleSheet.create({
+  	container: {
+    	flex: 1,
+    	alignItems: 'center',
+    	justifyContent: 'center'
+  	}
 });
 
-export default TextCanvasObj;
+export default TextMemeObj;
