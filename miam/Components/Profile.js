@@ -71,7 +71,7 @@ export default class Profile extends React.Component {
             following: response.data.following.length,
             score: response.data.score,
             battlesWon: response.data.battlesWon.length,
-            image: response.data.profileUrl,
+            image: response.data.profilePic,
           });
           console.log(response.data);
         } else {
