@@ -9,7 +9,7 @@ import {
     Dimensions
 } from 'react-native';
 
-class ImageCanvasObject extends React.Component{
+class ImageMemeObj extends React.Component{
 	constructor(props){
 	    super(props);
 	    this.imageURI = props.imageURI;
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ImageCanvasObject;
+export default ImageMemeObj;
