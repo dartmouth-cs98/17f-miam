@@ -17,6 +17,7 @@ import Button from "react-native-button";
 import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
+import CreateBattle from "./CreateBattle";
 import { fetchBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
@@ -26,6 +27,7 @@ import Pusher from "pusher-js/react-native";
 //            nav={this.props.navigation}
 //            token={this.state.token}
 //            myId={this.state.myId}
+
 //          />
 
 export default class BattleList extends React.Component {
@@ -81,6 +83,7 @@ export default class BattleList extends React.Component {
               battleDataSource: ds.cloneWithRows(response),
               loaded: true
             });
+            console.log(this.state.battleDataSource);
           }
         });
       });
@@ -103,36 +106,10 @@ export default class BattleList extends React.Component {
   }
 
   renderBattleRow(battle) {
-    var tempUsrImg =
-      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
-      battle.participant1.username.charAt(0);
     return (
       <View style={styles.battleContainer}>
-        <View style={styles.contenders}>
-          <View style={styles.iconContainer}>
-            <Image
-              source={{ uri: tempUsrImg }}
-              style={styles.userIconStyle}
-              resizeMode="contain"
-            />
-            <Text>Challenger</Text>
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: "bold",
-                marginLeft: "2%",
-                marginTop: "3%"
-              }}
-            >
-              {battle.participant1.username}
-            </Text>
-          </View>
-          <View>
-            <Text>Participants</Text>
-            <Text style={{ fontSize: 20, color: "#ffffff" }}>
-              {battle.participant2.username}
-            </Text>
-          </View>
+        <View>
+          <Text>Initiated by :{battle.initiatedBy.username}</Text>
         </View>
         <TouchableHighlight
           onPress={() => this.selectBattle(battle._id)}
@@ -158,6 +135,7 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading text="MEME Battles" />
+          <CreateBattle token={this.state.token} />
           <View style={styles.headingTabBar}>
             <TouchableHighlight
               onPress={this.newHeadingTabPress.bind(this)}
