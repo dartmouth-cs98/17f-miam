@@ -1,0 +1,52 @@
+[
+  {
+    "_id": "59fe3f32f174c633599f88ea",
+    "messages": [
+      {
+        "text": "I'm gonna beat you",
+        "sender": {
+          "_id": "59fc97f4f0d2441e5676988a",
+          "email": "weijia@123.com",
+          "userName": "Wayne"
+        },
+        "memeId": "",
+        "likes": []
+      },
+      {
+        "text": "",
+        "sender": {
+          "_id": "59fc97f4f0d2441e5676988a",
+          "email": "nicole@123.com",
+          "userName": "Nicole"
+        },
+        "memeId": "https://media.giphy.com/media/xUA7b68hKy839wiVJC/giphy.gif",
+        "likes": []
+      },
+    ]
+  },
+  /* {
+    "_id": "59fe3f32f174c633599f83ea",
+    "participant1": {
+      "_id": "59fc97f4f0d2441e5676988a",
+      "email": "weijia@123.com",
+      "userName": "Wayne"
+    },
+    "participant2": {
+      "_id": "59fc97f4f0d2441e5676983a",
+      "email": "sophia@123.com",
+      "userName": "Sophia"
+    },
+    "messages": [
+      {
+        "text": "you sucker",
+        "author": 1,
+        "meme": "https://media.giphy.com/media/3NtY188QaxDdC/giphy.gif"
+      },
+      {
+        "text": "come on man",
+        "author": 2,
+        "meme": ""
+      }
+    ]
+  }, */
+]
