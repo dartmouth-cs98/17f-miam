@@ -21,6 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
 import { getUserProfile } from "../api";
+import { uploadProfile } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -61,7 +62,7 @@ export default class Profile extends React.Component {
 
   async getUser() {
     try {
-      const userId = await AsyncStorage.getItem("@UserId:key");
+      // const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
       getUserProfile(token, async (response, error) => {
         if (response.data) {
@@ -73,7 +74,6 @@ export default class Profile extends React.Component {
             battlesWon: response.data.battlesWon.length,
             image: response.data.profilePic,
           });
-          console.log(response.data);
         } else {
           console.log(error);
         }
@@ -115,9 +115,30 @@ export default class Profile extends React.Component {
 
     if (!result.cancelled) {
       this.setState({ image: result.uri });
-      console.log(result);
+      if (this.state.image !== null) {
+        const token = await AsyncStorage.getItem("@Token:key");
+        uploadProfile(
+          result.uri,
+          token,
+          (response, error) => {
+            if (error) {
+              console.log(error);
+            } else {
+              this.saveProfile(response.data.token);
+            }
+          }
+        );
+      }
     }
   };
+
+  async saveProfile(token) {
+    try {
+      await AsyncStorage.setItem("@Token:key", token);
+    } catch (error) {
+      console.log(`Cannot save Profile. ${error}`);
+    }
+  }
 
   onChallenge() {
     console.log("onChallenge hasnt been finished!");
@@ -154,7 +175,7 @@ export default class Profile extends React.Component {
 
   render() {
     let imageUrl = "https://thebenclark.files.wordpress.com/2014/03/facebook-default-no-profile-pic.jpg";
-    if (this.state.image != null) {
+    if (this.state.image != null ) {
       imageUrl = this.state.image;
     }
     return (

@@ -19,6 +19,18 @@ export function signUpUser(email, password, username, cb) {
     });
 }
 
+export function uploadProfile(profileUrl, token, cb) {
+  const url = `${ROOT_URL}/users`;
+  axios
+    .put(url, { profilePic: profileUrl }, { headers: { Authorization: token } })
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function signInUser(email, password, cb) {
   const params = {
     email: email.toLowerCase(),
