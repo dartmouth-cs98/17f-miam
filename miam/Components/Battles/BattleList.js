@@ -22,7 +22,7 @@ import { fetchBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
-
+import moment from "moment";
 // <SearchProfile
 //            nav={this.props.navigation}
 //            token={this.state.token}
@@ -106,25 +106,57 @@ export default class BattleList extends React.Component {
   }
 
   renderBattleRow(battle) {
+    const time = moment(battle.startTime).fromNow();
     return (
       <View style={styles.battleContainer}>
         <View>
-          <Text>Initiated by :{battle.initiatedBy.username}</Text>
+          <View>
+            <Text
+              style={{ fontSize: 12, color: "#000000", fontWeight: "bold" }}
+            >
+              Challenger:{battle.initiatedBy.username}
+            </Text>
+          </View>
+          <View>
+            <View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#000000",
+                  fontSize: 15,
+                  fontWeight: "bold"
+                }}
+              >
+                {battle.theme}
+              </Text>
+            </View>
+            <TouchableHighlight
+              onPress={() => this.selectBattle(battle._id)}
+              underlayColor="#732673"
+            >
+              <Text
+                style={{
+                  color: "#bf4080",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 12
+                }}
+              >
+                JOIN
+              </Text>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.battleInfoContainer}>
+            <View>
+              <Text style={{ fontSize: 10, color: "#000000" }}>{time}</Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 10, color: "#000000" }}>
+                Participants Number: {battle.participants.length}
+              </Text>
+            </View>
+          </View>
         </View>
-        <TouchableHighlight
-          onPress={() => this.selectBattle(battle._id)}
-          underlayColor="#732673"
-        >
-          <Text
-            style={{
-              color: "#ffffff",
-              textAlign: "center",
-              fontWeight: "bold"
-            }}
-          >
-            JOIN
-          </Text>
-        </TouchableHighlight>
       </View>
     );
   }
@@ -253,23 +285,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: "2%",
     marginRight: "2%",
-    paddingTop: "3%",
     paddingHorizontal: "2%",
-    backgroundColor: "#eee6ff",
+    backgroundColor: "#d98cb3",
     borderColor: "#5c5c8a",
     borderRadius: 0.5,
-    borderWidth: 2
+    borderWidth: 2,
+    paddingTop: "1%",
+    paddingBottom: "2%"
   },
   battleContainer: {
     borderColor: "#000000",
+    backgroundColor: "#eee6ff",
     flexDirection: "column",
     width: 0.9 * vw,
-    borderRadius: 3,
+    borderRadius: 2,
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    marginTop: "2%",
+    marginTop: "1%",
     flexDirection: "column",
     paddingBottom: "1%"
   },
@@ -329,6 +363,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     shadowOpacity: 0.3,
     shadowRadius: 3
+  },
+  battleInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   }
 });
 
