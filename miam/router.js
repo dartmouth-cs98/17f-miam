@@ -36,12 +36,14 @@ import Splash from "./Components/Splash";
 import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
 import BattleList from "./Components/Battles/BattleList";
+import CreateBattle from "./Components/Battles/CreateBattle";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
 import Comment from "./Components/Comment";
 import SearchProfile from "./Components/SearchProfile";
 import SearchProfileList from "./Components/SearchProfileList";
 import Editor from "./Components/Editor";
+
 const navBarMainColor = "#F4F5F9";
 const navBarTintColor = "#6C56BA";
 const accentColor = "#D0CCDF";
