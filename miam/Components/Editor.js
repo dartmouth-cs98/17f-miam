@@ -34,9 +34,13 @@ class Editor extends React.Component {
     this.state = {
       imgURL: "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png",
       selectedType: "",
+      selectedObj: null,
 
-      layers: []
+      layers: [],
+      key: 0  // This serves no other purpose other than to suppress a React Native warning
     };
+
+    this.addText = this.addText.bind(this);
   }
 
   componentWillMount() {
@@ -51,6 +55,13 @@ class Editor extends React.Component {
         imgURL: this.props.navigation.state.params.imgURL || "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png"
       });
     }
+  }
+
+  addText(){
+    this.setState(prevState => ({
+      key: prevState.key + 1,
+      layers: [...prevState.layers, <TextObj key={prevState.key} editor={this} text="Hello World!"/>]
+    }));
   }
 
   render() {
@@ -70,17 +81,16 @@ class Editor extends React.Component {
           style={styles.memeStyle}
           resizeMode="contain"
         >
-          {/* TODO: Place Meme Objects HERE */}
-          <Test/>
-          <TextObj editor={this} text="Hello World!"/>
+          {this.state.layers}
         </Image>
 
-        <View style={styles.mainEditorDrawer}>
 
+        {/** ================ MAIN EDITOR DRAWER ================ **/}
+        <View style={styles.mainEditorDrawer}>
           <Text style={styles.mainEditorDrawerTitleText}> EDITOR DRAWER </Text>
 
           <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
+            <TouchableHighlight onPress={this.addText} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="text-fields" color="#FFFFFF" size={25}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Text</Text>

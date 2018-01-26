@@ -21,6 +21,7 @@ class TextMemeObj extends React.Component{
 	    };
 
 	    this.id = props.id;
+	    this.key = 0;
 	}
 
 	componentWillMount(){
