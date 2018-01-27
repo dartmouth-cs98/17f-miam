@@ -8,10 +8,11 @@ import {
   TouchableHighlight,
   Dimensions,
   TextInput,
-  AsyncStorage,
-  Slider
+  TouchableWithoutFeedback,
+  AsyncStorage
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Slider from "react-native-slider";
 import { Isao } from "react-native-textinput-effects";
 import StatusBarColor from "./StatusBarColor";
 import { ImagePicker } from "expo";
@@ -35,19 +36,32 @@ class Editor extends React.Component {
       imgURL: "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png",
       selectedType: "",
       selectedObj: null,
+      selectedObjKey: -1,
+
+      editorMode: "",
 
       layers: [],
-      key: 0  // This serves no other purpose other than to suppress a React Native warning
+      key: 0
     };
 
+    // Editor methods
+    this.unselectObj = this.unselectObj.bind(this);
+    this.recenterObj = this.recenterObj.bind(this);
+    this.deleteObj   = this.deleteObj.bind(this);
+
+    // Instancing methods
     this.addText = this.addText.bind(this);
+
+    // Editing Modes
+    this.editText   = this.editText.bind(this);
+    this.editSize   = this.editSize.bind(this);
+    this.editRotate = this.editRotate.bind(this);
+    this.editColor  = this.editColor.bind(this);
   }
 
   componentWillMount() {
     
   }
-
-  // TODO: ADD A RECENTER BUTTON TO RECENTER LAYER
 
   componentDidMount() {
     if (this.props.navigation.state.params.imgURL) {
@@ -57,11 +71,51 @@ class Editor extends React.Component {
     }
   }
 
+  unselectObj(){
+    this.setState({
+      selectedType: "",
+      selectedObj: null,
+      selectedObjKey: -1,
+      editorMode: ""
+    });
+  }
+
+  recenterObj(){
+    this.state.selectedObj.recenter();
+  }
+
+  deleteObj(){
+    this.setState(prevState => ({
+      layers: prevState.layers.filter((element, i) => element["key"] != prevState.selectedObjKey),
+      selectedType: "",
+      selectedObj: null,
+      selectedObjKey: -1,
+      editorMode: ""
+    }));
+  }
+
   addText(){
+    let newObj = <TextObj key={this.state.key} selectionKey={this.state.key} editor={this} text="Place Text Here"/>;
     this.setState(prevState => ({
       key: prevState.key + 1,
-      layers: [...prevState.layers, <TextObj key={prevState.key} editor={this} text="Hello World!"/>]
+      layers: [...prevState.layers, newObj],
     }));
+  }
+
+  editText(){
+    this.setState({ editorMode: "text"})
+  }
+
+  editSize(){
+    this.setState({ editorMode: "size" });
+  }
+
+  editRotate(){
+    this.setState({ editorMode: "rotate" });
+  }
+
+  editColor(){
+    this.setState({ editorMode: "color" });
   }
 
   render() {
@@ -76,13 +130,11 @@ class Editor extends React.Component {
           backButtonVisible={true}
           nav={this.props.navigation}
         />
-        <Image
-          source={{ uri: this.state.imgURL }}
-          style={styles.memeStyle}
-          resizeMode="contain"
-        >
-          {this.state.layers}
-        </Image>
+        <TouchableWithoutFeedback onPress={this.unselectObj}>
+          <Image source={{ uri: this.state.imgURL }} style={styles.memeStyle} resizeMode="contain">
+            {this.state.layers}
+          </Image>
+        </TouchableWithoutFeedback>
 
 
         {/** ================ MAIN EDITOR DRAWER ================ **/}
@@ -122,8 +174,106 @@ class Editor extends React.Component {
           </View>
         </View>
 
-        {
-          // this.state.selectedType == "text" && 
+
+        {/** ================ TEXT EDITOR DRAWER ================ **/}
+        {/* TODO: Look for a scrollable row online */}
+        {this.state.selectedType == "text" && 
+          <View style={styles.objEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Text Editing Options </Text>
+
+            <TouchableHighlight onPress={this.editText} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="mode-edit" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="vertical-align-center" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="autorenew" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editColor} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="color-lens" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+              <Icon name="delete" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+          </View>
+        }
+
+        {/* TODO: <BUG> When the text editing mode is selected, the current text value of the selected object resets.*/}
+        {/** ================ TEXT EDITING ================ **/}
+        {this.state.selectedType == "text" && this.state.editorMode == "text" &&
+          <View style={styles.sliderEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Text Edit </Text>
+            <TextInput
+              onChangeText={text => this.state.selectedObj.setState({ text: text })}
+              placeholder="Username"
+              value={this.state.selectedObj.text}
+              autoCapitalize="none"
+              style={styles.textArea}
+            />
+          </View>
+        }
+
+        {/** ================ FONT SIZE EDITING ================ **/}
+        {this.state.selectedType == "text" && this.state.editorMode == "size" &&
+          <View style={styles.sliderEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Font Size </Text>
+            <Slider
+              value={this.state.selectedObj.state.fontSize}
+              maximumValue={50}
+              minimumValue={10}
+              step={1}
+              onValueChange={(value) => this.state.selectedObj.setState({fontSize: value})} />
+          </View>
+        }
+
+        {/** ================ ROTATION EDITING ================ **/}
+        {this.state.selectedType == "text" && this.state.editorMode == "rotate" &&
+          <View style={styles.sliderEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Rotation </Text>
+            <Slider
+              value={this.state.selectedObj.state.rotation}
+              maximumValue={180}
+              minimumValue={-180}
+              step={5}
+              onValueChange={(value) => this.state.selectedObj.setState({rotation: value})} />
+          </View>
+        }
+
+        {/** ================ COLOR EDITING ================ **/}
+        {this.state.selectedType == "text" && this.state.editorMode == "color" &&
+          <View style={styles.sliderEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Color </Text>
+            <Slider
+              value={this.state.selectedObj.state.red}
+              maximumValue={255}
+              minimumValue={0}
+              step={1}
+              thumbTintColor="#FF0000"
+              onValueChange={(value) => this.state.selectedObj.setState({red: value})} />
+            <Slider
+              value={this.state.selectedObj.state.green}
+              maximumValue={255}
+              minimumValue={0}
+              step={1}
+              thumbTintColor="#00AA00"
+              onValueChange={(value) => this.state.selectedObj.setState({green: value})} />
+            <Slider
+              value={this.state.selectedObj.state.blue}
+              maximumValue={255}
+              minimumValue={0}
+              step={1}
+              thumbTintColor="#0000FF"
+              onValueChange={(value) => this.state.selectedObj.setState({blue: value})} />
+          </View>
         }
       </View>
     );
@@ -175,13 +325,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold"
   },
-  editBox: {
+  objEditorDrawer: {
     alignSelf: 'center',
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    position: 'absolute',
-    width: "90%",
-    bottom: "2%"
+    backgroundColor: "#000000",
+    borderColor: "#FFFFFF",
+    borderBottomWidth: 2,
+    borderTopWidth: 2,
+    flexDirection: "row",
+    marginTop: 25,
+    width: "70%",
+    justifyContent: 'center'
+  },
+  objEditorDrawerButton: {
+    margin: 3, 
+    padding: 5, 
+    borderRadius: 3
+  },
+  sliderEditorDrawer:{
+    alignSelf: 'center',
+    backgroundColor: "#000000",
+    borderColor: "#FFFFFF",
+    borderTopWidth: 2,
+    flexDirection: "column",
+    marginTop: 25,
+    width: "70%",
+    justifyContent: 'center'
   },
   memeStyle: {
     width: 300,
@@ -206,5 +374,16 @@ const styles = StyleSheet.create({
           {translateY: 0},
           {rotate: '0deg'}
     ]
+  },
+  textArea: {
+    color: "#FFFFFF",
+    height: 40,
+    width: "80%",
+    alignSelf: "center",
+    marginTop: 3,
+    padding: 5,
+    borderColor: "#9C8FC4",
+    borderWidth: 1,
+    borderRadius: 5
   }
 });

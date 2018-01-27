@@ -13,11 +13,14 @@ class TextMemeObj extends React.Component{
 	constructor(props){
 	    super(props);
 	    this.state = {
+	    	key: props.selectionKey,
 	    	type: "text",
-	    	color: '#FFFFFF',
+	    	red: 255,
+	    	green: 255,
+	    	blue: 255,
 	    	fontSize: 20,
 	    	editor: props.editor || null,
-	    	text: props.text || ""
+	    	text: props.text
 	    };
 
 	    this.id = props.id;
@@ -35,7 +38,7 @@ class TextMemeObj extends React.Component{
 	        onMoveShouldSetResponderCapture: () => true, //Tell iOS that we are allowing the movement
 	        onMoveShouldSetPanResponderCapture: () => true, // Same here, tell iOS that we allow dragging
 	        onPanResponderStart: (e, gestureState) => {
-			  this.state.editor.setState({ selected: this, selectedType: "text" });
+			  this.state.editor.setState({ selectedObj: this, selectedType: this.state.type, selectedObjKey: this.state.key });
 	        },
 	        onPanResponderGrant: (e, gestureState) => {
 	          this._animatedValue.setOffset({x: this._value.x, y: this._value.y});
@@ -50,6 +53,18 @@ class TextMemeObj extends React.Component{
 	    });
 	}
 
+	getX(){
+		console.log(this._animatedValue.x);
+	}
+
+	getY(){
+		console.log(this._animatedValue.y); 
+	}
+
+	recenter(){
+		this._animatedValue.setValue({x: 0, y: 0})
+	}
+
     render(){
         return (
 	        <Animated.View 
@@ -58,6 +73,7 @@ class TextMemeObj extends React.Component{
 	                transform: [
 	                  {translateX: this._animatedValue.x},
 	                  {translateY: this._animatedValue.y},
+	                  {rotate: this.state.rotation + 'deg'}
 	                ],
 	                backgroundColor: '#00000000',
 	                position: 'absolute',
@@ -67,7 +83,7 @@ class TextMemeObj extends React.Component{
 	            {...this._panResponder.panHandlers}>
 	            <Text style={
 	            	{
-	            		color: this.state.color,
+	            		color: 'rgb(' + this.state.red + ',' + this.state.green + ',' + this.state.blue + ')',
 	            		fontSize: this.state.fontSize,
 	            		fontWeight: 'bold',
 	            		textAlign: "center"
