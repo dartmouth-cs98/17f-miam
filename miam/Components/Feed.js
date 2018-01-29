@@ -103,7 +103,7 @@ export default class Feed extends React.Component {
 
   newHeadingTabPress() {
     sortedPosts = this.sortPostByNewest(
-      this.state.data, 
+      this.state.data,
       "ignore this for now"
     );
     this.setState({
@@ -129,17 +129,17 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-        
+
         // Re-fetching posts
         fetchPosts((response, error) => {
           if (error) {
             alert(error);
           } else {
             if (response.data) {
-              var sortedData = (this.state.headingTabSelected == "new") ? 
-                                this.sortPostByNewest(response.data) : 
+              var sortedData = (this.state.headingTabSelected == "new") ?
+                                this.sortPostByNewest(response.data) :
                                 this.sortPostByHottest(response.data);
-              
+
               this.setState({
                 data: sortedData,
                 postDataSource: ds.cloneWithRows(sortedData),
@@ -198,6 +198,9 @@ export default class Feed extends React.Component {
 
   renderPostRow(post) {
     console.log(post);
+
+    console.log(post.user);
+    var userId = post.user.username;
 
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
