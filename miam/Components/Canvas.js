@@ -119,7 +119,7 @@ class Canvas extends React.Component {
         },
         hashtags: "",
         memetext: this.state.text,
-        posttext: ""
+        posttext: this.state.text
       };
       console.log(this.state.token);
       createPost(postObj, this.state.token, (response, error) => {
