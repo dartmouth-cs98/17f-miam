@@ -8,7 +8,9 @@ import {
   ListView,
   ScrollView,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  TextInput,
+  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "../StatusBarColor";
@@ -17,8 +19,7 @@ import Button from "react-native-button";
 import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
-import CreateBattle from "./CreateBattle";
-import { fetchBattles } from "../../api";
+import { fetchBattles, createBattle } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
@@ -29,6 +30,8 @@ import Pusher from "pusher-js/react-native";
 //            myId={this.state.myId}
 
 //          />
+
+import moment from "moment";
 
 var mockData = require("../../mock_data/mockBattleData.json");
 
@@ -52,7 +55,8 @@ export default class BattleList extends React.Component {
       pusher: {},
       myId: "",
       token: "",
-      headingTabSelected: "hot"
+      headingTabSelected: "hot",
+      theme: ""
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -62,6 +66,7 @@ export default class BattleList extends React.Component {
 
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
+    this.startBattle = this.startBattle.bind(this);
   }
 
   async getMyId() {
@@ -88,7 +93,6 @@ export default class BattleList extends React.Component {
               battleDataSource: ds.cloneWithRows(response),
               loaded: true
             });
-            console.log(this.state.battleDataSource);
           }
         });
       });
@@ -109,27 +113,79 @@ export default class BattleList extends React.Component {
     });
     this.props.navigation.state.params = {};
   }
-
+  startBattle() {
+    createBattle(this.state.theme, this.state.token, (response, error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        Alert.alert("Battle successfully created!");
+        fetchBattles((response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({
+              battleDataSource: ds.cloneWithRows(response),
+              loaded: true,
+              theme: ""
+            });
+          }
+        });
+      }
+    });
+  }
   renderBattleRow(battle) {
+    const time = moment(battle.startTime).fromNow();
+    console.log(this.state.battleDataSource);
     return (
       <View style={styles.battleContainer}>
         <View>
-          <Text>Initiated by :{battle.initiatedBy.username}</Text>
+          <View>
+            <Text
+              style={{ fontSize: 12, color: "#000000", fontWeight: "bold" }}
+            >
+              Challenger:{battle.initiatedBy.username}
+            </Text>
+          </View>
+          <View>
+            <View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#000000",
+                  fontSize: 15,
+                  fontWeight: "bold"
+                }}
+              >
+                {battle.theme}
+              </Text>
+            </View>
+            <TouchableHighlight
+              onPress={() => this.selectBattle(battle._id)}
+              underlayColor="#732673"
+            >
+              <Text
+                style={{
+                  color: "#bf4080",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 12
+                }}
+              >
+                JOIN
+              </Text>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.battleInfoContainer}>
+            <View>
+              <Text style={{ fontSize: 10, color: "#000000" }}>{time}</Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 10, color: "#000000" }}>
+                Participants Number: {battle.participants.length}
+              </Text>
+            </View>
+          </View>
         </View>
-        <TouchableHighlight
-          onPress={() => this.selectBattle(battle._id)}
-          underlayColor="#732673"
-        >
-          <Text
-            style={{
-              color: "#ffffff",
-              textAlign: "center",
-              fontWeight: "bold"
-            }}
-          >
-            JOIN
-          </Text>
-        </TouchableHighlight>
       </View>
     );
   }
@@ -140,7 +196,34 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading text="MEME Battles" />
-          <CreateBattle token={this.state.token} />
+          <View style={styles.textInput}>
+            <TextInput
+              style={{
+                width: "75%",
+                borderColor: "gray",
+                borderWidth: 1,
+                height: "100%"
+              }}
+              maxLength={50}
+              onChangeText={text => this.setState({ theme: text })}
+              value={this.state.theme}
+              placeholder="theme"
+            />
+            <TouchableHighlight
+              underlayColor="#d279a6"
+              style={styles.startBattleButton}
+              onPress={this.startBattle}
+            >
+              <Text
+                style={{
+                  color: "#ffffff",
+                  textAlign: "center"
+                }}
+              >
+                Start a Battle!
+              </Text>
+            </TouchableHighlight>
+          </View>
           <View style={styles.headingTabBar}>
             <TouchableHighlight
               onPress={this.newHeadingTabPress.bind(this)}
@@ -258,23 +341,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: "2%",
     marginRight: "2%",
-    paddingTop: "3%",
     paddingHorizontal: "2%",
-    backgroundColor: "#eee6ff",
+    backgroundColor: "#d98cb3",
     borderColor: "#5c5c8a",
     borderRadius: 0.5,
-    borderWidth: 2
+    borderWidth: 2,
+    paddingTop: "1%",
+    paddingBottom: "2%"
   },
   battleContainer: {
     borderColor: "#000000",
+    backgroundColor: "#eee6ff",
     flexDirection: "column",
     width: 0.9 * vw,
-    borderRadius: 3,
+    borderRadius: 2,
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    marginTop: "2%",
+    marginTop: "1%",
     flexDirection: "column",
     paddingBottom: "1%"
   },
@@ -334,6 +419,22 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     shadowOpacity: 0.3,
     shadowRadius: 3
+  },
+  battleInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  textInput: {
+    flexDirection: "row",
+    height: "5%",
+    marginTop: "1%",
+    justifyContent: "flex-start"
+  },
+  startBattleButton: {
+    backgroundColor: "#993333",
+    height: "100%",
+    width: "25%",
+    justifyContent: "center"
   }
 });
 

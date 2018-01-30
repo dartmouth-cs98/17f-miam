@@ -16,6 +16,7 @@ import StatusBarColor from "./StatusBarColor";
 import { ImagePicker } from "expo";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
+import Meme from "./Meme";
 import ViewShot from "react-native-view-shot";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { captureRef } from "react-native-view-shot";
@@ -32,6 +33,7 @@ class Canvas extends React.Component {
     super(props);
     this.state = {
       image: null,
+      layers: [],
       isLocalPhoto: false,
 
       tags: [],
@@ -41,7 +43,7 @@ class Canvas extends React.Component {
       res: null,
       token: ""
     };
-    
+
     this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
 
@@ -68,6 +70,7 @@ class Canvas extends React.Component {
       } else if (this.props.navigation.state.params.imgURL) {
         this.setState({
           image: this.props.navigation.state.params.imgURL,
+          layers: this.props.navigation.state.params.layers,
           isLocalPhoto: false
         });
       }
@@ -110,10 +113,13 @@ class Canvas extends React.Component {
       }
 
       const postObj = {
-        imgURL: this.state.image,
+        meme: {
+          imgURL: this.state.image,
+          layers: this.state.layers
+        },
         hashtags: "",
         memetext: this.state.text,
-        posttext: ""
+        posttext: this.state.text
       };
       console.log(this.state.token);
       createPost(postObj, this.state.token, (response, error) => {
@@ -126,7 +132,8 @@ class Canvas extends React.Component {
             tags: [],
             text: "",
             showCaption: false,
-            res: null
+            res: null,
+            layers: []
           });
           alert("Successfully posted your meme!");
         }
@@ -219,7 +226,7 @@ class Canvas extends React.Component {
   editImage() {
     if(this.state.image != null){
       var imgURL = this.state.image;
-      this.props.navigation.navigate("Editor", { imgURL: imgURL });
+      this.props.navigation.navigate("Editor", { imgURL: this.state.image, layers: this.state.layers });
     }
     else{
       alert("Select an image before entering Editor Mode");
@@ -264,13 +271,7 @@ class Canvas extends React.Component {
               <View style={{ height: "80%", marginTop: "2%" }}>
                 {this.state.image && (
                   <View style={styles.meme}>
-                    <Image
-                      source={{ uri: this.state.image }}
-                      style={styles.imagePreview}
-                      resizeMode="contain"
-                      ref={ref => (this.meme = ref)}
-                    />
-
+                    <Meme imgURL={this.state.image} layers={this.state.layers}/>
                     <View
                       style={{
                         width: 300,
@@ -284,25 +285,6 @@ class Canvas extends React.Component {
                   </View>
                 )}
 
-                {this.state.res && (
-                  <View>
-                    <Image
-                      source={{ uri: this.state.res }}
-                      style={styles.imagePreview}
-                      resizeMode="contain"
-                    />
-                    <View
-                      style={{
-                        width: 300,
-                        justifyContent: "center"
-                      }}
-                    >
-                      <Text style={{ textAlign: "center" }}>
-                        {this.state.text}
-                      </Text>
-                    </View>
-                  </View>
-                )}
               </View>
             </View>
             <View style={styles.tools}>
@@ -313,8 +295,7 @@ class Canvas extends React.Component {
                       fontSize: 20,
                       color: "#cc66cc",
                       textAlign: "center"
-                    }}
-                  >
+                    }}>
                     T
                   </Text>
                 </View>

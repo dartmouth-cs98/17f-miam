@@ -36,7 +36,6 @@ import Splash from "./Components/Splash";
 import Feed from "./Components/Feed";
 import Canvas from "./Components/Canvas";
 import BattleList from "./Components/Battles/BattleList";
-import CreateBattle from "./Components/Battles/CreateBattle";
 import Profile from "./Components/Profile";
 import Search from "./Components/Search";
 import Comment from "./Components/Comment";

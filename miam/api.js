@@ -19,6 +19,30 @@ export function signUpUser(email, password, username, cb) {
     });
 }
 
+export function uploadProfile(profileUrl, token, cb) {
+  const url = `${ROOT_URL}/users`;
+  axios
+    .put(url, { profilePic: profileUrl }, { headers: { Authorization: token } })
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function followUser(followerlist, token, cb) {
+  const url = `${ROOT_URL}/users`;
+  axios
+    .put(url, { followers: followerlist }, { headers: { Authorization: token } })
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function signInUser(email, password, cb) {
   const params = {
     email: email.toLowerCase(),
@@ -87,7 +111,6 @@ export function createBattle(theme, token, cb) {
 export function createPost(postObj, token, cb) {
   const url = `${ROOT_URL}/posts`;
   console.log(postObj.imgURL);
-  console.log(token);
   axios
     .post(url, postObj, { headers: { Authorization: token } })
     .then(response => {
