@@ -34,7 +34,7 @@ class Meme extends React.Component {
     for(let i = 0; i < this.state.layers.length; i++){
       if(this.state.layers[i].type == "text"){
         layerObjects.push(<TextObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
-        console.log(this.state.layers[i]);
+        // console.log(this.state.layers[i]);       // TODO: Debugging purposes
       }
     }
 

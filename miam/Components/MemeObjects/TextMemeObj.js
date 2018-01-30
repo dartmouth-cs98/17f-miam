@@ -16,14 +16,14 @@ class TextMemeObj extends React.Component{
 	    this.state = {
 	    	key: props.selectionKey,
 	    	type: "text",
-	    	red: props.layer.red || 255,
-	    	green: props.layer.green || 255,
-	    	blue: props.layer.blue || 255,
-	    	fontSize: props.layer.fontSize || 20,
-	    	rotation: props.layer.rotation || 0,
+	    	red: 255,
+	    	green: 255,
+	    	blue: 255,
+	    	fontSize: 20,
+	    	rotation: 0,
 	    	editor: props.editor || null,
-	    	text: props.layer.text || "Place Text Here",
-	    	animatedValue: new Animated.ValueXY({x: props.layer.x || 0, y: props.layer.y || 0})
+	    	text: "Place Text Here",
+	    	animatedValue: new Animated.ValueXY({x: 0, y: 0})
 	    };
 
 	    if(props.editor)
@@ -32,9 +32,24 @@ class TextMemeObj extends React.Component{
 	    this.getLayerInfo = this.getLayerInfo.bind(this);
 	}
 
+	componentDidMount(){
+		if(this.props.layer){
+			this._value = {x: this.props.layer.x, y: this.props.layer.y};
+			this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
+			this.setState({
+				red: this.props.layer.red,
+				green: this.props.layer.green,
+				blue: this.props.layer.blue,
+				fontSize: this.props.layer.fontSize,
+				rotation: this.props.layer.rotation,
+				text: this.props.layer.text
+			});
+		}
+	}
+
 	componentWillMount(){
 		if(this.state.editor){
-		    this._value = {x: this.props.layer.x || 0, y: this.props.layer.y || 0};
+		    this._value = {x: 0, y: 0};
 
 		    this.state.animatedValue.addListener((value) => this._value = value);
 		    this._panResponder = PanResponder.create({

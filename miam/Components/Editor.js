@@ -192,7 +192,7 @@ class Editor extends React.Component {
           <Text style={styles.mainEditorDrawerTitleText}> EDITOR DRAWER </Text>
 
           <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight onPress={this.addText} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
+            <TouchableHighlight onPress={() => this.addText()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="text-fields" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Text</Text>
