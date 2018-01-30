@@ -8,7 +8,9 @@ import {
   ListView,
   ScrollView,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  TextInput,
+  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "../StatusBarColor";
@@ -17,8 +19,7 @@ import Button from "react-native-button";
 import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
-import CreateBattle from "./CreateBattle";
-import { fetchBattles } from "../../api";
+import { fetchBattles, createBattle } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
@@ -46,7 +47,8 @@ export default class BattleList extends React.Component {
       pusher: {},
       myId: "",
       token: "",
-      headingTabSelected: "hot"
+      headingTabSelected: "hot",
+      theme: ""
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -56,6 +58,7 @@ export default class BattleList extends React.Component {
 
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
+    this.startBattle = this.startBattle.bind(this);
   }
 
   async getMyId() {
@@ -102,7 +105,26 @@ export default class BattleList extends React.Component {
     });
     this.props.navigation.state.params = {};
   }
-
+  startBattle() {
+    createBattle(this.state.theme, this.state.token, (response, error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        Alert.alert("Battle successfully created!");
+        fetchBattles((response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({
+              battleDataSource: ds.cloneWithRows(response),
+              loaded: true,
+              theme: ""
+            });
+          }
+        });
+      }
+    });
+  }
   renderBattleRow(battle) {
     const time = moment(battle.startTime).fromNow();
     console.log(this.state.battleDataSource);
@@ -166,7 +188,34 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading text="MEME Battles" />
-          <CreateBattle token={this.state.token} />
+          <View style={styles.textInput}>
+            <TextInput
+              style={{
+                width: "75%",
+                borderColor: "gray",
+                borderWidth: 1,
+                height: "100%"
+              }}
+              maxLength={50}
+              onChangeText={text => this.setState({ theme: text })}
+              value={this.state.theme}
+              placeholder="theme"
+            />
+            <TouchableHighlight
+              underlayColor="#d279a6"
+              style={styles.startBattleButton}
+              onPress={this.startBattle}
+            >
+              <Text
+                style={{
+                  color: "#ffffff",
+                  textAlign: "center"
+                }}
+              >
+                Start a Battle!
+              </Text>
+            </TouchableHighlight>
+          </View>
           <View style={styles.headingTabBar}>
             <TouchableHighlight
               onPress={this.newHeadingTabPress.bind(this)}
@@ -366,6 +415,18 @@ const styles = StyleSheet.create({
   battleInfoContainer: {
     flexDirection: "row",
     justifyContent: "space-between"
+  },
+  textInput: {
+    flexDirection: "row",
+    height: "5%",
+    marginTop: "1%",
+    justifyContent: "flex-start"
+  },
+  startBattleButton: {
+    backgroundColor: "#993333",
+    height: "100%",
+    width: "25%",
+    justifyContent: "center"
   }
 });
 
