@@ -8,7 +8,9 @@ import {
   ListView,
   ScrollView,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  TextInput,
+  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "../StatusBarColor";
@@ -17,13 +19,21 @@ import Button from "react-native-button";
 import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
-import CreateBattle from "./CreateBattle";
-import { fetchBattles } from "../../api";
+import { fetchBattles, createBattle } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
 
+// <SearchProfile
+//            nav={this.props.navigation}
+//            token={this.state.token}
+//            myId={this.state.myId}
+
+//          />
+
 import moment from "moment";
+
+var mockData = require("../../mock_data/mockBattleData.json");
 
 // Enable pusher logging - don't include this in production
 // Pusher.logToConsole = true;
@@ -39,13 +49,14 @@ export default class BattleList extends React.Component {
     }
 
     this.state = {
-      battleDataSource: ds.cloneWithRows(mockData),
+      battleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
       pusher: {},
       myId: "",
       token: "",
-      headingTabSelected: "hot"
+      headingTabSelected: "hot",
+      theme: ""
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -55,6 +66,7 @@ export default class BattleList extends React.Component {
 
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
+    this.startBattle = this.startBattle.bind(this);
   }
 
   async getMyId() {
@@ -81,7 +93,6 @@ export default class BattleList extends React.Component {
               battleDataSource: ds.cloneWithRows(response),
               loaded: true
             });
-            console.log(this.state.battleDataSource);
           }
         });
       });
@@ -102,9 +113,29 @@ export default class BattleList extends React.Component {
     });
     this.props.navigation.state.params = {};
   }
-
+  startBattle() {
+    createBattle(this.state.theme, this.state.token, (response, error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        Alert.alert("Battle successfully created!");
+        fetchBattles((response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({
+              battleDataSource: ds.cloneWithRows(response),
+              loaded: true,
+              theme: ""
+            });
+          }
+        });
+      }
+    });
+  }
   renderBattleRow(battle) {
     const time = moment(battle.startTime).fromNow();
+    console.log(this.state.battleDataSource);
     return (
       <View style={styles.battleContainer}>
         <View>
@@ -165,7 +196,35 @@ export default class BattleList extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading text="MEME Battles" />
-          <CreateBattle token={this.state.token} />
+          <View style={styles.textInput}>
+            <TextInput
+              style={{
+                width: "75%",
+                borderColor: "#d9b3ff",
+                borderWidth: 2,
+                height: "100%"
+              }}
+              maxLength={50}
+              onChangeText={text => this.setState({ theme: text })}
+              value={this.state.theme}
+              placeholder="theme"
+            />
+            <TouchableHighlight
+              underlayColor="#d279a6"
+              style={styles.startBattleButton}
+              onPress={this.startBattle}
+            >
+              <Text
+                style={{
+                  color: "#ffffff",
+                  textAlign: "center",
+                  fontWeight: "bold"
+                }}
+              >
+                Start a Battle!
+              </Text>
+            </TouchableHighlight>
+          </View>
           <View style={styles.headingTabBar}>
             <TouchableHighlight
               onPress={this.newHeadingTabPress.bind(this)}
@@ -365,6 +424,18 @@ const styles = StyleSheet.create({
   battleInfoContainer: {
     flexDirection: "row",
     justifyContent: "space-between"
+  },
+  textInput: {
+    flexDirection: "row",
+    height: "5%",
+    marginTop: "0.5%",
+    justifyContent: "flex-start"
+  },
+  startBattleButton: {
+    backgroundColor: "#b366ff",
+    height: "100%",
+    width: "25%",
+    justifyContent: "center"
   }
 });
 

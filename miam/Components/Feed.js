@@ -218,7 +218,7 @@ export default class Feed extends React.Component {
       return likeId === id;
     });
 
-    let meme = <Meme imgURL={post.meme.imgURL} text={post.meme.text} layers={post.meme.layers}/>;
+    let meme = <Meme imgURL={post.meme.imgURL} text={post.posttext} layers={post.meme.layers}/>;
 
     return (
       <View style={styles.postContainer}>
