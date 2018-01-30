@@ -47,6 +47,8 @@ export default class Profile extends React.Component {
       following: -1,
       battlesWon: -1,
       image: null,
+      self: true,
+      observer: "",
     };
 
     this.signOut = this.signOut.bind(this);
@@ -58,6 +60,10 @@ export default class Profile extends React.Component {
       let username = this.props.navigation.state.params.username;
       console.log(this.props.navigation.state.params);
       this.getTargetUser(username);
+      this.setState({
+        self: false,
+      });
+      this.getObserver();
     } else {
       this.getUser();
     }
@@ -71,7 +77,6 @@ export default class Profile extends React.Component {
 
   async getUser() {
     try {
-      // const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
       getUserProfile(token, async (response, error) => {
         if (response.data) {
@@ -84,6 +89,7 @@ export default class Profile extends React.Component {
             score: response.data.score,
             battlesWon: response.data.battlesWon.length,
             image: response.data.profilePic,
+            observer: response.data.username,
           });
         } else {
           console.log(error);
@@ -93,6 +99,24 @@ export default class Profile extends React.Component {
       console.log(error);
     }
   }
+
+  async getObserver() {
+    try {
+      const token = await AsyncStorage.getItem("@Token:key");
+      getUserProfile(token, async (response, error) => {
+        if (response.data) {
+          this.setState({
+            observer: response.data.username,
+          });
+        } else {
+          console.log(error);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   async getTargetUser(username) {
     try {
@@ -140,10 +164,10 @@ export default class Profile extends React.Component {
   };
 
   onFollowUser = async () => {
-    console.log("ggg");
-    console.log(this.state.followerlist);
-    this.setState({ followerlist: this.state.followerlist.push("newfollower") });
-    console.log(this.state.followerlist);
+    let myUsername = this.state.observer;
+    let username = this.props.navigation.state.params.username;
+    this.setState({ followerlist: this.state.followerlist.push(username) });
+
     const token = await AsyncStorage.getItem("@Token:key");
     followUser(
       this.state.followerlist,
@@ -240,14 +264,16 @@ export default class Profile extends React.Component {
               uri: "http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg"
             }}
           >
-            <Button
-              containerStyle={styles.buttonContainer}
-              style={styles.addButton}
-              styleDisabled={{ color: "red" }}
-              onPress={() => this.onFollowUser()}
-            >
-              Follow
-            </Button>
+            {!this.state.self &&
+              <Button
+                containerStyle={styles.buttonContainer}
+                style={styles.addButton}
+                styleDisabled={{ color: "red" }}
+                onPress={() => this.onFollowUser()}
+              >
+                Follow
+              </Button>
+            }
             <View style={styles.profiles}>
               <Image
                 style={styles.profilePicture}
@@ -255,27 +281,31 @@ export default class Profile extends React.Component {
                   uri: imageUrl
                 }}
               />
-              <Button
-                containerStyle={styles.profileButtonContainer}
-                style={styles.profileButton}
-                onPress={() => this.onChangeProfile()}
-              >
-                Change Profile
-              </Button>
+              {this.state.self &&
+                <Button
+                  containerStyle={styles.profileButtonContainer}
+                  style={styles.profileButton}
+                  onPress={() => this.onChangeProfile()}
+                >
+                  Change Profile
+                </Button>
+              }
               <Text style={styles.name}> {this.state.userName} </Text>
               <Text style={styles.score}>Score: {this.state.score}</Text>
               <Text style={styles.battlewon}>
                 Battle Won: {this.state.battlesWon}
               </Text>
             </View>
-            <Button
-              containerStyle={styles.buttonContainer}
-              style={styles.messageButton}
-              styleDisabled={{ color: "red" }}
-              onPress={() => this.onChallenge()}
-            >
-              Challenge
-            </Button>
+            {!this.state.self &&
+              <Button
+                containerStyle={styles.buttonContainer}
+                style={styles.messageButton}
+                styleDisabled={{ color: "red" }}
+                onPress={() => this.onChallenge()}
+              >
+                Challenge
+              </Button>
+            }
           </Image>
           <View style={styles.bodyMiddle}>
             <View style={styles.box}>
