@@ -23,11 +23,6 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 7ffd6771eed7ee3ca179e5bd17cc80186c87eb84
-
 // <SearchProfile
 //            nav={this.props.navigation}
 //            token={this.state.token}
@@ -35,16 +30,10 @@ import Pusher from "pusher-js/react-native";
 
 //          />
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 0e8655f8a236f04440296ca6bb8b29e6670b1caf
->>>>>>> 7ffd6771eed7ee3ca179e5bd17cc80186c87eb84
 var mockData = require("../../mock_data/mockBattleData.json");
 
 // Enable pusher logging - don't include this in production
 // Pusher.logToConsole = true;
-
 
 export default class BattleList extends React.Component {
   constructor(props) {
@@ -57,7 +46,7 @@ export default class BattleList extends React.Component {
     }
 
     this.state = {
-      battleDataSource: ds.cloneWithRows(mockData),
+      battleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
       pusher: {},

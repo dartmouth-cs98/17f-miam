@@ -156,7 +156,7 @@ export function getTargetUserProfile(username, token, cb) {
 export function sendMessage(battleId, token, msg, cb) {
   const url = `${ROOT_URL}/battles/msg/${battleId}`;
   axios
-    .put(url, { message: msg }, { headers: { Authorization: token } })
+    .put(url, msg, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })
@@ -204,3 +204,15 @@ export function likePost(postID, action, token, cb) {
       cb(null, error);
     });
 }
+
+// export function likeMeme(msgID, action, token, cb) {
+//   const url = `${ROOT_URL}/posts/${postID}`;
+//   axios
+//     .put(url, { action: action }, { headers: { Authorization: token } })
+//     .then(response => {
+//       cb(response, null);
+//     })
+//     .catch(error => {
+//       cb(null, error);
+//     });
+// }
