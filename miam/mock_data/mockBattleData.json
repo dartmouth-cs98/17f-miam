@@ -1,6 +1,11 @@
 [
   {
     "_id": "59fe3f32f174c633599f88ea",
+    "initiatedBy": {
+      "_id": "59fc97f4f0d2441e5676988a",
+      "email": "weijia@123.com",
+      "userName": "Wayne"
+    },
     "messages": [
       {
         "text": "I'm gonna beat you",

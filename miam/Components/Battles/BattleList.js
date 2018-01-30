@@ -24,7 +24,15 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
 
+// <SearchProfile
+//            nav={this.props.navigation}
+//            token={this.state.token}
+//            myId={this.state.myId}
+
+//          />
+
 import moment from "moment";
+
 var mockData = require("../../mock_data/mockBattleData.json");
 
 // Enable pusher logging - don't include this in production
