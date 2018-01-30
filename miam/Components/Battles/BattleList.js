@@ -24,6 +24,7 @@ const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
 
 import moment from "moment";
+var mockData = require("../../mock_data/mockBattleData.json");
 
 // Enable pusher logging - don't include this in production
 // Pusher.logToConsole = true;
@@ -39,7 +40,7 @@ export default class BattleList extends React.Component {
     }
 
     this.state = {
-      battleDataSource: ds.cloneWithRows(mockData),
+      battleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
       pusher: {},
@@ -81,7 +82,6 @@ export default class BattleList extends React.Component {
               battleDataSource: ds.cloneWithRows(response),
               loaded: true
             });
-            console.log(this.state.battleDataSource);
           }
         });
       });
@@ -105,6 +105,7 @@ export default class BattleList extends React.Component {
 
   renderBattleRow(battle) {
     const time = moment(battle.startTime).fromNow();
+    console.log(this.state.battleDataSource);
     return (
       <View style={styles.battleContainer}>
         <View>
