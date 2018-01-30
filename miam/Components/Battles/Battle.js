@@ -33,7 +33,8 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: "",
-      memeId: "",
+      meme: "",
+      theme: ""
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
@@ -62,6 +63,7 @@ class Battle extends React.Component {
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
           messages: response.messages,
+          theme: response.theme
         });
         console.log(response);
       }
@@ -85,6 +87,7 @@ class Battle extends React.Component {
   }
 
   handleMessage(message) {
+    console.log(message);
     const messages = this.state.messages.slice();
     messages.push(message);
     this.setState({
@@ -104,7 +107,7 @@ class Battle extends React.Component {
         } else {
           this.setState({
             text: "",
-            memeId: ""
+            meme: ""
           });
         }
       }
@@ -115,7 +118,6 @@ class Battle extends React.Component {
     if (this.state.text !== "") {
       let msg = {
         text: this.state.text,
-        memeId: ''
       };
       this.sendMsg(msg);
     } else {
@@ -126,8 +128,7 @@ class Battle extends React.Component {
   sendMemeMsg() {
     if (this.state.text !== "") {
       let msg = {
-        text: '',
-        memeId: this.state.memeId
+        meme: this.state.meme
       };
       this.sendMsg(msg);
     } else {
@@ -174,7 +175,7 @@ class Battle extends React.Component {
     //   </View>
     // );
 
-    var likeButton = (<IconMaterial name="favorite-border" color="#cc6699" size={25} />);
+    var likeButton = msg.meme !== undefined ? (<IconMaterial name="favorite-border" color="#cc6699" size={25} />) : (<View />);
 
     // var bubbleStyles = isLeft
     //   ? [styles.messageBubble, styles.messageBubbleLeft]
@@ -187,22 +188,22 @@ class Battle extends React.Component {
     // var align = { justifyContent: "flex-start" };
 
 
-    // const time = moment(msg.createdAt).fromNow();
+    const time = moment(msg.sentAt).fromNow();
 
-    if (msg.text !== "" || msg.memeId !== "") {
+    if (msg.text !== "" || msg.meme !== "") {
       return (
         <View style={styles.messageContainer}>
-          <View>
+          <View style={styles.senderInfo}>
             <Text>
-              {msg.user.username}
+              {msg.sender.username}
             </Text>
+            <Text>{time}</Text>
           </View>
-          <View>
+          <View style={styles.messageContent}>
             {msg.text !== "" && this.renderText(msg.text)}
-            {msg.memeId !== "" && this.renderMeme(msg.memeId)}
+            {msg.meme !== "" && this.renderMeme(msg.meme)}
+            {likeButton}
           </View>
-          <Text>{time}</Text>
-          {likeButton}
         </View>
       );
     } else {
@@ -212,7 +213,7 @@ class Battle extends React.Component {
 
 
 
-  renderMeme(memeId) {
+  renderMeme(meme) {
     // if (msg.text === null) {
     //   return (
     //     <View>
@@ -258,6 +259,9 @@ class Battle extends React.Component {
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
+      <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
+        <IconMaterial name="control-point" color="#ac3973" size={35} />
+      </TouchableHighlight>
         <TextInput
           onChangeText={text => this.setState({ text })}
           placeholder="Say something..."
@@ -280,7 +284,7 @@ class Battle extends React.Component {
       <View style={styles.body}>
         <StatusBarColor />
         <Heading
-          text="BATTLE TIME!"
+          text={this.state.theme}
           backButtonVisible={true}
           backFunction={this.props.returnToList}
         />
@@ -357,6 +361,11 @@ const styles = StyleSheet.create({
     marginLeft: "2%"
   },
 
+  messageContent: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+
   //MessageBubble
   messageBubble: {
     borderRadius: 10,
@@ -410,6 +419,11 @@ const styles = StyleSheet.create({
   memeStyle: {
     width: 250,
     height: 150
+  },
+
+  senderInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   }
 });
 
