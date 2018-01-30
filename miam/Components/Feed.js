@@ -18,7 +18,7 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile, likePost } from "../api";
+import { fetchPosts, getUserProfile, likePost, getTargetUserProfile } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -200,7 +200,7 @@ export default class Feed extends React.Component {
     console.log(post);
 
     console.log(post.user);
-    var userId = post.user.username;
+    var username = post.user.username;
 
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
@@ -224,11 +224,18 @@ export default class Feed extends React.Component {
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
+          <TouchableHighlight
+            onPress={() =>
+              this.props.navigation.navigate("Profile", {
+                username: username,
+              })}
+          >
             <Image
               source={{ uri: tempUsrImg }}
               style={styles.userIconStyle}
               resizeMode="contain"
             />
+          </TouchableHighlight>
             <Text
               style={{
                 fontSize: 15,

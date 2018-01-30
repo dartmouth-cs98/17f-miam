@@ -20,7 +20,7 @@ import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
-import { getUserProfile } from "../api";
+import { getUserProfile, getTargetUserProfile } from "../api";
 import { uploadProfile, followUser } from "../api";
 
 var customData = require("../data/customData.json");
@@ -54,7 +54,14 @@ export default class Profile extends React.Component {
   }
 
   componentDidMount() {
-    this.getUser();
+    if (this.props.navigation.state.params){
+      let username = this.props.navigation.state.params.username;
+      console.log(this.props.navigation.state.params);
+      this.getTargetUser(username);
+    } else {
+      this.getUser();
+    }
+
     this.setState({
       dataSource: lv.cloneWithRows(listData),
       postDataSource: ds.cloneWithRows(customData),
@@ -86,6 +93,31 @@ export default class Profile extends React.Component {
       console.log(error);
     }
   }
+
+  async getTargetUser(username) {
+    try {
+      getTargetUserProfile(username, async (response, error) => {
+        if (response.data) {
+          this.setState({
+            userName: response.data[0].username,
+            followerlist: response.data[0].followers,
+            followers: response.data[0].followers ? response.data[0].followers.length : 0,
+            followinglist: response.data[0].following,
+            following: response.data[0].following ? response.data[0].following.length : 0,
+            score: response.data[0].score,
+            battlesWon: response.data[0].battlesWon ? response.data[0].battlesWon.length : 0,
+            image: response.data[0].profilePic,
+          });
+          console.log(this.state.userName);
+        } else {
+          console.log(error);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async signOut() {
     try {
       await AsyncStorage.removeItem("@Token:key");

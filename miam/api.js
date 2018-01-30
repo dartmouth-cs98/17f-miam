@@ -165,11 +165,22 @@ export function getUserProfile(token, cb) {
     });
 }
 
-export function getTargetUserProfile(username, token, cb) {
+export function getUserProfileFromID(userID, cb) {
+  axios
+    .get(`${ROOT_URL}/users/${userID}`)
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function getTargetUserProfile(username, cb) {
   axios
     .post(`${ROOT_URL}/users`, { query: username })
     .then(async response => {
-      cb(response.data, null);
+      cb(response, null);
     })
     .catch(error => {
       cb(null, error);
