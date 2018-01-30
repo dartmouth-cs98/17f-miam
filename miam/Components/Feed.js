@@ -218,7 +218,7 @@ export default class Feed extends React.Component {
       return likeId === id;
     });
 
-    let meme = <Meme imgURL={post.meme.imgURL} text={post.meme.text} />;
+    let meme = <Meme imgURL={post.meme.imgURL} text={post.meme.text} layers={post.meme.layers}/>;
 
     return (
       <View style={styles.postContainer}>
@@ -250,7 +250,7 @@ export default class Feed extends React.Component {
           <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
             {post.hashtags}
           </Text>
-          <Meme imgURL={post.meme.imgURL} text={post.meme.text} />
+          {meme}
         </View>
         <View style={styles.separatorLine} />
 
@@ -281,9 +281,9 @@ export default class Feed extends React.Component {
               underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Canvas", {
-                  imgURL: post.meme.imgURL
-                })}
-            >
+                  imgURL: post.meme.imgURL,
+                  layers: post.meme.layers
+                })}>
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
           </View>

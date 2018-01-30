@@ -111,7 +111,6 @@ export function createBattle(theme, token, cb) {
 export function createPost(postObj, token, cb) {
   const url = `${ROOT_URL}/posts`;
   console.log(postObj.imgURL);
-  console.log(token);
   axios
     .post(url, postObj, { headers: { Authorization: token } })
     .then(response => {

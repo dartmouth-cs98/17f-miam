@@ -28,7 +28,6 @@ import TextObj from "./MemeObjects/TextMemeObj.js";
 // import { RNS3 } from "react-native-aws3";
 import Expo from "expo";
 
-
 class Editor extends React.Component {
   constructor(props) {
     super(props);
@@ -44,7 +43,12 @@ class Editor extends React.Component {
       key: 0
     };
 
+    this.layerRefs            = [];
+    this.addLayerRef          = this.addLayerRef.bind(this);
+    this.addObjectsFromLayers = this.addObjectsFromLayers.bind(this);
+
     // Editor methods
+    this.getLayers   = this.getLayers.bind(this);
     this.unselectObj = this.unselectObj.bind(this);
     this.recenterObj = this.recenterObj.bind(this);
     this.deleteObj   = this.deleteObj.bind(this);
@@ -57,6 +61,8 @@ class Editor extends React.Component {
     this.editSize   = this.editSize.bind(this);
     this.editRotate = this.editRotate.bind(this);
     this.editColor  = this.editColor.bind(this);
+
+    this.finishEditing = this.finishEditing.bind(this);
   }
 
   componentWillMount() {
@@ -65,10 +71,35 @@ class Editor extends React.Component {
 
   componentDidMount() {
     if (this.props.navigation.state.params.imgURL) {
+
+      if(this.props.navigation.state.params.layers)
+        this.addObjectsFromLayers(this.props.navigation.state.params.layers);
+
       this.setState({
         imgURL: this.props.navigation.state.params.imgURL || "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png"
       });
     }
+  }
+
+  addObjectsFromLayers(layers){
+    for(let i = 0; i < layers.length; i++){
+      if(layers[i].type == "text")
+        this.addText(layers[i], i);
+    }
+  }
+
+  getLayers(){
+
+
+    // TODO: This is just a placeholder for the Layers Button. Currently does the same things as 'FinishEditing' method.
+    console.log("Number of Layers: " + this.state.layers.length);
+    let layers = [];
+    for(let i = 0; i < this.state.layers.length; i++){
+      let key = this.state.layers[i]["key"];
+      layers.push(this.layerRefs[key].getLayerInfo());
+    }
+
+    console.log(layers);
   }
 
   unselectObj(){
@@ -94,12 +125,21 @@ class Editor extends React.Component {
     }));
   }
 
-  addText(){
-    let newObj = <TextObj key={this.state.key} selectionKey={this.state.key} editor={this} text="Place Text Here"/>;
+  addText(layer = null, key = null){
+    let newObj = <TextObj 
+                    key={key || this.state.key} 
+                    selectionKey={key || this.state.key} 
+                    editor={this}
+                    layer={layer}/>;
+
     this.setState(prevState => ({
       key: prevState.key + 1,
-      layers: [...prevState.layers, newObj],
+      layers: [...prevState.layers, newObj]
     }));
+  }
+
+  addLayerRef(key, ref){
+    this.layerRefs[key] = ref;
   }
 
   editText(){
@@ -116,6 +156,16 @@ class Editor extends React.Component {
 
   editColor(){
     this.setState({ editorMode: "color" });
+  }
+
+  finishEditing(){
+    let layers = [];
+    for(let i = 0; i < this.state.layers.length; i++){
+      let key = this.state.layers[i]["key"];
+      layers.push(this.layerRefs[key].getLayerInfo());
+    }
+
+    this.props.navigation.navigate("Canvas", { imgURL: this.state.imgURL, layers: layers });
   }
 
   render() {
@@ -144,14 +194,14 @@ class Editor extends React.Component {
           <View style={styles.mainEditorDrawerRow}>
             <TouchableHighlight onPress={this.addText} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="text-fields" color="#FFFFFF" size={25}/>
+                <Icon name="text-fields" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Text</Text>
               </View>
             </TouchableHighlight>
 
             <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="collections" color="#FFFFFF" size={25}/>
+                <Icon name="collections" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
               </View>
             </TouchableHighlight>
@@ -160,19 +210,30 @@ class Editor extends React.Component {
           <View style={styles.mainEditorDrawerRow}>
             <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#B1D877"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="gif" color="#FFFFFF" size={25}/>
+                <Icon name="gif" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
+            <TouchableHighlight onPress={this.getLayers} underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="layers" color="#FFFFFF" size={25}/>
+                <Icon name="layers" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Layers</Text>
               </View>
             </TouchableHighlight>
           </View>
         </View>
+
+
+        {/** ================ COMPLETE BUTTON ================ **/}
+        {this.state.selectedType == "" && 
+          <TouchableHighlight onPress={this.finishEditing} underlayColor="white" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
+              <View style={styles.completeButtonView} >
+                <Icon name="check-circle" color="#FFFFFF" size={25}/>
+                <Text style={styles.completeButtonText}>  Finished</Text>
+              </View>
+            </TouchableHighlight>
+        }
 
 
         {/** ================ TEXT EDITOR DRAWER ================ **/}
@@ -323,6 +384,24 @@ const styles = StyleSheet.create({
   mainEditorDrawerButtonText: {
     color: "#FFFFFF",
     fontSize: 15,
+    fontWeight: "bold"
+  },
+  completeButton: {
+    alignSelf: "center",
+    position: "absolute",
+    margin: 5,
+    padding: 7,
+    borderRadius: 5,
+    bottom: "2%"
+  },
+  completeButtonView: {
+    alignSelf: "center",
+    justifyContent: "center",
+    flexDirection: "row"
+  },
+  completeButtonText: {
+    color: "#FFFFFF",
+    fontSize: 20,
     fontWeight: "bold"
   },
   objEditorDrawer: {
