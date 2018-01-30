@@ -192,8 +192,8 @@ export default class BattleList extends React.Component {
             <TextInput
               style={{
                 width: "75%",
-                borderColor: "gray",
-                borderWidth: 1,
+                borderColor: "#d9b3ff",
+                borderWidth: 2,
                 height: "100%"
               }}
               maxLength={50}
@@ -209,7 +209,8 @@ export default class BattleList extends React.Component {
               <Text
                 style={{
                   color: "#ffffff",
-                  textAlign: "center"
+                  textAlign: "center",
+                  fontWeight: "bold"
                 }}
               >
                 Start a Battle!
@@ -419,11 +420,11 @@ const styles = StyleSheet.create({
   textInput: {
     flexDirection: "row",
     height: "5%",
-    marginTop: "1%",
+    marginTop: "0.5%",
     justifyContent: "flex-start"
   },
   startBattleButton: {
-    backgroundColor: "#993333",
+    backgroundColor: "#b366ff",
     height: "100%",
     width: "25%",
     justifyContent: "center"
