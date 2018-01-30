@@ -21,7 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
 import { getUserProfile } from "../api";
-import { uploadProfile } from "../api";
+import { uploadProfile, followUser } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -41,6 +41,8 @@ export default class Profile extends React.Component {
       loaded: false,
       userName: "Default",
       score: -1,
+      followerlist: [],
+      followinglist: [],
       followers: -1,
       following: -1,
       battlesWon: -1,
@@ -68,7 +70,9 @@ export default class Profile extends React.Component {
         if (response.data) {
           this.setState({
             userName: response.data.username,
+            followerlist: response.data.followers,
             followers: response.data.followers.length,
+            followinglist: response.data.following,
             following: response.data.following.length,
             score: response.data.score,
             battlesWon: response.data.battlesWon.length,
@@ -103,9 +107,24 @@ export default class Profile extends React.Component {
     }
   };
 
-  onAdd() {
-    console.log("onAdd hasnt been finished!");
-  }
+  onFollowUser = async () => {
+    console.log("ggg");
+    console.log(this.state.followerlist);
+    this.setState({ followerlist: this.state.followerlist.push("newfollower") });
+    console.log(this.state.followerlist);
+    const token = await AsyncStorage.getItem("@Token:key");
+    followUser(
+      this.state.followerlist,
+      token,
+      (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          //this.saveProfile(response.data.token);
+        }
+      }
+    );
+  };
 
   onChangeProfile = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -193,7 +212,7 @@ export default class Profile extends React.Component {
               containerStyle={styles.buttonContainer}
               style={styles.addButton}
               styleDisabled={{ color: "red" }}
-              onPress={() => this.onAdd()}
+              onPress={() => this.onFollowUser()}
             >
               Follow
             </Button>
