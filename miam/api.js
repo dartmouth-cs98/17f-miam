@@ -43,6 +43,18 @@ export function followUser(followerlist, token, cb) {
     });
 }
 
+export function beingFollowed(followinglist, targetUsername, cb) {
+  const url = `${ROOT_URL}/users`;
+  axios
+    .put(url, { following: followinglist }, { query: targetUsername })
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function signInUser(email, password, cb) {
   const params = {
     email: email.toLowerCase(),
