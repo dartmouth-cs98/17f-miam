@@ -43,6 +43,13 @@ export function followUser(followerlist, token, cb) {
     });
 }
 
+
+export function beingFollowed(followinglist, targetUsername, cb) {
+  const url = `${ROOT_URL}/users`;
+  axios
+    .put(url, { following: followinglist }, { query: targetUsername })
+    .then(async response => {
+
 export function saveMeme(memeId, token, cb) {
   const url = `${ROOT_URL}/users`;
   axios
@@ -54,7 +61,6 @@ export function saveMeme(memeId, token, cb) {
       cb(null, error);
     });
 }
-
 
 export function signInUser(email, password, cb) {
   const params = {

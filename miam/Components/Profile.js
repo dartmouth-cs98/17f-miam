@@ -21,7 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
 import { getUserProfile, getTargetUserProfile } from "../api";
-import { uploadProfile, followUser } from "../api";
+import { uploadProfile, followUser, beingFollowed } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -49,6 +49,8 @@ export default class Profile extends React.Component {
       image: null,
       self: true,
       observer: "",
+      observerFollowingList: [],
+      followed: false,
     };
 
     this.signOut = this.signOut.bind(this);
@@ -58,7 +60,7 @@ export default class Profile extends React.Component {
   componentDidMount() {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
-      console.log(this.props.navigation.state.params);
+      //console.log(this.props.navigation.state.params);
       this.getTargetUser(username);
       this.setState({
         self: false,
@@ -107,6 +109,7 @@ export default class Profile extends React.Component {
         if (response.data) {
           this.setState({
             observer: response.data.username,
+            observerFollowingList: response.data.following,
           });
         } else {
           console.log(error);
@@ -132,7 +135,7 @@ export default class Profile extends React.Component {
             battlesWon: response.data[0].battlesWon ? response.data[0].battlesWon.length : 0,
             image: response.data[0].profilePic,
           });
-          console.log(this.state.userName);
+          //console.log(this.state.userName);
         } else {
           console.log(error);
         }
@@ -164,23 +167,48 @@ export default class Profile extends React.Component {
   };
 
   onFollowUser = async () => {
-    let myUsername = this.state.observer;
-    let username = this.props.navigation.state.params.username;
-    this.setState({ followerlist: this.state.followerlist.push(username) });
-
+    let myUsername = this.state.observer; // Jenny
+    let targetUsername = this.props.navigation.state.params.username; // Coda
+    // Add Coda to Jenny's following list
+    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUsername) });
+    console.log(this.state.observerFollowingList);
     const token = await AsyncStorage.getItem("@Token:key");
     followUser(
-      this.state.followerlist,
+      this.state.observerFollowingList,
       token,
       (response, error) => {
         if (error) {
           console.log(error);
         } else {
+          console.log(myUsername);
+          console.log("Successfully follows user.");
           //this.saveProfile(response.data.token);
         }
       }
     );
+
+    // Add Jenny to Coda's followee list
+    this.setState({ followerlist: this.state.followerlist.push(myUsername) });
+    // beingFollowed(
+    //   this.state.followerlist,
+    //   targetUsername,
+    //   (response, error) => {
+    //     if (error) {
+    //       console.log(error);
+    //     } else {
+    //       console.log(targetUsername);
+    //       console.log("is successfully being followed.");
+    //       //this.saveProfile(response.data.token);
+    //     }
+    //   }
+    // );
+
+    this.setState({ followed: true });
   };
+
+  onUnfollowUser = async () => {
+
+  }
 
   onChangeProfile = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -213,10 +241,6 @@ export default class Profile extends React.Component {
     } catch (error) {
       console.log(`Cannot save Profile. ${error}`);
     }
-  }
-
-  onChallenge() {
-    console.log("onChallenge hasnt been finished!");
   }
 
   setEditorRef = editor => (this.editor = editor);
@@ -264,16 +288,6 @@ export default class Profile extends React.Component {
               uri: "http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg"
             }}
           >
-            {!this.state.self &&
-              <Button
-                containerStyle={styles.buttonContainer}
-                style={styles.addButton}
-                styleDisabled={{ color: "red" }}
-                onPress={() => this.onFollowUser()}
-              >
-                Follow
-              </Button>
-            }
             <View style={styles.profiles}>
               <Image
                 style={styles.profilePicture}
@@ -281,6 +295,24 @@ export default class Profile extends React.Component {
                   uri: imageUrl
                 }}
               />
+              {!this.state.self && !this.state.followed &&
+                <Button
+                  containerStyle={styles.profileButtonContainer}
+                  style={styles.profileButton}
+                  onPress={() => this.onFollowUser()}
+                >
+                  Follow
+                </Button>
+              }
+              {!this.state.self && this.state.followed &&
+                <Button
+                  containerStyle={styles.profileButtonContainer}
+                  style={styles.profileButton}
+                  onPress={() => this.onUnfollowUser()}
+                >
+                  Followed
+                </Button>
+              }
               {this.state.self &&
                 <Button
                   containerStyle={styles.profileButtonContainer}
@@ -296,16 +328,6 @@ export default class Profile extends React.Component {
                 Battle Won: {this.state.battlesWon}
               </Text>
             </View>
-            {!this.state.self &&
-              <Button
-                containerStyle={styles.buttonContainer}
-                style={styles.messageButton}
-                styleDisabled={{ color: "red" }}
-                onPress={() => this.onChallenge()}
-              >
-                Challenge
-              </Button>
-            }
           </Image>
           <View style={styles.bodyMiddle}>
             <View style={styles.box}>
