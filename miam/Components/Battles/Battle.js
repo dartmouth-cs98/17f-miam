@@ -33,7 +33,7 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: "",
-      meme: "",
+      memeId: "",
       theme: ""
     };
 
@@ -107,7 +107,7 @@ class Battle extends React.Component {
         } else {
           this.setState({
             text: "",
-            meme: ""
+            memeId: ""
           });
         }
       }
@@ -128,7 +128,7 @@ class Battle extends React.Component {
   sendMemeMsg() {
     if (this.state.text !== "") {
       let msg = {
-        meme: this.state.meme
+        meme: this.state.memeId
       };
       this.sendMsg(msg);
     } else {
@@ -190,19 +190,26 @@ class Battle extends React.Component {
 
     const time = moment(msg.sentAt).fromNow();
 
-    if (msg.text !== "" || msg.meme !== "") {
+    if (msg.text !== undefined || msg.meme !== undefined) {
       return (
-        <View style={styles.messageContainer}>
-          <View style={styles.senderInfo}>
-            <Text>
-              {msg.sender.username}
-            </Text>
-            <Text>{time}</Text>
+        <View style={styles.messageMain}>
+          <View>
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={{ uri: msg.sender.profilePic }}/>
           </View>
-          <View style={styles.messageContent}>
-            {msg.text !== "" && this.renderText(msg.text)}
-            {msg.meme !== "" && this.renderMeme(msg.meme)}
-            {likeButton}
+          <View style={styles.messageContainer}>
+            <View style={styles.senderInfo}>
+              <Text>
+                {msg.sender.username}
+              </Text>
+              <Text>{time}</Text>
+            </View>
+            <View style={styles.messageContent}>
+              {msg.text !== undefined && this.renderText(msg.text)}
+              {msg.meme !== undefined && this.renderMeme(msg.meme)}
+              {likeButton}
+            </View>
           </View>
         </View>
       );
@@ -212,28 +219,16 @@ class Battle extends React.Component {
   }
 
 
-
   renderMeme(meme) {
-    // if (msg.text === null) {
-    //   return (
-    //     <View>
-    //       <Image
-    //         source={{ uri: msg.gifURL }}
-    //         style={styles.memeStyle}
-    //         resizeMode="contain"
-    //       />
-    //     </View>
-    //   );
-    // } else {
-    //   console.log(msg.gifURL);
-      // return (
-      //   <View>
-      //     <Meme imgURL={msg.gifURL} text={msg.text} />
-      //   </View>
-      // );
-    // }
-
-    return <View />;
+    if (meme) {
+      return (
+        <View>
+          <Meme imgURL={meme.imgURL} layers={meme.layers}/>
+        </View>
+      );
+    } else {
+      return <View />;
+    }
   }
 
   renderText(text, bubbleTextStyle) {
@@ -349,6 +344,11 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 5,
     backgroundColor: "#66db30"
+  },
+
+  messageMain: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
 
   messageContainer: {
