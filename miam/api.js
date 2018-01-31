@@ -49,6 +49,12 @@ export function beingFollowed(followinglist, targetUsername, cb) {
   axios
     .put(url, { following: followinglist }, { query: targetUsername })
     .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
 
 export function saveMeme(memeId, token, cb) {
   const url = `${ROOT_URL}/users`;
