@@ -21,7 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
 import { getUserProfile, getTargetUserProfile } from "../api";
-import { uploadProfile, followUser, beingFollowed } from "../api";
+import { uploadProfile, uploadBackground, followUser, beingFollowed } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -47,6 +47,7 @@ export default class Profile extends React.Component {
       following: -1,
       battlesWon: -1,
       image: null,
+      background: null,
       self: true,
       observer: "",
       observerFollowingList: [],
@@ -235,11 +236,29 @@ export default class Profile extends React.Component {
     }
   };
 
-  async saveProfile(token) {
-    try {
-      await AsyncStorage.setItem("@Token:key", token);
-    } catch (error) {
-      console.log(`Cannot save Profile. ${error}`);
+  onChangeBackground = async () => {
+    console.log("bg");
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3]
+    });
+
+    if (!result.cancelled) {
+      this.setState({ background: result.uri });
+      if (this.state.background !== null) {
+        const token = await AsyncStorage.getItem("@Token:key");
+        uploadBackground(
+          result.uri,
+          token,
+          (response, error) => {
+            if (error) {
+              console.log(error);
+            } else {
+              //this.saveProfile(response.data.token);
+            }
+          }
+        );
+      }
     }
   }
 
@@ -274,8 +293,12 @@ export default class Profile extends React.Component {
 
   render() {
     let imageUrl = "https://thebenclark.files.wordpress.com/2014/03/facebook-default-no-profile-pic.jpg";
+    let backgroundUrl = "http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg";
     if (this.state.image != null) {
       imageUrl = this.state.image;
+    }
+    if (this.state.background != null) {
+      backgroundUrl = this.state.background;
     }
     return (
       <View style={styles.body}>
@@ -285,7 +308,7 @@ export default class Profile extends React.Component {
           <Image
             style={styles.profile}
             source={{
-              uri: "http://cdn.pcwallart.com/images/sand-wallpaper-2.jpg"
+              uri: backgroundUrl
             }}
           >
             <View style={styles.profiles}>
@@ -314,13 +337,22 @@ export default class Profile extends React.Component {
                 </Button>
               }
               {this.state.self &&
-                <Button
-                  containerStyle={styles.profileButtonContainer}
-                  style={styles.profileButton}
-                  onPress={() => this.onChangeProfile()}
-                >
-                  Change Profile
-                </Button>
+                <View>
+                  <Button
+                    containerStyle={styles.profileButtonContainer}
+                    style={styles.profileButton}
+                    onPress={() => this.onChangeProfile()}
+                  >
+                    Change Profile
+                  </Button>
+                  <Button
+                    containerStyle={styles.profileButtonContainer}
+                    style={styles.profileButton}
+                    onPress={() => this.onChangeBackground()}
+                  >
+                    Change Background
+                  </Button>
+                </View>
               }
               <Text style={styles.name}> {this.state.userName} </Text>
               <Text style={styles.score}>Score: {this.state.score}</Text>
@@ -470,7 +502,7 @@ const styles = StyleSheet.create({
   },
   profileButtonContainer: {
     height: 20,
-    width: 100,
+    width: 120,
     marginTop: 5,
     overflow: "hidden",
     borderRadius: 2,

@@ -31,6 +31,18 @@ export function uploadProfile(profileUrl, token, cb) {
     });
 }
 
+export function uploadBackground(backgroundUrl, token, cb) {
+  const url = `${ROOT_URL}/users`;
+  axios
+    .put(url, { backgroundPic: backgroundUrl }, { headers: { Authorization: token } })
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function followUser(followerlist, token, cb) {
   const url = `${ROOT_URL}/users`;
   axios
