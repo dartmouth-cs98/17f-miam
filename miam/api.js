@@ -68,10 +68,22 @@ export function beingFollowed(followinglist, targetUsername, cb) {
     });
 }
 
-export function saveMeme(memeId, token, cb) {
-  const url = `${ROOT_URL}/users`;
+export function saveExistingMeme(memeId, token, cb) {
+  const url = `${ROOT_URL}/users/save-existing-meme`;
   axios
     .put(url, { memeId: memeId }, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function saveNewMeme(meme, token, cb) {
+  const url = `${ROOT_URL}/users/save-new-meme`;
+  axios
+    .post(url, { meme: meme }, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })
@@ -194,6 +206,17 @@ export function getBattle(battleId, cb) {
 export function getUserProfile(token, cb) {
   axios
     .get(`${ROOT_URL}/users`, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function getUserSavedMemes(token, cb) {
+  axios
+    .get(`${ROOT_URL}/user-memes`, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })

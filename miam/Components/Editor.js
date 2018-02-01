@@ -66,7 +66,7 @@ class Editor extends React.Component {
   }
 
   componentWillMount() {
-    
+
   }
 
   componentDidMount() {
@@ -126,9 +126,9 @@ class Editor extends React.Component {
   }
 
   addText(layer = null, key = null){
-    let newObj = <TextObj 
-                    key={key || this.state.key} 
-                    selectionKey={key || this.state.key} 
+    let newObj = <TextObj
+                    key={key || this.state.key}
+                    selectionKey={key || this.state.key}
                     editor={this}
                     layer={layer}/>;
 
@@ -226,7 +226,7 @@ class Editor extends React.Component {
 
 
         {/** ================ COMPLETE BUTTON ================ **/}
-        {this.state.selectedType == "" && 
+        {this.state.selectedType == "" &&
           <TouchableHighlight onPress={this.finishEditing} underlayColor="white" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
               <View style={styles.completeButtonView} >
                 <Icon name="check-circle" color="#FFFFFF" size={25}/>
@@ -238,7 +238,7 @@ class Editor extends React.Component {
 
         {/** ================ TEXT EDITOR DRAWER ================ **/}
         {/* TODO: Look for a scrollable row online */}
-        {this.state.selectedType == "text" && 
+        {this.state.selectedType == "text" &&
           <View style={styles.objEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Text Editing Options </Text>
 
@@ -362,9 +362,9 @@ const styles = StyleSheet.create({
     overflow: "visible"
   },
   mainEditorDrawerTitleText: {
-    position: "absolute", 
-    top: -20, 
-    color: "#FFFFFF", 
+    position: "absolute",
+    top: -20,
+    color: "#FFFFFF",
     fontWeight: "bold"
   },
   mainEditorDrawerRow: {
@@ -372,8 +372,8 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   mainEditorDrawerButton: {
-    margin: 3, 
-    padding: 5, 
+    margin: 3,
+    padding: 5,
     borderRadius: 3
   },
   mainEditorDrawerButtonView: {
@@ -416,8 +416,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   objEditorDrawerButton: {
-    margin: 3, 
-    padding: 5, 
+    margin: 3,
+    padding: 5,
     borderRadius: 3
   },
   sliderEditorDrawer:{

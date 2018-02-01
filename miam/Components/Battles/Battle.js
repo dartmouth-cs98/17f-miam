@@ -49,8 +49,6 @@ class Battle extends React.Component {
     this.sendMemeMsg = this.sendMemeMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
     this.renderInputBar = this.renderInputBar.bind(this);
-    // this.sendGif = this.sendGif.bind(this);
-    // this.sendMeme = this.sendMeme.bind(this);
     this.renderMeme = this.renderMeme.bind(this);
     this.renderText = this.renderText.bind(this);
   }
@@ -78,12 +76,6 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({ animated: true });
     }
-    // const params = this.props.navigation.state.params;
-    // if (params && params.gifUrl) {
-    //   this.setState({ gifUrl: params.gifUrl, text: params.memetext }, () => {
-    //     this.sendMsg();
-    //   });
-    // }
   }
 
   handleMessage(message) {
@@ -136,57 +128,9 @@ class Battle extends React.Component {
     }
   }
 
-  // sendGif() {
-  //   this.props.navigation.navigate("Search", {
-  //     source: "battle",
-  //     battleId: this.props.battleId
-  //   });
-  // }
-  //
-  // sendMeme() {
-  //   this.props.navigation.navigate("Canvas", {
-  //     source: "battle",
-  //     battleId: this.props.battleId
-  //   });
-  // }
-
   renderMsgRow(msg) {
 
-    // if (this.state.participating && msg.sender === this.props.myId) {
-    //   isLeft = false;
-    // } else {
-    //   isLeft = true;
-    // }
-
-    // const atlas = username ? username.charAt(0).toUpperCase() : "A";
-    //
-    // var avator = (
-    //   <View style={styles.avator}>
-    //     <Text
-    //       style={{
-    //         fontSize: 20,
-    //         alignSelf: "center",
-    //         backgroundColor: "transparent",
-    //         marginTop: 5
-    //       }}
-    //     >
-    //       {atlas}
-    //     </Text>
-    //   </View>
-    // );
-
     var likeButton = msg.meme !== undefined ? (<IconMaterial name="favorite-border" color="#cc6699" size={25} />) : (<View />);
-
-    // var bubbleStyles = isLeft
-    //   ? [styles.messageBubble, styles.messageBubbleLeft]
-    //   : [styles.messageBubble, styles.messageBubbleRight];
-
-    // var bubbleTextStyle = isLeft
-    //   ? styles.messageBubbleTextLeft
-    //   : styles.messageBubbleTextRight;
-
-    // var align = { justifyContent: "flex-start" };
-
 
     const time = moment(msg.sentAt).fromNow();
 
@@ -243,13 +187,6 @@ class Battle extends React.Component {
       </Text>
     );
   }
-
-  // <TouchableHighlight underlayColor="white" onPress={this.sendGif}>
-  //   <IconMaterial name="gif" color="#ac3973" size={40} />
-  // </TouchableHighlight>
-  // <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
-  //   <IconMaterial name="control-point" color="#ac3973" size={35} />
-  // </TouchableHighlight>
 
   renderInputBar() {
     return (
