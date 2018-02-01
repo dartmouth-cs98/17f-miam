@@ -286,6 +286,13 @@ export default class Feed extends React.Component {
           <View>
             <TouchableHighlight
               underlayColor="white"
+            >
+              <Icon name="save" color="#cc6699" size={25} />
+            </TouchableHighlight>
+          </View>
+          <View>
+            <TouchableHighlight
+              underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
