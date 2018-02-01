@@ -44,7 +44,7 @@ class Canvas extends React.Component {
       token: ""
     };
 
-    this.getImageFromGiphy = this.getImageFromGiphy.bind(this);
+    this.goGetImageFromGiphy = this.goGetImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
 
     this.sendPost = this.sendPost.bind(this);
@@ -187,6 +187,7 @@ class Canvas extends React.Component {
         console.log(error);
       });
   }
+
   getImageFromRoll = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -199,8 +200,15 @@ class Canvas extends React.Component {
     }
   };
 
-  getImageFromGiphy() {
-    this.props.navigation.navigate("Search");
+  goGetImageFromGiphy() {
+    this.props.navigation.navigate("Search", {sendImgURLBack: this.receiveGifURL.bind(this)});
+  }
+
+  receiveGifURL(gifURL){
+    this.setState({
+      image: gifURL,
+      isLocalPhoto: false
+    });
   }
 
   createTextObj() {
@@ -274,8 +282,9 @@ class Canvas extends React.Component {
                     <Meme imgURL={this.state.image} layers={this.state.layers}/>
                     <View
                       style={{
-                        width: 300,
-                        justifyContent: "center"
+                        width: "80%",
+                        justifyContent: "center",
+                        alignSelf: "center"
                       }}
                     >
                       <Text style={{ textAlign: "center" }}>
@@ -322,7 +331,7 @@ class Canvas extends React.Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={this.getImageFromGiphy}
+                onPress={this.goGetImageFromGiphy}
                 underlayColor="white"
               >
                 <Icon name="gif" color="#ac3973" size={40} />

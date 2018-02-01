@@ -25,6 +25,7 @@ import { createPost } from "../api";
 import { uploadImage } from "../api";
 import Test from "./MemeObjects/TestMemeObj.js";
 import TextObj from "./MemeObjects/TextMemeObj.js";
+import GifObj from "./MemeObjects/GifMemeObj.js";
 // import { RNS3 } from "react-native-aws3";
 import Expo from "expo";
 
@@ -55,12 +56,15 @@ class Editor extends React.Component {
 
     // Instancing methods
     this.addText = this.addText.bind(this);
+    this.addGif = this.addGif.bind(this);
+    this.getGifAPICall = this.getGifAPICall.bind(this);
 
     // Editing Modes
-    this.editText   = this.editText.bind(this);
-    this.editSize   = this.editSize.bind(this);
-    this.editRotate = this.editRotate.bind(this);
-    this.editColor  = this.editColor.bind(this);
+    this.editText      = this.editText.bind(this);
+    this.editSize      = this.editSize.bind(this);
+    this.editRotate    = this.editRotate.bind(this);
+    this.editColor     = this.editColor.bind(this);
+    this.editNewGifUrl = this.editNewGifUrl.bind(this);
 
     this.finishEditing = this.finishEditing.bind(this);
   }
@@ -70,8 +74,7 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.navigation.state.params.imgURL) {
-
+    if (this.props.navigation.state.params) {   // This used to be ...params.imgURL
       if(this.props.navigation.state.params.layers)
         this.addObjectsFromLayers(this.props.navigation.state.params.layers);
 
@@ -85,6 +88,8 @@ class Editor extends React.Component {
     for(let i = 0; i < layers.length; i++){
       if(layers[i].type == "text")
         this.addText(layers[i], i);
+      if(layers[i].type == "gif")
+        this.addGif(layers[i], i);
     }
   }
 
@@ -138,6 +143,36 @@ class Editor extends React.Component {
     }));
   }
 
+  addGif(layer = null, key = null, gifURL = ""){
+    if(layer == null){
+      var newObj = <GifObj
+                      key={key || this.state.key}
+                      selectionKey={key || this.state.key}
+                      editor={this}
+                      gifURL={gifURL}/>
+    }
+    else{
+      var newObj = <GifObj
+                      key={key || this.state.key}
+                      selectionKey={key || this.state.key}
+                      editor={this}
+                      layer={layer}/>
+    }
+
+    this.setState(prevState => ({
+      key: prevState.key + 1,
+      layers: [...prevState.layers, newObj]
+    }));
+  }
+
+  addGifAPICallback(gifURL){
+    this.addGif(null, null, gifURL);
+  }
+
+  getGifAPICall(){
+    this.props.navigation.navigate("Search", {sendImgURLBack: this.addGifAPICallback.bind(this)});
+  }
+
   addLayerRef(key, ref){
     this.layerRefs[key] = ref;
   }
@@ -158,6 +193,14 @@ class Editor extends React.Component {
     this.setState({ editorMode: "color" });
   }
 
+  editNewGifUrlCallback(gifURL){
+    this.state.selectedObj.updateGifURL(gifURL);
+  }
+
+  editNewGifUrl(){
+    this.props.navigation.navigate("Search", {sendImgURLBack: this.editNewGifUrlCallback.bind(this)});
+  }
+
   finishEditing(){
     let layers = [];
     for(let i = 0; i < this.state.layers.length; i++){
@@ -169,9 +212,6 @@ class Editor extends React.Component {
   }
 
   render() {
-
-    // Layer processing
-
     return (
       <View style={styles.body}>
         <StatusBarColor />
@@ -208,7 +248,7 @@ class Editor extends React.Component {
           </View>
 
           <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#B1D877"}]}>
+            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#B1D877"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="gif" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
@@ -334,6 +374,66 @@ class Editor extends React.Component {
               step={1}
               thumbTintColor="#0000FF"
               onValueChange={(value) => this.state.selectedObj.setState({blue: value})} />
+          </View>
+        }
+
+
+
+        {/** ================ GIF EDITOR DRAWER ================ **/}
+        {/* TODO: Look for a scrollable row online */}
+        {this.state.selectedType == "gif" && 
+          <View style={styles.objEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Gif Editing Options </Text>
+
+            <TouchableHighlight onPress={this.editNewGifUrl} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="add-to-photos" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="zoom-out-map" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="autorenew" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="remove-circle" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+              <Icon name="delete" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+          </View>
+        }
+
+        {/** ================ SIZE EDITING ================ **/}
+        {this.state.selectedType == "gif" && this.state.editorMode == "size" &&
+          <View style={styles.sliderEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Gif Scaling </Text>
+            <Slider
+              value={this.state.selectedObj.state.scaling}
+              maximumValue={3}
+              minimumValue={0.5}
+              step={0.1}
+              onValueChange={(value) => this.state.selectedObj.setState({scaling: value})} />
+          </View>
+        }
+
+        {/** ================ ROTATION EDITING ================ **/}
+        {this.state.selectedType == "gif" && this.state.editorMode == "rotate" &&
+          <View style={styles.sliderEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Rotation </Text>
+            <Slider
+              value={this.state.selectedObj.state.rotation}
+              maximumValue={180}
+              minimumValue={-180}
+              step={5}
+              onValueChange={(value) => this.state.selectedObj.setState({rotation: value})} />
           </View>
         }
       </View>

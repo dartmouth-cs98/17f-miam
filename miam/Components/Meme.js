@@ -8,6 +8,7 @@ import {
   TouchableHighlight
 } from "react-native";
 import TextObj from "./MemeObjects/TextMemeObj.js";
+import GifObj from "./MemeObjects/GifMemeObj.js";
 
 class Meme extends React.Component {
   constructor(props) {
@@ -25,17 +26,18 @@ class Meme extends React.Component {
     this.setState({ imgURL: this.props.imgURL, text: this.props.text, layers: this.props.layers});
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps){
     this.setState({ imgURL: nextProps.imgURL, text: nextProps.text, layers: nextProps.layers });
   }
 
   renderLayers(){
     var layerObjects = [];
     for(let i = 0; i < this.state.layers.length; i++){
-      if(this.state.layers[i].type == "text"){
+      if(this.state.layers[i].type == "text")
         layerObjects.push(<TextObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
-        // console.log(this.state.layers[i]);       // TODO: Debugging purposes
-      }
+      if(this.state.layers[i].type == "gif")
+        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>)
+      // console.log(this.state.layers[i]);       // TODO: Debugging purposes
     }
 
     return layerObjects;

@@ -89,7 +89,9 @@ export default class Search extends React.Component {
     if ( params && params.source === 'battle') {
       this.props.navigation.navigate("BattleList", { gifUrl: url, battleId: params.battleId });
     } else {
-      this.props.navigation.navigate("Canvas", { gifurl: url });
+      params.sendImgURLBack(url);
+      this.props.navigation.goBack();
+      // this.props.navigation.navigate("Canvas", { gifurl: url });
     }
   }
   renderRow(rowData) {

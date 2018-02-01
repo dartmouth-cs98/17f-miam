@@ -6,30 +6,32 @@ import {
     Text,
     PanResponder,
     Animated,
-    Dimensions
+    Dimensions,
+    Image
 } from 'react-native';
 
-class TextMemeObj extends React.Component{
+class GifMemeObj extends React.Component{
 	constructor(props){
 	    super(props);
-
+	    
 	    this.state = {
 	    	key: props.selectionKey,
-	    	type: "text",
-	    	red: 255,
-	    	green: 255,
-	    	blue: 255,
-	    	fontSize: 20,
+	    	gifURL: "https://media2.giphy.com/media/3o7WIJ7OlVcqS9Nxny/giphy.gif",
+	    	type: "gif",
+	    	scaling: 1,
 	    	rotation: 0,
 	    	editor: props.editor || null,
-	    	text: "Place Text Here",
 	    	animatedValue: new Animated.ValueXY({x: 0, y: 0})
 	    };
+
+	    this.defaultWidth = 150;
+	    this.defaultHeight = 100;
 
 	    if(props.editor)
 	    	props.editor.addLayerRef(props.selectionKey, this);
 
-	    this.getLayerInfo = this.getLayerInfo.bind(this);
+	    this.recenter = this.recenter.bind(this);
+	    this.updateGifURL = this.updateGifURL.bind(this);
 	}
 
 	componentDidMount(){
@@ -37,12 +39,14 @@ class TextMemeObj extends React.Component{
 			this._value = {x: this.props.layer.x, y: this.props.layer.y};
 			this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
 			this.setState({
-				red: this.props.layer.red,
-				green: this.props.layer.green,
-				blue: this.props.layer.blue,
-				fontSize: this.props.layer.fontSize,
-				rotation: this.props.layer.rotation,
-				text: this.props.layer.text
+				gifURL: this.props.layer.gifURL,
+				scaling: this.props.layer.scaling,
+				rotation: this.props.layer.rotation
+			});
+		}
+		else{
+			this.setState({
+				gifURL: this.props.gifURL
 			});
 		}
 	}
@@ -74,24 +78,27 @@ class TextMemeObj extends React.Component{
 		}
 	}
 
-	getLayerInfo(){
-		let coordinates = JSON.parse(JSON.stringify(this.state.animatedValue));
-
-		return {
-			type: "text",
-			x: coordinates.x,
-			y: coordinates.y,
-			text: this.state.text,
-			fontSize: this.state.fontSize,
-			rotation: this.state.rotation,
-			red: this.state.red,
-			green: this.state.green,
-			blue: this.state.blue
-		}
+	updateGifURL(gifURL){
+		this.setState({
+			gifURL: gifURL
+		});
 	}
 
 	recenter(){
 		this.state.animatedValue.setValue({x: 0, y: 0});
+	}
+
+	getLayerInfo(){
+		let coordinates = JSON.parse(JSON.stringify(this.state.animatedValue));
+
+		return {
+			type: "gif",
+			x: coordinates.x,
+			y: coordinates.y,
+			gifURL: this.state.gifURL,
+			scaling: this.state.scaling,
+			rotation: this.state.rotation
+		}
 	}
 
     render(){
@@ -103,64 +110,59 @@ class TextMemeObj extends React.Component{
 		                transform: [
 		                  {translateX: this.state.animatedValue.x},
 		                  {translateY: this.state.animatedValue.y},
-		                  {rotate: this.state.rotation + 'deg'}
+			              {rotate: this.state.rotation + 'deg'}
 		                ],
 		                backgroundColor: '#00000000',
 		                position: 'absolute',
 		                alignSelf: 'center',
 		                bottom: '50%'
-		              }} 
+		              }}
 		            {...this._panResponder.panHandlers}>
-		            <Text style={
+		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
 		            	{
-		            		color: 'rgb(' + this.state.red + ',' + this.state.green + ',' + this.state.blue + ')',
-		            		fontSize: this.state.fontSize,
-		            		fontWeight: 'bold',
-		            		textAlign: "center"
+		            		alignSelf: "center",
+		            		width: this.defaultWidth * this.state.scaling,
+		            		height: this.defaultHeight * this.state.scaling
 		            	}
-		            }>
-		            	{this.state.text}
-		            </Text>
+		            }/>
 		        </Animated.View>
 	        );
-	    }
+    	}
 
-	    else{
-	    	return (
+    	else{
+	        return (
 		        <Animated.View 
 		          style={
 		              {
 		                transform: [
 		                  {translateX: this.state.animatedValue.x},
 		                  {translateY: this.state.animatedValue.y},
-		                  {rotate: this.state.rotation + 'deg'}
+			              {rotate: this.state.rotation + 'deg'}
 		                ],
 		                backgroundColor: '#00000000',
 		                position: 'absolute',
 		                alignSelf: 'center',
 		                bottom: '50%'
 		              }}>
-		            <Text style={
+		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
 		            	{
-		            		color: 'rgb(' + this.state.red + ',' + this.state.green + ',' + this.state.blue + ')',
-		            		fontSize: this.state.fontSize,
-		            		fontWeight: 'bold',
-		            		textAlign: "center"
+		            		alignSelf: "center",
+		            		width: this.defaultWidth * this.state.scaling,
+		            		height: this.defaultHeight * this.state.scaling
 		            	}
-		            }>
-		            	{this.state.text}
-		            </Text>
+		            }/>
 		        </Animated.View>
 	        );
-	    }
+    	}
     }
 }
 
 const styles = StyleSheet.create({
-  	container: {
-    	alignItems: 'center',
-    	justifyContent: 'center'
-  	}
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
 
-export default TextMemeObj;
+export default GifMemeObj;
