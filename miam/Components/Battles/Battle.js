@@ -195,7 +195,7 @@ class Battle extends React.Component {
         <View style={styles.messageMain}>
           <View>
             <Image
-              style={{ width: 60, height: 60 }}
+              style={styles.profilePic}
               source={{ uri: msg.sender.profilePic }}/>
           </View>
           <View style={styles.messageContainer}>
@@ -348,17 +348,17 @@ const styles = StyleSheet.create({
 
   messageMain: {
     flexDirection: "row",
-    justifyContent: "space-between"
-  },
-
-  messageContainer: {
-    flexDirection: "column",
-    flex: 1,
+    justifyContent: "space-between",
     marginTop: "2.5%",
     borderBottomWidth: 1,
     paddingBottom: "2.5%",
     borderBottomColor: "#9999ff",
     marginLeft: "2%"
+  },
+
+  messageContainer: {
+    flexDirection: "column",
+    flex: 1
   },
 
   messageContent: {
@@ -423,7 +423,15 @@ const styles = StyleSheet.create({
 
   senderInfo: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    marginLeft: 7
+  },
+
+  profilePic: {
+    width: 43,
+    height: 43,
+    borderRadius: 20,
+    margin: 2
   }
 });
 
