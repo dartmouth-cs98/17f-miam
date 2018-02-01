@@ -114,78 +114,91 @@ export default class BattleList extends React.Component {
     this.props.navigation.state.params = {};
   }
   startBattle() {
-    createBattle(this.state.theme, this.state.token, (response, error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        Alert.alert("Battle successfully created!");
-        fetchBattles((response, error) => {
-          if (error) {
-            console.log(error);
-          } else {
-            this.setState({
-              battleDataSource: ds.cloneWithRows(response),
-              loaded: true,
-              theme: ""
-            });
-          }
-        });
-      }
-    });
+    if (this.state.meme != "" && this.state.meme != "theme") {
+      createBattle(this.state.theme, this.state.token, (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          Alert.alert("Battle successfully created!");
+          fetchBattles((response, error) => {
+            if (error) {
+              console.log(error);
+            } else {
+              this.setState({
+                battleDataSource: ds.cloneWithRows(response),
+                loaded: true,
+                theme: ""
+              });
+            }
+          });
+        }
+      });
+    } else {
+      Alert.alert("Create a theme!");
+    }
   }
   renderBattleRow(battle) {
     const time = moment(battle.startTime).fromNow();
-    console.log(this.state.battleDataSource);
     return (
       <View style={styles.battleContainer}>
-        <View>
+        <TouchableHighlight
+          onPress={() => this.selectBattle(battle._id)}
+          underlayColor="#ffffff"
+        >
           <View>
-            <Text
-              style={{ fontSize: 12, color: "#000000", fontWeight: "bold" }}
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              Challenger:{battle.initiatedBy.username}
-            </Text>
-          </View>
-          <View>
-            <View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: "#000000",
-                  fontSize: 15,
-                  fontWeight: "bold"
-                }}
-              >
-                {battle.theme}
-              </Text>
-            </View>
-            <TouchableHighlight
-              onPress={() => this.selectBattle(battle._id)}
-              underlayColor="#732673"
-            >
-              <Text
-                style={{
-                  color: "#bf4080",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: 12
-                }}
-              >
-                JOIN
-              </Text>
-            </TouchableHighlight>
-          </View>
-          <View style={styles.battleInfoContainer}>
-            <View>
-              <Text style={{ fontSize: 10, color: "#000000" }}>{time}</Text>
+              <View style={{ marginTop: "1%", marginLeft: "1%" }}>
+                <Text
+                  style={{ fontSize: 12, color: "#000000", fontWeight: "bold" }}
+                >
+                  Challenger:{battle.initiatedBy.username}
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={{ fontSize: 11, color: "#000000", fontWeight: "bold" }}
+                >
+                  {" "}
+                  follow{" "}
+                </Text>
+              </View>
             </View>
             <View>
-              <Text style={{ fontSize: 10, color: "#000000" }}>
-                Participants Number: {battle.participants.length}
-              </Text>
+              <View>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "#000000",
+                    fontSize: 15,
+                    fontWeight: "bold"
+                  }}
+                >
+                  {battle.theme}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.battleInfoContainer}>
+              <View style={{ marginLeft: "2%" }}>
+                <Text style={{ fontSize: 10, color: "#000000" }}>{time}</Text>
+              </View>
+              <View style={{ flexDirection: "row", marginRight: "2%" }}>
+                <Icon name="people" color="#886BEA" size={15} />
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "#000000",
+                    marginLeft: 2,
+                    textAlign: "center"
+                  }}
+                >
+                  {battle.participants.length}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -336,14 +349,15 @@ export default class BattleList extends React.Component {
 
 const styles = StyleSheet.create({
   body: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "white"
   },
   battlelist: {
     alignItems: "center",
     marginLeft: "2%",
     marginRight: "2%",
     paddingHorizontal: "2%",
-    backgroundColor: "#d98cb3",
+    backgroundColor: "#886BEA",
     borderColor: "#5c5c8a",
     borderRadius: 0.5,
     borderWidth: 2,
@@ -351,11 +365,12 @@ const styles = StyleSheet.create({
     paddingBottom: "2%"
   },
   battleContainer: {
-    borderColor: "#000000",
-    backgroundColor: "#eee6ff",
+    borderColor: "#ffffff",
+    backgroundColor: "#ffffff",
     flexDirection: "column",
     width: 0.9 * vw,
-    borderRadius: 2,
+    borderRadius: 7,
+    borderWidth: 0.5,
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
@@ -387,10 +402,11 @@ const styles = StyleSheet.create({
   headingTabBar: {
     width: "50%",
     height: 28,
-    borderWidth: 1,
-    borderRadius: 5,
+    borderBottomWidth: 2,
+    borderColor: "#d9b3ff",
+    borderRadius: 10,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "center",
     margin: "3%"
@@ -402,16 +418,13 @@ const styles = StyleSheet.create({
   },
   headingTabText: {
     height: "100%",
-    alignSelf: "center",
     fontWeight: "bold",
-    backgroundColor: "#00000000",
-    top: "18%"
+    alignSelf: "center",
+    backgroundColor: "#00000000"
   },
-  activeHeadingTabView: {
-    backgroundColor: "#886BEA"
-  },
+  activeHeadingTabView: {},
   activeHeadingTabText: {
-    color: "white"
+    color: "#886BEA"
   },
   imagePreview: {
     width: 300,
