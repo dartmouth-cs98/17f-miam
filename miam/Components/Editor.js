@@ -302,6 +302,10 @@ class Editor extends React.Component {
               <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
 
+            <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="remove-circle" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
             <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
               <Icon name="delete" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
