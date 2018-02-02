@@ -143,10 +143,26 @@ class Battle extends React.Component {
 
   renderMsgRow(msg) {
 
-    var likeButton = (msg.meme !== undefined) ? (
-      <TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
-        <IconMaterial name="favorite-border" color="#cc6699" size={25} />
-      </TouchableHighlight>) : (<View />);
+    if (msg.meme) {
+      var likeButton = (
+        <TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+          <IconMaterial name="favorite-border" color="#cc6699" size={25} />
+        </TouchableHighlight>
+      );
+      var likeNum = (
+        <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "1%" }}>
+          {msg.likes.length}
+        </Text>
+      );
+    } else {
+      var likeButton = <View />;
+      var likeNum = <View />;
+    }
+
+    // var likeButton = (msg.meme !== undefined) ? (
+    //   <TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+    //     <IconMaterial name="favorite-border" color="#cc6699" size={25} />
+    //   </TouchableHighlight>) : (<View />);
 
     const time = moment(msg.sentAt).fromNow();
 
@@ -168,7 +184,10 @@ class Battle extends React.Component {
             <View style={styles.messageContent}>
               {msg.text !== undefined && this.renderText(msg.text)}
               {msg.meme !== undefined && this.renderMeme(msg.meme)}
+            </View>
+            <View style={styles.messageFooterContainer}>
               {likeButton}
+              {likeNum}
             </View>
           </View>
         </View>
@@ -316,55 +335,64 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: "2.5%",
     borderBottomWidth: 1,
-    paddingBottom: "2.5%",
     borderBottomColor: "#9999ff",
-    marginLeft: "2%"
+    // paddingBottom: "2.5%",
+    marginLeft: "2%",
+    marginRight: "2%"
   },
 
   messageContainer: {
     flexDirection: "column",
-    flex: 1
+    flex: 1,
+    marginRight: "5%"
   },
 
   messageContent: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "flex-start",
+    margin: 10
+  },
+
+  messageFooterContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center"
   },
 
   //MessageBubble
-  messageBubble: {
-    borderRadius: 10,
-    borderColor: "#000000",
-    marginTop: 8,
-    marginRight: 10,
-    marginLeft: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    flexDirection: "column",
-    shadowColor: "#291D56",
-    shadowOffset: { height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    maxWidth: "85%"
-  },
+  // messageBubble: {
+  //   borderRadius: 10,
+  //   borderColor: "#000000",
+  //   marginTop: 8,
+  //   marginRight: 10,
+  //   marginLeft: 10,
+  //   paddingHorizontal: 10,
+  //   paddingVertical: 5,
+  //   flexDirection: "column",
+  //   shadowColor: "#291D56",
+  //   shadowOffset: { height: 2 },
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 3,
+  //   maxWidth: "85%"
+  // },
 
-  messageBubbleLeft: {
-    backgroundColor: "#d5d8d4",
-    alignSelf: "flex-start"
-  },
-
-  messageBubbleTextLeft: {
-    color: "black"
-  },
-
-  messageBubbleRight: {
-    backgroundColor: "#66db30",
-    alignSelf: "flex-end"
-  },
-
-  messageBubbleTextRight: {
-    color: "white"
-  },
+  // messageBubbleLeft: {
+  //   backgroundColor: "#d5d8d4",
+  //   alignSelf: "flex-start"
+  // },
+  //
+  // messageBubbleTextLeft: {
+  //   color: "black"
+  // },
+  //
+  // messageBubbleRight: {
+  //   backgroundColor: "#66db30",
+  //   alignSelf: "flex-end"
+  // },
+  //
+  // messageBubbleTextRight: {
+  //   color: "white"
+  // },
 
   scrollView: {
     flexDirection: "column",
@@ -382,7 +410,10 @@ const styles = StyleSheet.create({
   },
 
   memeStyle: {
-    margin: 20
+    borderWidth: 1,
+    borderColor: "#000000",
+    borderRadius: 10,
+    padding: 5
   },
 
   senderInfo: {
