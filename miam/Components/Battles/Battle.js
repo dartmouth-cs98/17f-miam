@@ -25,6 +25,7 @@ import { getBattle, sendMessage } from "../../api";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Meme from "../Meme";
 import moment from "moment";
+import SelectingMeme from "./SelectingMeme";
 
 class Battle extends React.Component {
   constructor(props) {
@@ -34,7 +35,8 @@ class Battle extends React.Component {
       messages: [],
       text: "",
       memeId: "",
-      theme: ""
+      theme: "",
+      selectingMeme: false
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
@@ -191,7 +193,9 @@ class Battle extends React.Component {
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-      <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.setState({ selectingMeme: true })}>
         <IconMaterial name="control-point" color="#ac3973" size={35} />
       </TouchableHighlight>
         <TextInput
@@ -212,35 +216,41 @@ class Battle extends React.Component {
   }
 
   render() {
-    return (
-      <View style={styles.body}>
-        <StatusBarColor />
-        <Heading
-          text={this.state.theme}
-          backButtonVisible={true}
-          backFunction={this.props.returnToList}
-        />
-        <KeyboardAwareScrollView
-          ref={ref => {
-            this.scrollView = ref;
-          }}
-          onContentSizeChange={(contentWidth, contentHeight) => {
-            this.scrollView.scrollToEnd({ animated: true });
-          }}
-          contentContainerStyle={styles.scrollView}
-        >
-          <ListView
-            initialListSize={5}
-            enableEmptySections={true}
-            dataSource={this.state.msgDataSource}
-            renderRow={msg => {
-              return this.renderMsgRow(msg);
-            }}
+    if (!this.state.selectingMeme) {
+      return (
+        <View style={styles.body}>
+          <StatusBarColor />
+          <Heading
+            text={this.state.theme}
+            backButtonVisible={true}
+            backFunction={this.props.returnToList}
           />
-          {this.renderInputBar()}
-        </KeyboardAwareScrollView>
-      </View>
-    );
+          <KeyboardAwareScrollView
+            ref={ref => {
+              this.scrollView = ref;
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.scrollView.scrollToEnd({ animated: true });
+            }}
+            contentContainerStyle={styles.scrollView}
+          >
+            <ListView
+              initialListSize={5}
+              enableEmptySections={true}
+              dataSource={this.state.msgDataSource}
+              renderRow={msg => {
+                return this.renderMsgRow(msg);
+              }}
+            />
+            {this.renderInputBar()}
+          </KeyboardAwareScrollView>
+        </View>
+      );
+    } else {
+      return (
+        <SelectingMeme />
+      );
+    }
   }
 }
 
