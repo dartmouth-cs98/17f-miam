@@ -52,6 +52,7 @@ export default class BattleList extends React.Component {
       battleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
+      selectedBattleTheme: '',
       pusher: {},
       myId: "",
       token: "",
@@ -99,9 +100,10 @@ export default class BattleList extends React.Component {
     }
   }
 
-  selectBattle(battleId) {
+  selectBattle(battleId, theme) {
     this.setState({
-      selectedBattle: battleId
+      selectedBattle: battleId,
+      selectedBattleTheme: theme
     });
   }
   newHeadingTabPress() {}
@@ -109,7 +111,8 @@ export default class BattleList extends React.Component {
   hotHeadingTabPress() {}
   returnToList() {
     this.setState({
-      selectedBattle: ""
+      selectedBattle: "",
+      selectedBattleTheme: ''
     });
     this.props.navigation.state.params = {};
   }
@@ -142,7 +145,7 @@ export default class BattleList extends React.Component {
     return (
       <View style={styles.battleContainer}>
         <TouchableHighlight
-          onPress={() => this.selectBattle(battle._id)}
+          onPress={() => this.selectBattle(battle._id, battle.theme)}
           underlayColor="#ffffff"
         >
           <View>
@@ -338,6 +341,7 @@ export default class BattleList extends React.Component {
             navigation={this.props.navigation}
             myId={this.state.myId}
             token={this.state.token}
+            theme={this.state.selectedBattleTheme}
           />
         </View>
       );
