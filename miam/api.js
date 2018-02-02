@@ -299,14 +299,14 @@ export function likePost(postID, action, token, cb) {
     });
 }
 
-// export function likeMeme(msgID, action, token, cb) {
-//   const url = `${ROOT_URL}/posts/${postID}`;
-//   axios
-//     .put(url, { action: action }, { headers: { Authorization: token } })
-//     .then(response => {
-//       cb(response, null);
-//     })
-//     .catch(error => {
-//       cb(null, error);
-//     });
-// }
+export function likeMeme(msgID, action, token, cb) {
+  const url = `${ROOT_URL}/battles/like-msg/${msgID}`;
+  axios
+    .put(url, { action: action }, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}

@@ -21,7 +21,7 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
 import Button from "react-native-button";
-import { getBattle, sendMessage } from "../../api";
+import { getBattle, sendMessage, likeMeme } from "../../api";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Meme from "../Meme";
 import moment from "moment";
@@ -34,8 +34,6 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: "",
-      memeId: "",
-      theme: "",
       selectingMeme: false
     };
 
@@ -53,6 +51,8 @@ class Battle extends React.Component {
     this.renderInputBar = this.renderInputBar.bind(this);
     this.renderMeme = this.renderMeme.bind(this);
     this.renderText = this.renderText.bind(this);
+    this.renderMsgRow = this.renderMsgRow.bind(this);
+    this.like = this.like.bind(this);
   }
 
   fetchBattle() {
@@ -63,9 +63,8 @@ class Battle extends React.Component {
         this.setState({
           msgDataSource: ds.cloneWithRows(response.messages),
           messages: response.messages,
-          theme: response.theme
         });
-        console.log(response);
+        // console.log(response);
       }
     });
   }
@@ -101,7 +100,6 @@ class Battle extends React.Component {
         } else {
           this.setState({
             text: "",
-            memeId: ""
           });
         }
       }
@@ -119,20 +117,36 @@ class Battle extends React.Component {
     }
   }
 
-  sendMemeMsg() {
-    if (this.state.text !== "") {
+  sendMemeMsg(memeId) {
+    if (memeId) {
       let msg = {
-        meme: this.state.memeId
+        meme: memeId
       };
       this.sendMsg(msg);
+      this.setState({
+        selectingMeme: false
+      });
     } else {
       alert("You have to select a Meme!");
     }
   }
 
+  like(msgId) {
+    likeMeme(msgId, 'like', this.props.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        console.log(response.data);
+      }
+    })
+  }
+
   renderMsgRow(msg) {
 
-    var likeButton = msg.meme !== undefined ? (<IconMaterial name="favorite-border" color="#cc6699" size={25} />) : (<View />);
+    var likeButton = (msg.meme !== undefined) ? (
+      <TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+        <IconMaterial name="favorite-border" color="#cc6699" size={25} />
+      </TouchableHighlight>) : (<View />);
 
     const time = moment(msg.sentAt).fromNow();
 
@@ -168,7 +182,7 @@ class Battle extends React.Component {
   renderMeme(meme) {
     if (meme) {
       return (
-        <View>
+        <View style={styles.memeStyle}>
           <Meme imgURL={meme.imgURL} layers={meme.layers}/>
         </View>
       );
@@ -221,7 +235,7 @@ class Battle extends React.Component {
         <View style={styles.body}>
           <StatusBarColor />
           <Heading
-            text={this.state.theme}
+            text={'#'+this.props.theme}
             backButtonVisible={true}
             backFunction={this.props.returnToList}
           />
@@ -248,7 +262,11 @@ class Battle extends React.Component {
       );
     } else {
       return (
-        <SelectingMeme />
+        <SelectingMeme
+          token={this.props.token}
+          returnToBattle={() => this.setState({ selectingMeme: false })}
+          sendMemeMsg={this.sendMemeMsg}
+          />
       );
     }
   }
@@ -364,8 +382,7 @@ const styles = StyleSheet.create({
   },
 
   memeStyle: {
-    width: 250,
-    height: 150
+    margin: 20
   },
 
   senderInfo: {
