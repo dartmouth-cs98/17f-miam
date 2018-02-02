@@ -18,7 +18,7 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile, likePost, getTargetUserProfile } from "../api";
+import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme} from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -40,6 +40,7 @@ export default class Feed extends React.Component {
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
+    this.save = this.save.bind(this);
     this.setUserId = this.setUserId.bind(this);
   }
 
@@ -122,6 +123,17 @@ export default class Feed extends React.Component {
       headingTabSelected: "hot"
     });
   }
+
+  save(memeId) {
+    saveExistingMeme(memeId, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        console.log(response.data)
+      }
+    })
+  }
+
   like(postID, action) {
     console.log(postID);
     console.log(this.state.token);
@@ -286,6 +298,9 @@ export default class Feed extends React.Component {
           <View>
             <TouchableHighlight
               underlayColor="white"
+              onPress={() =>
+                this.save(post.meme._id)
+              }
             >
               <Icon name="save" color="#cc6699" size={25} />
             </TouchableHighlight>

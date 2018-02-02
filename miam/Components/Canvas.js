@@ -20,7 +20,7 @@ import Meme from "./Meme";
 import ViewShot from "react-native-view-shot";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { captureRef } from "react-native-view-shot";
-import { createPost } from "../api";
+import { createPost, saveNewMeme } from "../api";
 import { uploadImage } from "../api";
 // import { RNS3 } from "react-native-aws3";
 import Expo from "expo";
@@ -54,6 +54,9 @@ class Canvas extends React.Component {
     this.retrieveToken = this.retrieveToken.bind(this);
 
     this.editImage = this.editImage.bind(this);
+
+    this.saveMeme = this.saveMeme.bind(this);
+    this.save = this.save.bind(this);
   }
 
   componentWillMount() {
@@ -92,56 +95,95 @@ class Canvas extends React.Component {
     }
   }
 
+  saveMeme(){
+    if (this.state.isLocalPhoto) {
+      this.uploadLocalPhoto('save');
+    }
+    else this.save();
+  }
+
+  save() {
+    if(this.state.image == null){
+      alert("Please select an image or gif.");
+      return;
+    }
+
+    const meme = {
+      imgURL: this.state.image,
+      layers: this.state.layers
+    }
+
+    saveNewMeme(meme, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        this.setState({
+          image: null,
+          isLocalPhoto: false,
+          tags: [],
+          text: "",
+          showCaption: false,
+          res: null,
+          layers: []
+        });
+        alert("Successfully saved your meme!");
+        console.log(response.data);
+      }
+    });
+  }
+
   sendPost() {
-    if (this.state.isLocalPhoto) this.uploadLocalPhoto();
+    if (this.state.isLocalPhoto) {
+      this.uploadLocalPhoto('post');
+    }
     else this.createMeme();
   }
 
   createMeme() {
-    var params = this.props.navigation.state.params;
-    if (params && params.source === "battle") {
-      console.log(this.state.image);
-      this.props.navigation.navigate("BattleList", {
-        gifUrl: this.state.image,
-        memetext: this.state.text,
-        battleId: params.battleId
-      });
-    } else {
-      if(this.state.image == null){
-        alert("Please select an image or gif.");
-        return;
-      }
+    // var params = this.props.navigation.state.params;
+    // if (params && params.source === "battle") {
+    //   console.log(this.state.image);
+    //   this.props.navigation.navigate("BattleList", {
+    //     gifUrl: this.state.image,
+    //     memetext: this.state.text,
+    //     battleId: params.battleId
+    //   });
+    // } else {
 
-      const postObj = {
-        meme: {
-          imgURL: this.state.image,
-          layers: this.state.layers
-        },
-        hashtags: "",
-        memetext: this.state.text,
-        posttext: this.state.text
-      };
-      console.log(this.state.token);
-      createPost(postObj, this.state.token, (response, error) => {
-        if (error) {
-          alert(error);
-        } else {
-          this.setState({
-            image: null,
-            isLocalPhoto: false,
-            tags: [],
-            text: "",
-            showCaption: false,
-            res: null,
-            layers: []
-          });
-          alert("Successfully posted your meme!");
-        }
-      });
+    if(this.state.image == null){
+      alert("Please select an image or gif.");
+      return;
     }
+
+    const postObj = {
+      meme: {
+        imgURL: this.state.image,
+        layers: this.state.layers
+      },
+      hashtags: "",
+      memetext: this.state.text,
+      posttext: this.state.text
+    };
+    console.log(this.state.token);
+    createPost(postObj, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        this.setState({
+          image: null,
+          isLocalPhoto: false,
+          tags: [],
+          text: "",
+          showCaption: false,
+          res: null,
+          layers: []
+        });
+        alert("Successfully posted your meme!");
+      }
+    });
   }
 
-  uploadLocalPhoto() {
+  uploadLocalPhoto(action) {
     pseudoRandomFileName =
       Math.random()
         .toString(36)
@@ -163,7 +205,10 @@ class Canvas extends React.Component {
     uploadImage(file)
       .then(function(datum) {
         canvasObj.setState({ image: datum.url });
-        canvasObj.createMeme();
+        if (action === 'post')
+          canvasObj.createMeme();
+        else if (action === 'save')
+          canvasObj.save();
       })
       .catch(function(err) {
         console.log(err);
@@ -253,6 +298,14 @@ class Canvas extends React.Component {
                 <View />
                 <View>
                   <Text style={{ fontSize: 25, color: "#cc66cc" }}>Canvas</Text>
+                </View>
+                <View>
+                  <TouchableHighlight
+                    onPress={this.saveMeme}
+                    underlayColor="#ffffff"
+                  >
+                    <Icon name="save" color="#ac3973" size={28} />
+                  </TouchableHighlight>
                 </View>
                 <View>
                   <TouchableHighlight

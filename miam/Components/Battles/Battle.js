@@ -25,6 +25,7 @@ import { getBattle, sendMessage } from "../../api";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Meme from "../Meme";
 import moment from "moment";
+import SelectingMeme from "./SelectingMeme";
 
 class Battle extends React.Component {
   constructor(props) {
@@ -34,7 +35,8 @@ class Battle extends React.Component {
       messages: [],
       text: "",
       memeId: "",
-      theme: ""
+      theme: "",
+      selectingMeme: false
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
@@ -49,8 +51,6 @@ class Battle extends React.Component {
     this.sendMemeMsg = this.sendMemeMsg.bind(this);
     this.fetchBattle = this.fetchBattle.bind(this);
     this.renderInputBar = this.renderInputBar.bind(this);
-    // this.sendGif = this.sendGif.bind(this);
-    // this.sendMeme = this.sendMeme.bind(this);
     this.renderMeme = this.renderMeme.bind(this);
     this.renderText = this.renderText.bind(this);
   }
@@ -78,12 +78,6 @@ class Battle extends React.Component {
     if (this.scrollView) {
       this.scrollView.scrollToEnd({ animated: true });
     }
-    // const params = this.props.navigation.state.params;
-    // if (params && params.gifUrl) {
-    //   this.setState({ gifUrl: params.gifUrl, text: params.memetext }, () => {
-    //     this.sendMsg();
-    //   });
-    // }
   }
 
   handleMessage(message) {
@@ -136,57 +130,9 @@ class Battle extends React.Component {
     }
   }
 
-  // sendGif() {
-  //   this.props.navigation.navigate("Search", {
-  //     source: "battle",
-  //     battleId: this.props.battleId
-  //   });
-  // }
-  //
-  // sendMeme() {
-  //   this.props.navigation.navigate("Canvas", {
-  //     source: "battle",
-  //     battleId: this.props.battleId
-  //   });
-  // }
-
   renderMsgRow(msg) {
 
-    // if (this.state.participating && msg.sender === this.props.myId) {
-    //   isLeft = false;
-    // } else {
-    //   isLeft = true;
-    // }
-
-    // const atlas = username ? username.charAt(0).toUpperCase() : "A";
-    //
-    // var avator = (
-    //   <View style={styles.avator}>
-    //     <Text
-    //       style={{
-    //         fontSize: 20,
-    //         alignSelf: "center",
-    //         backgroundColor: "transparent",
-    //         marginTop: 5
-    //       }}
-    //     >
-    //       {atlas}
-    //     </Text>
-    //   </View>
-    // );
-
     var likeButton = msg.meme !== undefined ? (<IconMaterial name="favorite-border" color="#cc6699" size={25} />) : (<View />);
-
-    // var bubbleStyles = isLeft
-    //   ? [styles.messageBubble, styles.messageBubbleLeft]
-    //   : [styles.messageBubble, styles.messageBubbleRight];
-
-    // var bubbleTextStyle = isLeft
-    //   ? styles.messageBubbleTextLeft
-    //   : styles.messageBubbleTextRight;
-
-    // var align = { justifyContent: "flex-start" };
-
 
     const time = moment(msg.sentAt).fromNow();
 
@@ -244,17 +190,12 @@ class Battle extends React.Component {
     );
   }
 
-  // <TouchableHighlight underlayColor="white" onPress={this.sendGif}>
-  //   <IconMaterial name="gif" color="#ac3973" size={40} />
-  // </TouchableHighlight>
-  // <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
-  //   <IconMaterial name="control-point" color="#ac3973" size={35} />
-  // </TouchableHighlight>
-
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-      <TouchableHighlight underlayColor="white" onPress={this.sendMeme}>
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.setState({ selectingMeme: true })}>
         <IconMaterial name="control-point" color="#ac3973" size={35} />
       </TouchableHighlight>
         <TextInput
@@ -275,35 +216,41 @@ class Battle extends React.Component {
   }
 
   render() {
-    return (
-      <View style={styles.body}>
-        <StatusBarColor />
-        <Heading
-          text={this.state.theme}
-          backButtonVisible={true}
-          backFunction={this.props.returnToList}
-        />
-        <KeyboardAwareScrollView
-          ref={ref => {
-            this.scrollView = ref;
-          }}
-          onContentSizeChange={(contentWidth, contentHeight) => {
-            this.scrollView.scrollToEnd({ animated: true });
-          }}
-          contentContainerStyle={styles.scrollView}
-        >
-          <ListView
-            initialListSize={5}
-            enableEmptySections={true}
-            dataSource={this.state.msgDataSource}
-            renderRow={msg => {
-              return this.renderMsgRow(msg);
-            }}
+    if (!this.state.selectingMeme) {
+      return (
+        <View style={styles.body}>
+          <StatusBarColor />
+          <Heading
+            text={this.state.theme}
+            backButtonVisible={true}
+            backFunction={this.props.returnToList}
           />
-          {this.renderInputBar()}
-        </KeyboardAwareScrollView>
-      </View>
-    );
+          <KeyboardAwareScrollView
+            ref={ref => {
+              this.scrollView = ref;
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.scrollView.scrollToEnd({ animated: true });
+            }}
+            contentContainerStyle={styles.scrollView}
+          >
+            <ListView
+              initialListSize={5}
+              enableEmptySections={true}
+              dataSource={this.state.msgDataSource}
+              renderRow={msg => {
+                return this.renderMsgRow(msg);
+              }}
+            />
+            {this.renderInputBar()}
+          </KeyboardAwareScrollView>
+        </View>
+      );
+    } else {
+      return (
+        <SelectingMeme />
+      );
+    }
   }
 }
 
