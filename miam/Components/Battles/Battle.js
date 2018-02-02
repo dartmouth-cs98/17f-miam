@@ -44,6 +44,7 @@ class Battle extends React.Component {
       });
     });
 
+    this.fetchBattle = this.fetchBattle.bind(this);
     this.sendMsg = this.sendMsg.bind(this);
     this.sendTextMsg = this.sendTextMsg.bind(this);
     this.sendMemeMsg = this.sendMemeMsg.bind(this);
@@ -136,7 +137,8 @@ class Battle extends React.Component {
       if (error) {
         alert(error);
       } else {
-        console.log(response.data);
+        console.log(response.data.likes);
+        this.fetchBattle();
       }
     })
   }
