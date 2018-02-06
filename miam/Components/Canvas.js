@@ -331,7 +331,7 @@ class Canvas extends React.Component {
               </View>
               <View style={{ height: "80%", marginTop: "2%" }}>
                 {this.state.image && (
-                  <View style={styles.meme}>
+                  <View>
                     <Meme imgURL={this.state.image} layers={this.state.layers}/>
                     <View
                       style={{
@@ -351,16 +351,7 @@ class Canvas extends React.Component {
             </View>
             <View style={styles.tools}>
               <View style={styles.textInput}>
-                <View style={styles.textIcon}>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      color: "#cc66cc",
-                      textAlign: "center"
-                    }}>
-                    T
-                  </Text>
-                </View>
+                <Icon style={{width: "15%"}} name="text-fields" color="#ac3973" size={40} />
                 <TextInput
                   style={{
                     width: "75%",
@@ -418,7 +409,7 @@ const styles = StyleSheet.create({
   },
   canvas: {
     width: "90%",
-    height: 370,
+    height: 350,
     marginTop: "10%",
     borderWidth: 1,
     borderRadius: 3,
@@ -435,7 +426,7 @@ const styles = StyleSheet.create({
     marginBottom: "1%",
     height: 50,
     width: "90%",
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderRadius: 1,
     borderColor: "#a64dff",
     justifyContent: "center"
@@ -454,7 +445,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: "70%",
     marginTop: "1%",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
   },
   mainIcons: {
     flexDirection: "row",
