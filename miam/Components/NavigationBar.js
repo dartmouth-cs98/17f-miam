@@ -58,6 +58,19 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => {
+            if (state.routeName !== "History") {
+              this.props.navigation.navigate("History");
+            }
+          }}
+          underlayColor="#f2d9d9"
+        >
+          <View>
+            <Icon name="history" color="#862d59" size={30} />
+          </View>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          onPress={() => {
             if (state.routeName !== "Profile") {
               this.props.navigation.navigate("Profile");
             }
