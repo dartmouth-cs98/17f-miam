@@ -64,24 +64,43 @@ class SelectingMeme extends React.Component {
   }
 
   render() {
-    return (
-        <View>
-          <StatusBarColor />
-          <Heading
-            text='Saved Memes'
-            backButtonVisible={true}
-            backFunction={this.props.returnToBattle}
-          />
-          <ListView
-            initialListSize={5}
-            enableEmptySections={true}
-            dataSource={this.state.memesDataSource}
-            renderRow={meme => {
-              return this.renderMemesRow(meme);
-            }}
-          />
-        </View>
-    );
+    if (this.state.memes.length === 0) {
+      return (
+          <View>
+            <StatusBarColor />
+            <Heading
+              text='Saved Memes'
+              backButtonVisible={true}
+              backFunction={this.props.returnToBattle}
+            />
+            <Text style={styles.textMsg}>
+              You have not saved any Memes yet!
+            </Text>
+            <Text style={styles.textMsg}>
+              Go to the Feed to save Memes or create a Meme yourself!
+            </Text>
+          </View>
+      );
+    } else {
+      return (
+          <View>
+            <StatusBarColor />
+            <Heading
+              text='Saved Memes'
+              backButtonVisible={true}
+              backFunction={this.props.returnToBattle}
+            />
+            <ListView
+              initialListSize={5}
+              enableEmptySections={true}
+              dataSource={this.state.memesDataSource}
+              renderRow={meme => {
+                return this.renderMemesRow(meme);
+              }}
+            />
+          </View>
+      );
+    }
   }
 }
 
@@ -108,6 +127,11 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     color: "#841584"
+  },
+  textMsg: {
+    color: "#000000",
+    textAlign: "center",
+    fontWeight: "bold"
   }
 });
 

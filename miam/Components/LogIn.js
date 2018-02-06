@@ -60,8 +60,12 @@ class LogIn extends React.Component {
           />
           <Text style={styles.logoFont}> MIAM </Text>
         </View>
-        <Text style={styles.instructions}> Enter your email and password to login</Text>
-        <KeyboardAvoidingView style={styles.numArea}>
+        <View>
+          <Text style={styles.instructions}> Enter your email and password to login</Text>
+        </View>
+        <KeyboardAvoidingView
+          style={styles.numArea}
+          behavior="padding">
           <TextInput onChangeText={(email) => this.setState({email})}
             placeholder='Email'
             value={this.state.email}

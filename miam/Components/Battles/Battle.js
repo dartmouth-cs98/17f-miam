@@ -44,6 +44,8 @@ class Battle extends React.Component {
       });
     });
 
+    this.handleMessage = this.handleMessage.bind(this);
+
     this.fetchBattle = this.fetchBattle.bind(this);
     this.sendMsg = this.sendMsg.bind(this);
     this.sendTextMsg = this.sendTextMsg.bind(this);
@@ -102,6 +104,7 @@ class Battle extends React.Component {
           this.setState({
             text: "",
           });
+          this.fetchBattle();
         }
       }
     );
@@ -276,6 +279,7 @@ class Battle extends React.Component {
               renderRow={msg => {
                 return this.renderMsgRow(msg);
               }}
+              style={styles.listView}
             />
             {this.renderInputBar()}
           </KeyboardAwareScrollView>
@@ -394,6 +398,10 @@ const styles = StyleSheet.create({
   //
   // messageBubbleTextRight: {
   //   color: "white"
+  // },
+
+  // listView: {
+  //   height: vh*0.75
   // },
 
   scrollView: {
