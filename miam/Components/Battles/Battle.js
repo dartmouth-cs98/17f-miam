@@ -188,9 +188,17 @@ class Battle extends React.Component {
           </View>
           <View style={styles.messageContainer}>
             <View style={styles.senderInfo}>
-              <Text>
-                {msg.sender.username}
-              </Text>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate("Profile", {
+                    userId: msg.sender._id,
+                    username: msg.sender.username,
+                  })}
+              >
+                <Text>
+                  {msg.sender.username}
+                </Text>
+              </TouchableHighlight>
               <Text>{time}</Text>
             </View>
             <View style={styles.messageContent}>
