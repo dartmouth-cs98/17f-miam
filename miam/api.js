@@ -43,23 +43,10 @@ export function uploadBackground(backgroundUrl, token, cb) {
     });
 }
 
-export function followUser(followerlist, token, cb) {
-  const url = `${ROOT_URL}/users`;
+export function followUser(newFollower, token, cb) {
+  const url = `${ROOT_URL}/users/follow`;
   axios
-    .put(url, { followers: followerlist }, { headers: { Authorization: token } })
-    .then(async response => {
-      cb(response, null);
-    })
-    .catch(error => {
-      cb(null, error);
-    });
-}
-
-
-export function beingFollowed(followinglist, targetUsername, cb) {
-  const url = `${ROOT_URL}/users`;
-  axios
-    .put(url, { following: followinglist }, { query: targetUsername })
+    .put(url, { followedUserId: newFollower }, { headers: { Authorization: token } })
     .then(async response => {
       cb(response, null);
     })

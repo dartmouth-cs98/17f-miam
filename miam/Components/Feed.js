@@ -210,8 +210,7 @@ export default class Feed extends React.Component {
 
   renderPostRow(post) {
     console.log(post);
-
-    console.log(post.user);
+    var userId = post.user._id;
     var username = post.user.username;
 
     var tempUsrImg =
@@ -239,6 +238,8 @@ export default class Feed extends React.Component {
           <TouchableHighlight
             onPress={() =>
               this.props.navigation.navigate("Profile", {
+                userId
+                : userId,
                 username: username,
               })}
           >

@@ -167,14 +167,24 @@ class Battle extends React.Component {
     //   </TouchableHighlight>) : (<View />);
 
     const time = moment(msg.sentAt).fromNow();
+    console.log("opopop");
+    console.log(msg.sender);
 
     if (msg.text !== undefined || msg.meme !== undefined) {
       return (
         <View style={styles.messageMain}>
           <View>
-            <Image
-              style={styles.profilePic}
-              source={{ uri: msg.sender.profilePic }}/>
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId: msg.sender._id,
+                  username: msg.sender.username,
+                })}
+            >
+              <Image
+                style={styles.profilePic}
+                source={{ uri: msg.sender.profilePic }}/>
+            </TouchableHighlight>
           </View>
           <View style={styles.messageContainer}>
             <View style={styles.senderInfo}>
