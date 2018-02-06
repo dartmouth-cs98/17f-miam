@@ -249,6 +249,14 @@ export default class Feed extends React.Component {
               resizeMode="contain"
             />
           </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() =>
+              this.props.navigation.navigate("Profile", {
+                userId
+                : userId,
+                username: username,
+              })}
+          >
             <Text
               style={{
                 fontSize: 15,
@@ -259,6 +267,7 @@ export default class Feed extends React.Component {
             >
               {post.user.username}
             </Text>
+          </TouchableHighlight>
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Text style={{ fontSize: 8 }}>{time}</Text>

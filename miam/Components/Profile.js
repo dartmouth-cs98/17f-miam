@@ -70,6 +70,12 @@ export default class Profile extends React.Component {
         self: false,
       });
       this.getObserver();
+      // console.log("gygygy");
+      // console.log(this.state.observer);
+      // console.log(this.state.observerFollowingList);
+      if (this.state.observerFollowingList.indexOf(userId) >= 0){
+        this.setState({ followed: true });
+      }
     } else {
       this.getUser();
     }
@@ -239,7 +245,6 @@ export default class Profile extends React.Component {
   };
 
   onChangeBackground = async () => {
-    console.log("bg");
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3]
@@ -262,7 +267,7 @@ export default class Profile extends React.Component {
         );
       }
     }
-  }
+  };
 
   setEditorRef = editor => (this.editor = editor);
 
