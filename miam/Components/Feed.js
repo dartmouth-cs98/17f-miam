@@ -234,33 +234,13 @@ export default class Feed extends React.Component {
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
-          <View style={styles.iconContainer}>
+          
 
           {post.anon ?
-            <TouchableHighlight>
-              <Image source={{ uri: tempUsrImg }} style={styles.userIconStyle} resizeMode="contain"/>
-            </TouchableHighlight>
-            :
-            <TouchableHighlight
-              onPress={() =>
-                this.props.navigation.navigate("Profile", {
-                  userId
-                  : userId,
-                  username: username,
-                })}>
-              <Image
-                source={{ uri: tempUsrImg }}
-                style={styles.userIconStyle}
-                resizeMode="contain"
-              />
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() =>
-                this.props.navigation.navigate("Profile", {
-                  userId
-                  : userId,
-                  username: username,
-                })}>
+            <View style={styles.iconContainer}>
+              <TouchableHighlight>
+                <Image source={{ uri: tempUsrImg }} style={styles.userIconStyle} resizeMode="contain"/>
+              </TouchableHighlight>
               <Text
                 style={{
                   fontSize: 15,
@@ -271,10 +251,43 @@ export default class Feed extends React.Component {
               >
                 {username}
               </Text>
-            </TouchableHighlight>
+            </View>
+            :
+            <View style={styles.iconContainer}>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate("Profile", {
+                    userId
+                    : userId,
+                    username: username,
+                  })}>
+                <Image
+                  source={{ uri: tempUsrImg }}
+                  style={styles.userIconStyle}
+                  resizeMode="contain"
+                />
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate("Profile", {
+                    userId
+                    : userId,
+                    username: username,
+                  })}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    marginLeft: "2%",
+                    marginTop: "10%"
+                  }}
+                >
+                  {username}
+                </Text>
+              </TouchableHighlight>
+            </View>
           }
 
-          </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Text style={{ fontSize: 8 }}>{time}</Text>
           </View>
