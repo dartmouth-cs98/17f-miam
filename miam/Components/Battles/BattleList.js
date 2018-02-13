@@ -57,7 +57,8 @@ export default class BattleList extends React.Component {
       myId: "",
       token: "",
       headingTabSelected: "hot",
-      theme: ""
+      theme: "",
+      data: null
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -95,13 +96,13 @@ export default class BattleList extends React.Component {
               battleDataSource: ds.cloneWithRows(response),
               loaded: true
             });
-            if (response.data) {
-              sortedData = this.sortPostByNewest(response.data);
-              this.setState({
-                data: sortedData,
-                loaded: true
-              });
-            }
+
+            sortedData = this.sortPostByNewest(response);
+            this.setState({
+              data: sortedData,
+              loaded: true
+            });
+            console.log(this.state.data);
           }
         });
       });
@@ -115,19 +116,19 @@ export default class BattleList extends React.Component {
     });
   }
 
-  newHeadingTabPress() {
-    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this");
-    this.setState({
-      postDataSource: ds.cloneWithRows(sortedPosts),
-      headingTabSelected: "new"
-    });
-  }
-
   sortPostByNewest(array, key) {
     return array.sort(function(a, b) {
       return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
         ? -1
         : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
+    });
+  }
+
+  newHeadingTabPress() {
+    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this");
+    this.setState({
+      battleDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "new"
     });
   }
 
@@ -165,11 +166,14 @@ export default class BattleList extends React.Component {
   }
   getTimeLeft(startTime) {
     var start = moment(startTime);
+    console.log("start time" + start);
     var deadline = start
       .clone()
       .hour(24)
       .minute(0)
       .second(0);
+
+    console.log(deadline);
     if (start.isAfter(deadline)) {
       return "expired";
     } else {
