@@ -18,12 +18,18 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme} from "../api";
+import {
+  fetchPosts,
+  getUserProfile,
+  likePost,
+  getTargetUserProfile,
+  saveExistingMeme
+} from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
 var customData = require("../data/customData.json");
-const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
+const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 
 export default class Feed extends React.Component {
@@ -50,7 +56,6 @@ export default class Feed extends React.Component {
         alert(error);
       } else {
         if (response.data) {
-
           sortedData = this.sortPostByNewest(response.data);
           this.setState({
             data: sortedData,
@@ -92,21 +97,22 @@ export default class Feed extends React.Component {
 
   sortPostByNewest(array, key) {
     return array.sort(function(a, b) {
-      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf() ? -1 : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
+      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
+        ? -1
+        : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
     });
   }
 
   sortPostByHottest(array, key) {
     return array.sort(function(a, b) {
-      return b.likes.length < a.likes.length ? -1 : b.likes.length > a.likes.length ? 1 : 0;
+      return b.likes.length < a.likes.length
+        ? -1
+        : b.likes.length > a.likes.length ? 1 : 0;
     });
   }
 
   newHeadingTabPress() {
-    sortedPosts = this.sortPostByNewest(
-      this.state.data,
-      "ignore this for now"
-    );
+    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "new"
@@ -129,9 +135,9 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-        console.log(response.data)
+        console.log(response.data);
       }
-    })
+    });
   }
 
   like(postID, action) {
@@ -141,16 +147,16 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-
         // Re-fetching posts
         fetchPosts((response, error) => {
           if (error) {
             alert(error);
           } else {
             if (response.data) {
-              var sortedData = (this.state.headingTabSelected == "new") ?
-                                this.sortPostByNewest(response.data) :
-                                this.sortPostByHottest(response.data);
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response.data)
+                  : this.sortPostByHottest(response.data);
 
               this.setState({
                 data: sortedData,
@@ -209,7 +215,6 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
-    console.log(post);
     var userId = post.user._id;
     var username = post.user.username;
 
@@ -218,56 +223,70 @@ export default class Feed extends React.Component {
       post.user.username.charAt(0);
     const time = moment(post.createdAt).fromNow();
 
-    const likeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "like")}>
-                        <Icon name="favorite-border" color="#cc6699" size={25} />
-                       </TouchableHighlight>;
-    const unlikeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "unlike")}>
-                          <Icon name="favorite" color="#cc6699" size={25} />
-                         </TouchableHighlight>;
+    const likeButton = (
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.like(post._id, "like")}
+      >
+        <Icon name="favorite-border" color="#cc6699" size={25} />
+      </TouchableHighlight>
+    );
+    const unlikeButton = (
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.like(post._id, "unlike")}
+      >
+        <Icon name="favorite" color="#cc6699" size={25} />
+      </TouchableHighlight>
+    );
     var id = this.state.userId;
-    var postLiked = post.likes.some(function (likeId) {
+    var postLiked = post.likes.some(function(likeId) {
       return likeId === id;
     });
 
-    let meme = <Meme imgURL={post.meme.imgURL} text={post.posttext} layers={post.meme.layers}/>;
+    let meme = (
+      <Meme
+        imgURL={post.meme.imgURL}
+        text={post.posttext}
+        layers={post.meme.layers}
+      />
+    );
 
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
-          <TouchableHighlight
-            onPress={() =>
-              this.props.navigation.navigate("Profile", {
-                userId
-                : userId,
-                username: username,
-              })}
-          >
-            <Image
-              source={{ uri: tempUsrImg }}
-              style={styles.userIconStyle}
-              resizeMode="contain"
-            />
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() =>
-              this.props.navigation.navigate("Profile", {
-                userId
-                : userId,
-                username: username,
-              })}
-          >
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: "bold",
-                marginLeft: "2%",
-                marginTop: "3%"
-              }}
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId: userId,
+                  username: username
+                })}
             >
-              {post.user.username}
-            </Text>
-          </TouchableHighlight>
+              <Image
+                source={{ uri: tempUsrImg }}
+                style={styles.userIconStyle}
+                resizeMode="contain"
+              />
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId: userId,
+                  username: username
+                })}
+            >
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  marginLeft: "2%",
+                  marginTop: "3%"
+                }}
+              >
+                {post.user.username}
+              </Text>
+            </TouchableHighlight>
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Text style={{ fontSize: 8 }}>{time}</Text>
@@ -308,9 +327,7 @@ export default class Feed extends React.Component {
           <View>
             <TouchableHighlight
               underlayColor="white"
-              onPress={() =>
-                this.save(post.meme._id)
-              }
+              onPress={() => this.save(post.meme._id)}
             >
               <Icon name="save" color="#cc6699" size={25} />
             </TouchableHighlight>
@@ -322,7 +339,8 @@ export default class Feed extends React.Component {
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
                   layers: post.meme.layers
-                })}>
+                })}
+            >
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
           </View>

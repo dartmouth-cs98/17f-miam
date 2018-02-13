@@ -68,6 +68,7 @@ export default class BattleList extends React.Component {
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
     this.startBattle = this.startBattle.bind(this);
+    this.getTimeLeft = this.getTimeLeft.bind(this);
   }
 
   async getMyId() {
@@ -94,6 +95,13 @@ export default class BattleList extends React.Component {
               battleDataSource: ds.cloneWithRows(response),
               loaded: true
             });
+            if (response.data) {
+              sortedData = this.sortPostByNewest(response.data);
+              this.setState({
+                data: sortedData,
+                loaded: true
+              });
+            }
           }
         });
       });
@@ -106,7 +114,22 @@ export default class BattleList extends React.Component {
       selectedBattleTheme: theme
     });
   }
-  newHeadingTabPress() {}
+
+  newHeadingTabPress() {
+    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this");
+    this.setState({
+      postDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "new"
+    });
+  }
+
+  sortPostByNewest(array, key) {
+    return array.sort(function(a, b) {
+      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
+        ? -1
+        : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
+    });
+  }
 
   hotHeadingTabPress() {}
   returnToList() {
@@ -117,7 +140,7 @@ export default class BattleList extends React.Component {
     this.props.navigation.state.params = {};
   }
   startBattle() {
-    if (this.state.meme !== undefined && this.state.meme !== "theme") {
+    if (this.state.theme !== undefined && this.state.theme !== "theme") {
       createBattle(this.state.theme, this.state.token, (response, error) => {
         if (error) {
           console.log(error);
@@ -140,8 +163,21 @@ export default class BattleList extends React.Component {
       Alert.alert("Create an actual theme!");
     }
   }
+  getTimeLeft(startTime) {
+    var start = moment(startTime);
+    var deadline = start
+      .clone()
+      .hour(24)
+      .minute(0)
+      .second(0);
+    if (start.isAfter(deadline)) {
+      return "expired";
+    } else {
+      return deadline.from(start);
+    }
+  }
   renderBattleRow(battle) {
-    const time = moment(battle.startTime).fromNow();
+    const remainedTime = this.getTimeLeft(battle.startTime);
     return (
       <View style={styles.battleContainer}>
         <TouchableHighlight
@@ -184,7 +220,9 @@ export default class BattleList extends React.Component {
             </View>
             <View style={styles.battleInfoContainer}>
               <View style={{ marginLeft: "2%" }}>
-                <Text style={{ fontSize: 10, color: "#000000" }}>{time}</Text>
+                <Text style={{ fontSize: 10, color: "#000000" }}>
+                  {remainedTime}
+                </Text>
               </View>
               <View style={{ flexDirection: "row", marginRight: "2%" }}>
                 <Icon name="people" color="#886BEA" size={15} />
