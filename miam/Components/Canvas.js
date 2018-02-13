@@ -36,6 +36,8 @@ class Canvas extends React.Component {
       layers: [],
       isLocalPhoto: false,
 
+      anon: false,
+
       tags: [],
       text: "",
       showCaption: false,
@@ -47,6 +49,7 @@ class Canvas extends React.Component {
     this.goGetImageFromGiphy = this.goGetImageFromGiphy.bind(this);
     this.createTextObj = this.createTextObj.bind(this);
 
+    this.toggleAnon = this.toggleAnon.bind(this);
     this.sendPost = this.sendPost.bind(this);
     this.createMeme = this.createMeme.bind(this);
     this.uploadLocalPhoto = this.uploadLocalPhoto.bind(this);
@@ -93,6 +96,13 @@ class Canvas extends React.Component {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  toggleAnon(){
+    var newAnonState = !this.state.anon;
+    this.setState({
+      anon: newAnonState
+    });
   }
 
   saveMeme(){
@@ -162,7 +172,8 @@ class Canvas extends React.Component {
       },
       hashtags: "",
       memetext: this.state.text,
-      posttext: this.state.text
+      posttext: this.state.text,
+      anon: this.state.anon
     };
     console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {
@@ -176,7 +187,8 @@ class Canvas extends React.Component {
           text: "",
           showCaption: false,
           res: null,
-          layers: []
+          layers: [],
+          anon: false
         });
         alert("Successfully posted your meme!");
       }
@@ -287,6 +299,22 @@ class Canvas extends React.Component {
   }
 
   render() {
+
+    // Anonymous Posting Buttons
+    var anonOffButton = <TouchableHighlight onPress={() => this.toggleAnon()} underlayColor="#ffffffaa" style={[styles.anonButton, {backgroundColor: "#222222"}]}>
+                    <View style={styles.anonButtonView} >
+                      <Icon name="lock-open" color="#FFFFFF" size={25}/>
+                      <Text style={styles.anonButtonText}>  Anonymous OFF</Text>
+                    </View>
+                  </TouchableHighlight>
+
+    var anonOnButton = <TouchableHighlight onPress={() => this.toggleAnon()} underlayColor="#ffffffaa" style={[styles.anonButton, {backgroundColor: "#006400"}]}>
+                    <View style={styles.anonButtonView} >
+                      <Icon name="lock" color="#FFFFFF" size={25}/>
+                      <Text style={styles.anonButtonText}>  Anonymous ON</Text>
+                    </View>
+                  </TouchableHighlight>
+
     return (
       <View style={styles.body}>
         <StatusBarColor />
@@ -331,7 +359,7 @@ class Canvas extends React.Component {
               </View>
               <View style={{ height: "80%", marginTop: "2%" }}>
                 {this.state.image && (
-                  <View style={styles.meme}>
+                  <View>
                     <Meme imgURL={this.state.image} layers={this.state.layers}/>
                     <View
                       style={{
@@ -346,21 +374,11 @@ class Canvas extends React.Component {
                     </View>
                   </View>
                 )}
-
               </View>
             </View>
             <View style={styles.tools}>
               <View style={styles.textInput}>
-                <View style={styles.textIcon}>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      color: "#cc66cc",
-                      textAlign: "center"
-                    }}>
-                    T
-                  </Text>
-                </View>
+                <Icon style={{width: "15%"}} name="text-fields" color="#ac3973" size={40} />
                 <TextInput
                   style={{
                     width: "75%",
@@ -374,6 +392,8 @@ class Canvas extends React.Component {
                 />
               </View>
             </View>
+
+            {(this.state.anon ? anonOnButton : anonOffButton)}
 
             <View style={styles.mainIcons}>
               <TouchableHighlight
@@ -418,7 +438,7 @@ const styles = StyleSheet.create({
   },
   canvas: {
     width: "90%",
-    height: 370,
+    height: 350,
     marginTop: "10%",
     borderWidth: 1,
     borderRadius: 3,
@@ -435,7 +455,7 @@ const styles = StyleSheet.create({
     marginBottom: "1%",
     height: 50,
     width: "90%",
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderRadius: 1,
     borderColor: "#a64dff",
     justifyContent: "center"
@@ -454,7 +474,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: "70%",
     marginTop: "1%",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
   },
   mainIcons: {
     flexDirection: "row",
@@ -467,5 +488,22 @@ const styles = StyleSheet.create({
   gifTranslate: {
     flexDirection: "row",
     height: "30%"
-  }
+  },
+  anonButton: {
+    margin: 3,
+    padding: 5,
+    borderRadius: 3,
+    borderColor: "#006400",
+    borderWidth: 2
+  },
+  anonButtonView: {
+    alignItems: 'center',
+    width: 190,
+    flexDirection: "row"
+  },
+  anonButtonText: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "bold"
+  },
 });
