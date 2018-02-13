@@ -257,8 +257,6 @@ export default class Feed extends React.Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    userId
-                    : userId,
                     username: username,
                   })}>
                 <Image
@@ -270,8 +268,6 @@ export default class Feed extends React.Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    userId
-                    : userId,
                     username: username,
                   })}>
                 <Text

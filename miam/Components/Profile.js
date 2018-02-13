@@ -62,7 +62,7 @@ export default class Profile extends React.Component {
   componentDidMount() {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
-      let userId = this.props.navigation.state.params.userId;
+      let userId = this.props.navigation.state.params.userId || null;
       //console.log(this.props.navigation.state.params);
       this.getTargetUser(username);
       this.setState({
