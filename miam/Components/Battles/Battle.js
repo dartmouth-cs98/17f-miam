@@ -26,6 +26,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Meme from "../Meme";
 import moment from "moment";
 import SelectingMeme from "./SelectingMeme";
+import SearchProfile from "../SearchProfile";
 
 class Battle extends React.Component {
   constructor(props) {
@@ -34,7 +35,8 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: "",
-      selectingMeme: false
+      selectingMeme: false,
+      invitingUser: false
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
@@ -248,11 +250,18 @@ class Battle extends React.Component {
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-      <TouchableHighlight
-        underlayColor="white"
-        onPress={() => this.setState({ selectingMeme: true })}>
-        <IconMaterial name="control-point" color="#ac3973" size={35} />
-      </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor="white"
+          onPress={() => this.setState({ invitingUser: true })}
+          style={styles.iconStyle}>
+          <IconMaterial name="group-add" color="#ac3973" size={30} />
+        </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor="white"
+          onPress={() => this.setState({ selectingMeme: true })}
+          style={styles.iconStyle}>
+          <IconMaterial name="control-point" color="#ac3973" size={30} />
+        </TouchableHighlight>
         <TextInput
           onChangeText={text => this.setState({ text })}
           placeholder="Say something..."
@@ -271,7 +280,22 @@ class Battle extends React.Component {
   }
 
   render() {
-    if (!this.state.selectingMeme) {
+    if (this.state.selectingMeme) {
+      return (
+        <SelectingMeme
+          token={this.props.token}
+          returnToBattle={() => this.setState({ selectingMeme: false })}
+          sendMemeMsg={this.sendMemeMsg}/>
+      );
+    } else if (this.state.invitingUser) {
+      return (
+        <SearchProfile
+          nav={this.props.navigation}
+          token={this.props.token}
+          returnToBattle={() => this.setState({ invitingUser: false })}
+          myId={this.props.myId}/>
+      );
+    } else {
       return (
         <View style={styles.body}>
           <StatusBarColor />
@@ -301,14 +325,6 @@ class Battle extends React.Component {
             {this.renderInputBar()}
           </KeyboardAwareScrollView>
         </View>
-      );
-    } else {
-      return (
-        <SelectingMeme
-          token={this.props.token}
-          returnToBattle={() => this.setState({ selectingMeme: false })}
-          sendMemeMsg={this.sendMemeMsg}
-          />
       );
     }
   }
@@ -454,6 +470,10 @@ const styles = StyleSheet.create({
     height: 43,
     borderRadius: 20,
     margin: 2
+  },
+
+  iconStyle: {
+    marginLeft: 5
   }
 });
 
