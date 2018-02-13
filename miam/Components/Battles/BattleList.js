@@ -221,7 +221,7 @@ export default class BattleList extends React.Component {
             <View style={styles.battleInfoContainer}>
               <View style={{ marginLeft: "2%" }}>
                 <Text style={{ fontSize: 10, color: "#000000" }}>
-                  {remainedTime}
+                  expire {remainedTime}
                 </Text>
               </View>
               <View style={{ flexDirection: "row", marginRight: "2%" }}>
