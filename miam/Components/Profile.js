@@ -20,7 +20,7 @@ import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
-import { getUserProfile, getTargetUserProfile } from "../api";
+import { getUserProfile, getTargetUserProfile, getUserProfileFromID } from "../api";
 import { uploadProfile, uploadBackground, followUser, beingFollowed } from "../api";
 
 var customData = require("../data/customData.json");
@@ -42,6 +42,7 @@ export default class Profile extends React.Component {
       userId: "",
       userName: "Default",
       score: -1,
+      post: [],
       followerlist: [],
       followinglist: [],
       followers: -1,
@@ -53,6 +54,7 @@ export default class Profile extends React.Component {
       observer: "",
       observerFollowingList: [],
       followed: false,
+      tab: "follower",
     };
 
     this.signOut = this.signOut.bind(this);
@@ -63,16 +65,12 @@ export default class Profile extends React.Component {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
       let userId = this.props.navigation.state.params.userId;
-      //console.log(this.props.navigation.state.params);
       this.getTargetUser(username);
       this.setState({
         userId: userId,
         self: false,
       });
       this.getObserver();
-      // console.log("gygygy");
-      // console.log(this.state.observer);
-      // console.log(this.state.observerFollowingList);
       if (this.state.observerFollowingList.indexOf(userId) >= 0){
         this.setState({ followed: true });
       }
@@ -81,7 +79,7 @@ export default class Profile extends React.Component {
     }
 
     this.setState({
-      dataSource: lv.cloneWithRows(listData),
+      dataSource: lv.cloneWithRows([this.state.followerlist]),
       postDataSource: ds.cloneWithRows(customData),
       loaded: true,
     });
@@ -269,33 +267,57 @@ export default class Profile extends React.Component {
     }
   };
 
+  onPressFollowerTab = () => {
+    this.setState({
+      tab: "follower",
+      dataSource: lv.cloneWithRows(this.state.followerlist),
+    });
+  };
+
+  onPressPostTab = () => {
+    this.setState({
+      tab: "post",
+      dataSource: lv.cloneWithRows(this.state.post),
+    });
+  };
+
+  onPressFollowingTab = () => {
+    this.setState({
+      tab: "following",
+      dataSource: lv.cloneWithRows(this.state.followinglist),
+    });
+  };
+
   setEditorRef = editor => (this.editor = editor);
 
+
+  async signOut() {
+    try {
+      await AsyncStorage.removeItem("@Token:key");
+      await AsyncStorage.removeItem("@UserId:key");
+      console.log("Successfully log out");
+      this.props.navigation.navigate("LogIn");
+    } catch (error) {
+      console.log(`Cannot log out. ${error}`);
+    }
+  }
+
   renderListView(post) {
-    var message = "";
-
-    if (post.event == "follow") {
-      message = "is now following you.";
-    }
-
-    if (post.event == "challenge") {
-      message = "challenged you!";
-    }
-
+    console.log(post.profilePic);
     return (
       <View style={styles.singleListContainer}>
         <Image
           style={styles.audienceProfile}
-          source={{ uri: post.userProfile }}
+          source={{ uri: post.profilePic }}
         />
         <View style={styles.audienceBox}>
           <Text style={styles.message}>
-            {post.userName} {message}
+            {post.username}
           </Text>
-          <Text style={styles.time}>{post.time}</Text>
         </View>
       </View>
     );
+
   }
 
   render() {
@@ -369,18 +391,30 @@ export default class Profile extends React.Component {
             </View>
           </Image>
           <View style={styles.bodyMiddle}>
-            <View style={styles.box}>
-              <Text style={styles.fda}>{this.state.followers}</Text>
-              <Text style={styles.fda}>Followers</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.fda}>32</Text>
-              <Text style={styles.fda}>Post</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.fda}>{this.state.following}</Text>
-              <Text style={styles.fda}>Followering</Text>
-            </View>
+            <TouchableHighlight
+              onPress={() => this.onPressFollowerTab()}
+            >
+              <View style={styles.box}>
+                <Text style={styles.fda}>{this.state.followers}</Text>
+                <Text style={styles.fda}>Followers</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.onPressPostTab()}
+            >
+              <View style={styles.box}>
+                <Text style={styles.fda}>32</Text>
+                <Text style={styles.fda}>Post</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.onPressFollowingTab()}
+            >
+              <View style={styles.box}>
+                <Text style={styles.fda}>{this.state.following}</Text>
+                <Text style={styles.fda}>Following</Text>
+              </View>
+            </TouchableHighlight>
           </View>
           <ListView
             style={styles.listviewcontainer}
