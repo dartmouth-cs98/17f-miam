@@ -209,13 +209,13 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
-    console.log(post);
+
     var userId = post.user._id;
-    var username = post.user.username;
+    var username = post.anon ? "Anonymous" : post.user.username;
 
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
-      post.user.username.charAt(0);
+      username.charAt(0);
     const time = moment(post.createdAt).fromNow();
 
     const likeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "like")}>
@@ -235,39 +235,45 @@ export default class Feed extends React.Component {
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
-          <TouchableHighlight
-            onPress={() =>
-              this.props.navigation.navigate("Profile", {
-                userId
-                : userId,
-                username: username,
-              })}
-          >
-            <Image
-              source={{ uri: tempUsrImg }}
-              style={styles.userIconStyle}
-              resizeMode="contain"
-            />
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() =>
-              this.props.navigation.navigate("Profile", {
-                userId
-                : userId,
-                username: username,
-              })}
-          >
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: "bold",
-                marginLeft: "2%",
-                marginTop: "3%"
-              }}
-            >
-              {post.user.username}
-            </Text>
-          </TouchableHighlight>
+
+          {post.anon ?
+            <TouchableHighlight>
+              <Image source={{ uri: tempUsrImg }} style={styles.userIconStyle} resizeMode="contain"/>
+            </TouchableHighlight>
+            :
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId
+                  : userId,
+                  username: username,
+                })}>
+              <Image
+                source={{ uri: tempUsrImg }}
+                style={styles.userIconStyle}
+                resizeMode="contain"
+              />
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId
+                  : userId,
+                  username: username,
+                })}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  marginLeft: "2%",
+                  marginTop: "3%"
+                }}
+              >
+                {username}
+              </Text>
+            </TouchableHighlight>
+          }
+
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Text style={{ fontSize: 8 }}>{time}</Text>
