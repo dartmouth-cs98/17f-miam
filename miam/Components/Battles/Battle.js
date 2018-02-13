@@ -104,7 +104,6 @@ class Battle extends React.Component {
           this.setState({
             text: "",
           });
-          this.fetchBattle();
         }
       }
     );
