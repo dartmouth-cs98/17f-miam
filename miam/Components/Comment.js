@@ -26,6 +26,7 @@ class Comment extends Component {
       commentDataSource: ds.cloneWithRows([]),
       comments: [],
       comment: "",
+      originalPoster: null,
       postID: null,
       token: null
     };
@@ -44,8 +45,12 @@ class Comment extends Component {
   componentDidMount() {
     if (this.props.navigation.state.params) {
       this.setState({
-        postID: this.props.navigation.state.params.postID
+        postID: this.props.navigation.state.params.postID,
+        originalUser: this.props.navigation.state.params.originalPoster || null
       });
+
+      console.log(this.props.navigation.state.params.originalPoster);
+
       for (i = 0; i < this.props.navigation.state.params.comments.length; i++) {
         this.getComment(this.props.navigation.state.params.comments[i]);
       }
@@ -128,6 +133,7 @@ class Comment extends Component {
       </View>
     );
   }
+
   render() {
     return (
       <View style={styles.body}>
@@ -138,6 +144,11 @@ class Comment extends Component {
           nav={this.props.navigation}
         />
         <KeyboardAwareView animated={true}>
+
+          <View style={styles.commentTitleBox}>
+            <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
+          </View>
+
           <ListView
             initialListSize={5}
             enableEmptySections={true}
@@ -200,6 +211,12 @@ const styles = StyleSheet.create({
   createCommentContainer: {
     height: 30,
     flexDirection: "row"
+  },
+  commentTitleBox: {
+    paddingTop: 2,
+    paddingBottom: 2,
+    backgroundColor: "#6633aa",
+    alignItems: "center"
   }
 });
 module.exports = Comment;

@@ -311,7 +311,8 @@ export default class Feed extends React.Component {
               onPress={() =>
                 this.props.navigation.navigate("Comment", {
                   postID: post._id,
-                  comments: post.comments
+                  comments: post.comments,
+                  originalPoster: "ColaDude"
                 })}
             >
               <Icon name="mode-comment" color="#cc6699" size={25} />
