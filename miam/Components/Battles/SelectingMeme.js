@@ -66,7 +66,7 @@ class SelectingMeme extends React.Component {
   render() {
     if (this.state.memes.length === 0) {
       return (
-          <View>
+          <View style={styles.body}>
             <StatusBarColor />
             <Heading
               text='Saved Memes'
@@ -83,7 +83,7 @@ class SelectingMeme extends React.Component {
       );
     } else {
       return (
-          <View>
+          <View style={styles.body}>
             <StatusBarColor />
             <Heading
               text='Saved Memes'
@@ -91,6 +91,7 @@ class SelectingMeme extends React.Component {
               backFunction={this.props.returnToBattle}
             />
             <ListView
+              style={styles.listView}
               initialListSize={5}
               enableEmptySections={true}
               dataSource={this.state.memesDataSource}
@@ -105,6 +106,10 @@ class SelectingMeme extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  body: {
+    flex: 1,
+    backgroundColor: "#ffffff"
+  },
   memeContainer: {
     borderWidth: 1,
     borderRadius: 3,
@@ -131,8 +136,12 @@ const styles = StyleSheet.create({
   textMsg: {
     color: "#000000",
     textAlign: "center",
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+    marginTop: 20
+  },
+  listView: {
+    marginBottom: 20
+  },
 });
 
 export default SelectingMeme;

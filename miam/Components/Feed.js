@@ -129,7 +129,7 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-        console.log(response.data)
+        alert("You have successfully saved this meme!");
       }
     })
   }
