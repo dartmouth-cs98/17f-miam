@@ -52,7 +52,7 @@ export default class BattleList extends React.Component {
       battleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
-      selectedBattleTheme: '',
+      selectedBattleTheme: "",
       pusher: {},
       myId: "",
       token: "",
@@ -112,12 +112,12 @@ export default class BattleList extends React.Component {
   returnToList() {
     this.setState({
       selectedBattle: "",
-      selectedBattleTheme: ''
+      selectedBattleTheme: ""
     });
     this.props.navigation.state.params = {};
   }
   startBattle() {
-    if (this.state.meme != "" && this.state.meme != "theme") {
+    if (this.state.meme !== undefined && this.state.meme !== "theme") {
       createBattle(this.state.theme, this.state.token, (response, error) => {
         if (error) {
           console.log(error);
@@ -137,7 +137,7 @@ export default class BattleList extends React.Component {
         }
       });
     } else {
-      Alert.alert("Create a theme!");
+      Alert.alert("Create an actual theme!");
     }
   }
   renderBattleRow(battle) {
@@ -178,7 +178,7 @@ export default class BattleList extends React.Component {
                     fontWeight: "bold"
                   }}
                 >
-                  {battle.theme}
+                  #{battle.theme}
                 </Text>
               </View>
             </View>

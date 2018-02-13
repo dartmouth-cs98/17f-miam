@@ -39,6 +39,7 @@ export default class Profile extends React.Component {
       dataSource: lv.cloneWithRows(["row 1", "row 2"]),
       postDataSource: ds.cloneWithRows([]),
       loaded: false,
+      userId: "",
       userName: "Default",
       score: -1,
       followerlist: [],
@@ -61,12 +62,20 @@ export default class Profile extends React.Component {
   componentDidMount() {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
+      let userId = this.props.navigation.state.params.userId;
       //console.log(this.props.navigation.state.params);
       this.getTargetUser(username);
       this.setState({
+        userId: userId,
         self: false,
       });
       this.getObserver();
+      // console.log("gygygy");
+      // console.log(this.state.observer);
+      // console.log(this.state.observerFollowingList);
+      if (this.state.observerFollowingList.indexOf(userId) >= 0){
+        this.setState({ followed: true });
+      }
     } else {
       this.getUser();
     }
@@ -169,13 +178,12 @@ export default class Profile extends React.Component {
 
   onFollowUser = async () => {
     let myUsername = this.state.observer; // Jenny
-    let targetUsername = this.props.navigation.state.params.username; // Coda
+    let targetUserId = this.props.navigation.state.params.userId; // Coda's id
     // Add Coda to Jenny's following list
-    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUsername) });
-    console.log(this.state.observerFollowingList);
+    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
     const token = await AsyncStorage.getItem("@Token:key");
     followUser(
-      this.state.observerFollowingList,
+      targetUserId,
       token,
       (response, error) => {
         if (error) {
@@ -189,7 +197,7 @@ export default class Profile extends React.Component {
     );
 
     // Add Jenny to Coda's followee list
-    this.setState({ followerlist: this.state.followerlist.push(myUsername) });
+    // this.setState({ followerlist: this.state.followerlist.push(myUsername) });
     // beingFollowed(
     //   this.state.followerlist,
     //   targetUsername,
@@ -237,7 +245,6 @@ export default class Profile extends React.Component {
   };
 
   onChangeBackground = async () => {
-    console.log("bg");
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3]
@@ -260,7 +267,7 @@ export default class Profile extends React.Component {
         );
       }
     }
-  }
+  };
 
   setEditorRef = editor => (this.editor = editor);
 

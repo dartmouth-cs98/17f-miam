@@ -42,6 +42,7 @@ import Comment from "./Components/Comment";
 import SearchProfile from "./Components/SearchProfile";
 import SearchProfileList from "./Components/SearchProfileList";
 import Editor from "./Components/Editor";
+import History from "./Components/History";
 
 const navBarMainColor = "#F4F5F9";
 const navBarTintColor = "#6C56BA";
@@ -87,6 +88,9 @@ export const AuthStack = StackNavigator(
     },
     BattleList: {
       screen: BattleList
+    },
+    History: {
+      screen: History
     },
     Profile: {
       screen: Profile

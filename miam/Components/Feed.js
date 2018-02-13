@@ -209,7 +209,9 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
+
     var username = post.anon ? "Anonymous" : post.user.username;
+    var userId = post.user._id;
 
     var tempUsrImg =
       "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
@@ -233,7 +235,6 @@ export default class Feed extends React.Component {
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
           <View style={styles.iconContainer}>
-
           {post.anon ?
             <TouchableHighlight>
               <Image source={{ uri: tempUsrImg }} style={styles.userIconStyle} resizeMode="contain"/>
@@ -242,12 +243,25 @@ export default class Feed extends React.Component {
             <TouchableHighlight
               onPress={() =>
                 this.props.navigation.navigate("Profile", {
+                  userId
+                  : userId,
                   username: username,
-                })}>
-              <Image source={{ uri: tempUsrImg }} style={styles.userIconStyle} resizeMode="contain"/>
+                })}
+            >
+              <Image
+                source={{ uri: tempUsrImg }}
+                style={styles.userIconStyle}
+                resizeMode="contain"
+              />
             </TouchableHighlight>
-          }
-
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId
+                  : userId,
+                  username: username,
+                })}
+            >
             <Text
               style={{
                 fontSize: 15,
@@ -258,6 +272,9 @@ export default class Feed extends React.Component {
             >
               {username}
             </Text>
+          </TouchableHighlight>
+          }
+
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Text style={{ fontSize: 8 }}>{time}</Text>

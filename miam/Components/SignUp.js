@@ -7,7 +7,8 @@ import {
   Dimensions,
   Button,
   TextInput,
-  AsyncStorage
+  AsyncStorage,
+  KeyboardAvoidingView
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -87,7 +88,9 @@ class SignUp extends React.Component {
           {" "}
           Enter your email and password to signup
         </Text>
-        <View style={styles.numArea}>
+        <KeyboardAvoidingView
+          style={styles.numArea}
+          behavior="padding">
           <TextInput
             onChangeText={username => this.setState({ username })}
             placeholder="Username"
@@ -111,7 +114,7 @@ class SignUp extends React.Component {
             autoCapitalize="none"
             style={styles.textArea}
           />
-        </View>
+        </KeyboardAvoidingView>
         <View style={styles.buttonArea}>
           <Button
             containerStyle={{

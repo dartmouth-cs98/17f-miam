@@ -44,6 +44,8 @@ class Battle extends React.Component {
       });
     });
 
+    this.handleMessage = this.handleMessage.bind(this);
+
     this.fetchBattle = this.fetchBattle.bind(this);
     this.sendMsg = this.sendMsg.bind(this);
     this.sendTextMsg = this.sendTextMsg.bind(this);
@@ -102,6 +104,7 @@ class Battle extends React.Component {
           this.setState({
             text: "",
           });
+          this.fetchBattle();
         }
       }
     );
@@ -167,20 +170,38 @@ class Battle extends React.Component {
     //   </TouchableHighlight>) : (<View />);
 
     const time = moment(msg.sentAt).fromNow();
+    console.log("opopop");
+    console.log(msg.sender);
 
     if (msg.text !== undefined || msg.meme !== undefined) {
       return (
         <View style={styles.messageMain}>
           <View>
-            <Image
-              style={styles.profilePic}
-              source={{ uri: msg.sender.profilePic }}/>
+            <TouchableHighlight
+              onPress={() =>
+                this.props.navigation.navigate("Profile", {
+                  userId: msg.sender._id,
+                  username: msg.sender.username,
+                })}
+            >
+              <Image
+                style={styles.profilePic}
+                source={{ uri: msg.sender.profilePic }}/>
+            </TouchableHighlight>
           </View>
           <View style={styles.messageContainer}>
             <View style={styles.senderInfo}>
-              <Text>
-                {msg.sender.username}
-              </Text>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate("Profile", {
+                    userId: msg.sender._id,
+                    username: msg.sender.username,
+                  })}
+              >
+                <Text>
+                  {msg.sender.username}
+                </Text>
+              </TouchableHighlight>
               <Text>{time}</Text>
             </View>
             <View style={styles.messageContent}>
@@ -276,6 +297,7 @@ class Battle extends React.Component {
               renderRow={msg => {
                 return this.renderMsgRow(msg);
               }}
+              style={styles.listView}
             />
             {this.renderInputBar()}
           </KeyboardAwareScrollView>
@@ -394,6 +416,10 @@ const styles = StyleSheet.create({
   //
   // messageBubbleTextRight: {
   //   color: "white"
+  // },
+
+  // listView: {
+  //   height: vh*0.75
   // },
 
   scrollView: {
