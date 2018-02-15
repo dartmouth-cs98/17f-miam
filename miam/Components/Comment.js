@@ -8,7 +8,9 @@ import {
   ListView,
   AsyncStorage,
   TouchableHighlight,
-  Alert
+  Alert,
+  Animated,
+  Easing
 } from "react-native";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
@@ -16,6 +18,8 @@ import { postComment } from "../api";
 import { fetchComment } from "../api";
 import update from "react-addons-update";
 import moment from "moment";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { LinearGradient } from 'expo';
 import { KeyboardAwareView } from "react-native-keyboard-aware-view";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 class Comment extends Component {
@@ -31,31 +35,44 @@ class Comment extends Component {
       token: null
     };
 
+    this.animRot = new Animated.Value(0);
+
     this.del = this.del.bind(this);
     this.getMyId = this.getMyId.bind(this);
     this.renderCommentRow = this.renderCommentRow.bind(this);
     this.comment = this.comment.bind(this);
     this.getComment = this.getComment.bind(this);
     this.sortByNewest = this.sortByNewest.bind(this);
+
+    this.runStarAnim = this.runStarAnim.bind(this);
   }
+
   del(commentId) {}
+
   componentWillMount() {
     this.getMyId();
   }
+
   componentDidMount() {
     if (this.props.navigation.state.params) {
       this.setState({
         postID: this.props.navigation.state.params.postID,
-        originalUser: this.props.navigation.state.params.originalPoster || null
+        originalPoster: this.props.navigation.state.params.originalPoster || null
       });
 
-      console.log(this.props.navigation.state.params.originalPoster);
+      // Create animation loop if there is an original poster
+      if(this.props.navigation.state.params.originalPoster){
+        console.log(this.props.navigation.state.params.originalPoster);
+        this.runStarAnim();
+      }
+
 
       for (i = 0; i < this.props.navigation.state.params.comments.length; i++) {
         this.getComment(this.props.navigation.state.params.comments[i]);
       }
     }
   }
+
   sortByNewest(array) {
     return array.sort(function(a, b) {
       return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
@@ -65,6 +82,7 @@ class Comment extends Component {
           : 0;
     });
   }
+
   getComment(commentID) {
     fetchComment(commentID, (response, error) => {
       if (error) {
@@ -83,6 +101,7 @@ class Comment extends Component {
       }
     });
   }
+
   comment() {
     if (this.state.comment) {
       postComment(
@@ -104,6 +123,7 @@ class Comment extends Component {
       Alert.alert("Comment is empty.");
     }
   }
+
   async getMyId() {
     try {
       const savedToken = await AsyncStorage.getItem("@Token:key");
@@ -134,7 +154,39 @@ class Comment extends Component {
     );
   }
 
+  runStarAnim(){
+    Animated.sequence([
+      Animated.timing(this.animRot, {
+        toValue: 1,
+        duration: 350
+      }),
+      Animated.timing(this.animRot, {
+        toValue: 0,
+        duration: 350
+      })
+    ]).start(() => this.runStarAnim());
+  }
+
   render() {
+    const interpolRotLeft = this.animRot.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['45deg', '135deg'],
+    });
+
+    const interpolRotRight = this.animRot.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['135deg', '45deg'],
+    });
+
+    const starBar = <View style={{flexDirection: "row", justifyContent: 'space-between', padding: 3}}>
+                    <Icon style={{paddingLeft: "1%", paddingRight: "1%"}} name="stars" color="#FFDF00" size={14} />
+                    <Icon style={{paddingLeft: "1%", paddingRight: "1%"}} name="stars" color="#FFDF00" size={14} />
+                    <Icon style={{paddingLeft: "1%", paddingRight: "1%"}} name="stars" color="#FFDF00" size={14} />
+                  </View>;
+         
+    const leftAnimStar = <Animated.View style={{right: "150%", transform: [{rotate: interpolRotLeft}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+    const rightAnimStar = <Animated.View style={{left: "150%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+
     return (
       <View style={styles.body}>
         <StatusBarColor />
@@ -144,6 +196,35 @@ class Comment extends Component {
           nav={this.props.navigation}
         />
         <KeyboardAwareView animated={true}>
+
+          {this.state.originalPoster != null &&
+            <TouchableHighlight
+                  underlayColor="#FFFFFFAA"
+                  onPress={() => {
+                    this.setState({ stopAnimation: true });
+                    this.props.navigation.navigate("Profile", { username: this.state.originalPoster})}}
+            >
+              <View>
+                <LinearGradient
+                  style={styles.originalPosterBox}
+                  colors={[ '#9d50bb', '#6e48aa', '#4a2875', '#2a0845']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}>
+                  {starBar}
+                  
+                  <View style={{flexDirection: "row"}}>
+                    {leftAnimStar}
+                    <View style={{alignItems: "center"}}>
+                      <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 12}}> Original Poster is </Text>
+                      <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 20}}>{this.state.originalPoster}</Text>
+                    </View>
+                    {rightAnimStar}
+                  </View>
+                  {starBar}
+                </LinearGradient>
+              </View>
+            </TouchableHighlight>
+          }
 
           <View style={styles.commentTitleBox}>
             <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
@@ -195,6 +276,7 @@ class Comment extends Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -217,6 +299,10 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     backgroundColor: "#6633aa",
     alignItems: "center"
+  },
+  originalPosterBox: {
+    alignItems: 'center', 
+    marginBottom: 3
   }
 });
 module.exports = Comment;

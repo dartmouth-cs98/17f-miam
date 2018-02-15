@@ -312,7 +312,7 @@ export default class Feed extends React.Component {
                 this.props.navigation.navigate("Comment", {
                   postID: post._id,
                   comments: post.comments,
-                  originalPoster: "ColaDude"
+                  originalPoster: "ColaDude"      // TODO: CHANGE THIS LATER 
                 })}
             >
               <Icon name="mode-comment" color="#cc6699" size={25} />
@@ -337,7 +337,8 @@ export default class Feed extends React.Component {
               onPress={() =>
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
-                  layers: post.meme.layers
+                  layers: post.meme.layers,
+                  originalPoster: username    // TODO: IN CANVAS, ONLY USE THIS WHEN IT ISN"T ANONYMOUS
                 })}>
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
