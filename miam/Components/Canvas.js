@@ -43,7 +43,9 @@ class Canvas extends React.Component {
       showCaption: false,
       gifWords: "Sup",
       res: null,
-      token: ""
+      token: "",
+      originalPoster: "",
+      username: ""
     };
 
     this.goGetImageFromGiphy = this.goGetImageFromGiphy.bind(this);
@@ -74,9 +76,15 @@ class Canvas extends React.Component {
           isLocalPhoto: false
         });
       } else if (this.props.navigation.state.params.imgURL) {
+        var originalPoster = ((this.props.navigation.state.params.username != "Anonymous") && 
+                               this.props.navigation.state.params.originalPoster ? 
+                               this.props.navigation.state.params.originalPoster :
+                               "");
+
         this.setState({
           image: this.props.navigation.state.params.imgURL,
           layers: this.props.navigation.state.params.layers,
+          originalPoster: originalPoster,
           isLocalPhoto: false
         });
       }
@@ -173,7 +181,8 @@ class Canvas extends React.Component {
       hashtags: "",
       memetext: this.state.text,
       posttext: this.state.text,
-      anon: this.state.anon
+      anon: this.state.anon,
+      originalPoster: this.state.originalPoster
     };
     console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {

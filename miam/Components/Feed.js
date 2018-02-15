@@ -18,7 +18,7 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme} from "../api";
+import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme } from "../api";
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -340,7 +340,8 @@ export default class Feed extends React.Component {
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
                   layers: post.meme.layers,
-                  originalPoster: username,    // TODO: IN CANVAS, ONLY USE THIS WHEN IT ISN"T ANONYMOUS
+                  originalPoster: "post.meme.originalPoster",    // TODO: IN CANVAS, ONLY USE THIS WHEN IT ISN"T ANONYMOUS
+                  username: username
                 })}>
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
@@ -419,7 +420,8 @@ const styles = StyleSheet.create({
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 3
+    shadowRadius: 3,
+    padding: 5
   },
   postHeadingContainer: {
     flexDirection: "row",

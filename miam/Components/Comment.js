@@ -178,7 +178,7 @@ class Comment extends Component {
                     <View>
                       <LinearGradient
                         style={styles.originalPosterBox}
-                        colors={[ '#9d50bb', '#6e48aa', '#4a2875', '#2a0845']}
+                        colors={[ '#1D2671', '#9733EE' ]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}>
                         {starBar}
@@ -200,9 +200,9 @@ class Comment extends Component {
     return(
       <View>
         {opButton}
-        <View style={styles.commentTitleBox}>
-          <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
-        </View>
+        <LinearGradient style={styles.commentTitleBox} colors={['#9733EE', '#DA22FF']} start={{ x:0, y:0 }} end={{ x:1, y:0 }}>
+          <Text style={{fontWeight: "bold", color: "#FFFFFF", backgroundColor: "#00000000", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
+        </LinearGradient>
       </View>
     );
   }
