@@ -21,7 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker } from "expo";
 
 import { getUserProfile, getTargetUserProfile, getUserProfileFromID } from "../api";
-import { uploadProfile, uploadBackground, followUser, beingFollowed } from "../api";
+import { uploadProfile, uploadBackground, followUser, beingFollowed, uploadImage } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -194,22 +194,6 @@ export default class Profile extends React.Component {
       }
     );
 
-    // Add Jenny to Coda's followee list
-    // this.setState({ followerlist: this.state.followerlist.push(myUsername) });
-    // beingFollowed(
-    //   this.state.followerlist,
-    //   targetUsername,
-    //   (response, error) => {
-    //     if (error) {
-    //       console.log(error);
-    //     } else {
-    //       console.log(targetUsername);
-    //       console.log("is successfully being followed.");
-    //       //this.saveProfile(response.data.token);
-    //     }
-    //   }
-    // );
-
     this.setState({ followed: true });
   };
 
@@ -224,11 +208,38 @@ export default class Profile extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri });
-      if (this.state.image !== null) {
+      if (result.uri !== null) {
+        pseudoRandomFileName =
+          Math.random()
+            .toString(36)
+            .substr(2) +
+          Math.random()
+            .toString(36)
+            .substr(2);
+        typeExtension = result.uri.substr(result.uri.length - 3);
+
+        const file = {
+          uri: result.uri,
+          name: pseudoRandomFileName + "." + typeExtension,
+          type: "image/" + typeExtension
+        };
+
+        let remoteUrl = result.uri;
+
+        uploadImage(file)
+          .then(function(datum) {
+            remoteUrl = datum.url;
+            console.log(remoteUrl);
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+
+        this.setState({ image: remoteUrl });
+
         const token = await AsyncStorage.getItem("@Token:key");
         uploadProfile(
-          result.uri,
+          remoteUrl,
           token,
           (response, error) => {
             if (error) {
