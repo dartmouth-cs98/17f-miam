@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-
+import { Notifications } from "expo";
 import { signUpUser, getUserProfile } from "../api";
 
 const vw = Dimensions.get("window").width;
@@ -39,14 +39,18 @@ class SignUp extends React.Component {
     }
   }
 
-  onSignUp(e) {
+  async onSignUp(e) {
     e.preventDefault();
+
+    let token = await Notifications.getExpoPushTokenAsync();
+    console.log(token);
 
     if (this.state.email !== "" && this.state.password !== "") {
       signUpUser(
         this.state.email,
         this.state.password,
         this.state.username,
+        token,
         (response, error) => {
           if (error) {
             console.log(error);
