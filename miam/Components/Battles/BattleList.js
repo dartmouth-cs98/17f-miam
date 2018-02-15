@@ -56,7 +56,7 @@ export default class BattleList extends React.Component {
       pusher: {},
       myId: "",
       token: "",
-      headingTabSelected: "hot",
+      headingTabSelected: "new",
       theme: "",
       data: null
     };
@@ -92,17 +92,16 @@ export default class BattleList extends React.Component {
           if (error) {
             console.log(error);
           } else {
+            var sortedData =
+              this.state.headingTabSelected == "new"
+                ? this.sortPostByNewest(response)
+                : this.sortPostByHottest(response);
+
             this.setState({
               battleDataSource: ds.cloneWithRows(response),
-              loaded: true
-            });
-
-            sortedData = this.sortPostByNewest(response);
-            this.setState({
               data: sortedData,
               loaded: true
             });
-            console.log(this.state.data);
           }
         });
       });
@@ -118,9 +117,9 @@ export default class BattleList extends React.Component {
 
   sortPostByNewest(array, key) {
     return array.sort(function(a, b) {
-      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
+      return moment(b.startTime).valueOf() < moment(a.startTime).valueOf()
         ? -1
-        : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
+        : moment(b.startTime).valueOf() > moment(a.startTime).valueOf() ? 1 : 0;
     });
   }
 
@@ -166,9 +165,7 @@ export default class BattleList extends React.Component {
   }
   getTimeLeft(startTime) {
     var start = moment(startTime);
-    console.log("start time" + start);
     var deadline = start.clone().add(24, "h");
-
     console.log(deadline);
     if (start.isAfter(deadline)) {
       return "expired";
