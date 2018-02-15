@@ -44,6 +44,7 @@ class Comment extends Component {
     this.getComment = this.getComment.bind(this);
     this.sortByNewest = this.sortByNewest.bind(this);
 
+    this.renderHeader = this.renderHeader.bind(this);
     this.runStarAnim = this.runStarAnim.bind(this);
   }
 
@@ -62,7 +63,7 @@ class Comment extends Component {
 
       // Create animation loop if there is an original poster
       if(this.props.navigation.state.params.originalPoster){
-        console.log(this.props.navigation.state.params.originalPoster);
+        // console.log(this.props.navigation.state.params.originalPoster);
         this.runStarAnim();
       }
 
@@ -137,6 +138,75 @@ class Comment extends Component {
     }
   }
 
+  renderHeader(){
+    const interpolRotLeft = this.animRot.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['-45deg', '45deg'],
+    });
+
+    const interpolRotRight = this.animRot.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['45deg', '-45deg'],
+    });
+
+    var starBar = <View style={{flexDirection: "row", justifyContent: 'space-between', padding: 3}}>
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
+                    </View>;
+         
+    var leftAnimStar = <Animated.View style={{right: "150%", transform: [{rotate: interpolRotLeft}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+    var rightAnimStar = <Animated.View style={{left: "150%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+    var opButton = null;
+
+    if(this.state.originalPoster != null && 
+       this.state.originalPoster != this.props.navigation.state.params.username &&
+       this.props.navigation.state.params.username != "Anonymous"){
+      opButton = <TouchableHighlight
+                        underlayColor="#FFFFFFAA"
+                        onPress={() => {
+                          this.setState({ stopAnimation: true });
+                          this.props.navigation.navigate("Profile", { username: this.state.originalPoster})}}
+                  >
+                    <View>
+                      <LinearGradient
+                        style={styles.originalPosterBox}
+                        colors={[ '#9d50bb', '#6e48aa', '#4a2875', '#2a0845']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}>
+                        {starBar}
+                        
+                        <View style={{flexDirection: "row", paddingTop: 3, paddingBottom: 3}}>
+                          {leftAnimStar}
+                          <View style={{alignItems: "center"}}>
+                            <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 12}}> Original Poster is </Text>
+                            <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 20}}>{this.state.originalPoster}</Text>
+                          </View>
+                          {rightAnimStar}
+                        </View>
+                        {starBar}
+                      </LinearGradient>
+                    </View>
+                  </TouchableHighlight>;
+    }
+
+    return(
+      <View>
+        {opButton}
+        <View style={styles.commentTitleBox}>
+          <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
+        </View>
+      </View>
+    );
+  }
+
   renderCommentRow(comment) {
     const time = moment(comment.createdAt).fromNow();
     return (
@@ -168,24 +238,6 @@ class Comment extends Component {
   }
 
   render() {
-    const interpolRotLeft = this.animRot.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['45deg', '135deg'],
-    });
-
-    const interpolRotRight = this.animRot.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['135deg', '45deg'],
-    });
-
-    const starBar = <View style={{flexDirection: "row", justifyContent: 'space-between', padding: 3}}>
-                    <Icon style={{paddingLeft: "1%", paddingRight: "1%"}} name="stars" color="#FFDF00" size={14} />
-                    <Icon style={{paddingLeft: "1%", paddingRight: "1%"}} name="stars" color="#FFDF00" size={14} />
-                    <Icon style={{paddingLeft: "1%", paddingRight: "1%"}} name="stars" color="#FFDF00" size={14} />
-                  </View>;
-         
-    const leftAnimStar = <Animated.View style={{right: "150%", transform: [{rotate: interpolRotLeft}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
-    const rightAnimStar = <Animated.View style={{left: "150%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
 
     return (
       <View style={styles.body}>
@@ -197,43 +249,12 @@ class Comment extends Component {
         />
         <KeyboardAwareView animated={true}>
 
-          {this.state.originalPoster != null &&
-            <TouchableHighlight
-                  underlayColor="#FFFFFFAA"
-                  onPress={() => {
-                    this.setState({ stopAnimation: true });
-                    this.props.navigation.navigate("Profile", { username: this.state.originalPoster})}}
-            >
-              <View>
-                <LinearGradient
-                  style={styles.originalPosterBox}
-                  colors={[ '#9d50bb', '#6e48aa', '#4a2875', '#2a0845']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}>
-                  {starBar}
-                  
-                  <View style={{flexDirection: "row"}}>
-                    {leftAnimStar}
-                    <View style={{alignItems: "center"}}>
-                      <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 12}}> Original Poster is </Text>
-                      <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 20}}>{this.state.originalPoster}</Text>
-                    </View>
-                    {rightAnimStar}
-                  </View>
-                  {starBar}
-                </LinearGradient>
-              </View>
-            </TouchableHighlight>
-          }
-
-          <View style={styles.commentTitleBox}>
-            <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
-          </View>
 
           <ListView
             initialListSize={5}
             enableEmptySections={true}
             dataSource={this.state.commentDataSource}
+            renderHeader={() => this.renderHeader()}
             renderRow={comment => {
               return this.renderCommentRow(comment);
             }}
