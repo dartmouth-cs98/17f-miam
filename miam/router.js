@@ -28,7 +28,7 @@ import React from "react";
 
 import { TabNavigator, StackNavigator } from "react-navigation";
 
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Animated } from "react-native";
 
 import LogIn from "./Components/LogIn";
 import SignUp from "./Components/SignUp";
@@ -118,6 +118,12 @@ export const AuthStack = StackNavigator(
       headerTintColor: mainColor,
       headerStyle: {
         backgroundColor: mainColor
+      }
+    }),
+    transitionConfig: () => ({
+      transitionSpec: {
+        duration: 0,
+        timing: Animated.timing
       }
     })
   }
