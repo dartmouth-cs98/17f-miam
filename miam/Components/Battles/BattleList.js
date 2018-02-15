@@ -167,11 +167,7 @@ export default class BattleList extends React.Component {
   getTimeLeft(startTime) {
     var start = moment(startTime);
     console.log("start time" + start);
-    var deadline = start
-      .clone()
-      .hour(24)
-      .minute(0)
-      .second(0);
+    var deadline = start.clone().add(24, "h");
 
     console.log(deadline);
     if (start.isAfter(deadline)) {
