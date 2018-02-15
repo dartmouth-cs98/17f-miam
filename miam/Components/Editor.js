@@ -9,7 +9,8 @@ import {
   Dimensions,
   TextInput,
   TouchableWithoutFeedback,
-  AsyncStorage
+  AsyncStorage,
+  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Slider from "react-native-slider";
@@ -49,10 +50,12 @@ class Editor extends React.Component {
     this.addObjectsFromLayers = this.addObjectsFromLayers.bind(this);
 
     // Editor methods
-    this.getLayers   = this.getLayers.bind(this);
-    this.unselectObj = this.unselectObj.bind(this);
-    this.recenterObj = this.recenterObj.bind(this);
-    this.deleteObj   = this.deleteObj.bind(this);
+    this.getLayers      = this.getLayers.bind(this);
+    this.clearAll       = this.clearAll.bind(this);
+    this.unselectObj    = this.unselectObj.bind(this);
+    this.recenterObj    = this.recenterObj.bind(this);
+    this.deleteObjAlert = this.deleteObjAlert.bind(this);
+    this.deleteObj      = this.deleteObj.bind(this);
 
     // Instancing methods
     this.addText = this.addText.bind(this);
@@ -60,11 +63,13 @@ class Editor extends React.Component {
     this.getGifAPICall = this.getGifAPICall.bind(this);
 
     // Editing Modes
-    this.editText      = this.editText.bind(this);
-    this.editSize      = this.editSize.bind(this);
-    this.editRotate    = this.editRotate.bind(this);
-    this.editColor     = this.editColor.bind(this);
-    this.editNewGifUrl = this.editNewGifUrl.bind(this);
+    this.editText         = this.editText.bind(this);
+    this.editSize         = this.editSize.bind(this);
+    this.editRotate       = this.editRotate.bind(this);
+    this.editColor        = this.editColor.bind(this);
+    this.editNewGifUrl    = this.editNewGifUrl.bind(this);
+    this.editBringToFront = this.editBringToFront.bind(this);
+    this.editBringToBack  = this.editBringToBack.bind(this);
 
     this.finishEditing = this.finishEditing.bind(this);
   }
@@ -94,8 +99,6 @@ class Editor extends React.Component {
   }
 
   getLayers(){
-
-
     // TODO: This is just a placeholder for the Layers Button. Currently does the same things as 'FinishEditing' method.
     console.log("Number of Layers: " + this.state.layers.length);
     let layers = [];
@@ -105,6 +108,18 @@ class Editor extends React.Component {
     }
 
     console.log(layers);
+  }
+
+  clearAll(){
+    Alert.alert(
+      'DELETING ALL LAYERS',
+      'Are you sure you want to erase all layers?',
+      [
+        {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'Yes', onPress: () => this.setState({layers: []})},
+      ],
+      { cancelable: false }
+    );
   }
 
   unselectObj(){
@@ -118,6 +133,18 @@ class Editor extends React.Component {
 
   recenterObj(){
     this.state.selectedObj.recenter();
+  }
+
+  deleteObjAlert(){
+    Alert.alert(
+      'DELETING CURRENT LAYER',
+      'Are you sure you want to erase the selected layer?',
+      [
+        {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'Yes', onPress: () => this.deleteObj()},
+      ],
+      { cancelable: false }
+    );
   }
 
   deleteObj(){
@@ -201,6 +228,14 @@ class Editor extends React.Component {
     this.props.navigation.navigate("Search", {sendImgURLBack: this.editNewGifUrlCallback.bind(this)});
   }
 
+  editBringToFront(){
+
+  }
+
+  editBringToBack(){
+
+  }
+
   finishEditing(){
     let layers = [];
     for(let i = 0; i < this.state.layers.length; i++){
@@ -239,7 +274,7 @@ class Editor extends React.Component {
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
+            <TouchableHighlight underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="collections" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
@@ -248,17 +283,17 @@ class Editor extends React.Component {
           </View>
 
           <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#B1D877"}]}>
+            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="gif" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.getLayers} underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
+            <TouchableHighlight onPress={this.clearAll} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#800000"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="layers" color="#FFFFFF" size={20}/>
-                <Text style={styles.mainEditorDrawerButtonText}>  Layers</Text>
+                <Icon name="layers-clear" color="#FFFFFF" size={20}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Clear All</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -267,7 +302,7 @@ class Editor extends React.Component {
 
         {/** ================ COMPLETE BUTTON ================ **/}
         {this.state.selectedType == "" &&
-          <TouchableHighlight onPress={this.finishEditing} underlayColor="white" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
+          <TouchableHighlight onPress={this.finishEditing} underlayColor="#ffffffaa" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
               <View style={styles.completeButtonView} >
                 <Icon name="check-circle" color="#FFFFFF" size={25}/>
                 <Text style={styles.completeButtonText}>  Finished</Text>
@@ -306,7 +341,7 @@ class Editor extends React.Component {
               <Icon name="remove-circle" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+            <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
               <Icon name="delete" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
           </View>
@@ -409,7 +444,7 @@ class Editor extends React.Component {
               <Icon name="remove-circle" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+            <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
               <Icon name="delete" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
           </View>
