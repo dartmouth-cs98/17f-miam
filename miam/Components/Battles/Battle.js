@@ -58,6 +58,8 @@ class Battle extends React.Component {
     this.renderText = this.renderText.bind(this);
     this.renderMsgRow = this.renderMsgRow.bind(this);
     this.like = this.like.bind(this);
+
+    this.renderList = this.renderList.bind(this);
   }
 
   fetchBattle() {
@@ -279,6 +281,57 @@ class Battle extends React.Component {
     );
   }
 
+  renderList() {
+    if (this.state.messages.length < 5) {
+      return (
+        <View>
+          <KeyboardAwareScrollView
+            ref={ref => {
+              this.scrollView = ref;
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.scrollView.scrollToEnd({ animated: true });
+            }}
+            contentContainerStyle={styles.scrollView}
+          >
+            <ListView
+              initialListSize={5}
+              enableEmptySections={true}
+              dataSource={this.state.msgDataSource}
+              renderRow={msg => {
+                return this.renderMsgRow(msg);
+              }}
+              style={styles.listView}
+            />
+            {this.renderInputBar()}
+          </KeyboardAwareScrollView>
+        </View>
+      );
+    } else {
+      return (
+        <KeyboardAwareScrollView
+          ref={ref => {
+            this.scrollView = ref;
+          }}
+          onContentSizeChange={(contentWidth, contentHeight) => {
+            this.scrollView.scrollToEnd({ animated: true });
+          }}
+          contentContainerStyle={styles.scrollView}
+        >
+          <ListView
+            initialListSize={5}
+            enableEmptySections={true}
+            dataSource={this.state.msgDataSource}
+            renderRow={msg => {
+              return this.renderMsgRow(msg);
+            }}
+          />
+          {this.renderInputBar()}
+        </KeyboardAwareScrollView>
+      );
+    }
+  }
+
   render() {
     if (this.state.selectingMeme) {
       return (
@@ -304,26 +357,7 @@ class Battle extends React.Component {
             backButtonVisible={true}
             backFunction={this.props.returnToList}
           />
-          <KeyboardAwareScrollView
-            ref={ref => {
-              this.scrollView = ref;
-            }}
-            onContentSizeChange={(contentWidth, contentHeight) => {
-              this.scrollView.scrollToEnd({ animated: true });
-            }}
-            contentContainerStyle={styles.scrollView}
-          >
-            <ListView
-              initialListSize={5}
-              enableEmptySections={true}
-              dataSource={this.state.msgDataSource}
-              renderRow={msg => {
-                return this.renderMsgRow(msg);
-              }}
-              style={styles.listView}
-            />
-            {this.renderInputBar()}
-          </KeyboardAwareScrollView>
+          {this.renderList()}
         </View>
       );
     }
@@ -433,9 +467,9 @@ const styles = StyleSheet.create({
   //   color: "white"
   // },
 
-  // listView: {
-  //   height: vh*0.75
-  // },
+  listView: {
+    height: vh*0.75
+  },
 
   scrollView: {
     flexDirection: "column",
