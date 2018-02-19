@@ -187,7 +187,6 @@ export default class Profile extends React.Component {
         if (error) {
           console.log(error);
         } else {
-          console.log(myUsername);
           console.log("Successfully follows user.");
           //this.saveProfile(response.data.token);
         }
@@ -225,30 +224,26 @@ export default class Profile extends React.Component {
         };
 
         let remoteUrl = result.uri;
+        const token = await AsyncStorage.getItem("@Token:key");
+
+        var that = this;
 
         uploadImage(file)
           .then(function(datum) {
-            remoteUrl = datum.url;
-            console.log(remoteUrl);
+            that.setState({ image: datum.url });
+            uploadProfile(
+              datum.url,
+              token,
+              (response, error) => {
+                if (error) {
+                  console.log(error);
+                }
+              }
+            );
           })
           .catch(function(err) {
             console.log(err);
           });
-
-        this.setState({ image: remoteUrl });
-
-        const token = await AsyncStorage.getItem("@Token:key");
-        uploadProfile(
-          remoteUrl,
-          token,
-          (response, error) => {
-            if (error) {
-              console.log(error);
-            } else {
-              //this.saveProfile(response.data.token);
-            }
-          }
-        );
       }
     }
   };

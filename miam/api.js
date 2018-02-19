@@ -3,11 +3,12 @@ import axios from "axios";
 const ROOT_URL = "https://miam98.herokuapp.com/api";
 // const ROOT_URL = 'http://localhost:9090/api';
 
-export function signUpUser(email, password, username, cb) {
+export function signUpUser(email, password, username, pushToken, cb) {
   const params = {
     email: email.toLowerCase(),
     password: password,
-    username: username
+    username: username,
+    pushToken: pushToken
   };
   axios
     .post(ROOT_URL + "/users/signup", params)
