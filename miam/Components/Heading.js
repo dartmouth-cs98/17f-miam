@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-
+import { LinearGradient } from "expo";
 class Heading extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +29,15 @@ class Heading extends Component {
 
   render() {
     return (
-      <View style={styles.heading}>
+      <LinearGradient
+        colors={["#6a3093", "#a044ff"]}
+        style={{
+          height: "7%",
+          width: "100%",
+          backgroundColor: "transparent",
+          justifyContent: "center"
+        }}
+      >
         <Text style={styles.logo}>{this.headingText}</Text>
         {this.createPostButton && (
           <TouchableHighlight
@@ -49,18 +57,12 @@ class Heading extends Component {
             <Icon name="ios-arrow-back" size={38} color="white" />
           </TouchableHighlight>
         )}
-      </View>
+      </LinearGradient>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  heading: {
-    height: "8%",
-    width: "100%",
-    backgroundColor: "#886BEA",
-    justifyContent: "center"
-  },
   logo: {
     color: "#ffffff",
     fontSize: 30,
