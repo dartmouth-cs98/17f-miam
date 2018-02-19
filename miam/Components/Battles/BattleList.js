@@ -35,9 +35,6 @@ import moment from "moment";
 
 var mockData = require("../../mock_data/mockBattleData.json");
 
-// Enable pusher logging - don't include this in production
-// Pusher.logToConsole = true;
-
 export default class BattleList extends React.Component {
   constructor(props) {
     super(props);

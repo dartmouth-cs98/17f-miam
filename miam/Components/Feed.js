@@ -141,8 +141,6 @@ export default class Feed extends React.Component {
   }
 
   like(postID, action) {
-    console.log(postID);
-    console.log(this.state.token);
     likePost(postID, action, this.state.token, (response, error) => {
       if (error) {
         alert(error);
@@ -401,10 +399,11 @@ const styles = StyleSheet.create({
   headingTabBar: {
     width: "50%",
     height: 28,
-    borderWidth: 1,
-    borderRadius: 5,
+    borderBottomWidth: 2,
+    borderColor: "#a044ff",
+    borderRadius: 10,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "center",
     margin: "3%"
@@ -416,16 +415,12 @@ const styles = StyleSheet.create({
   },
   headingTabText: {
     height: "100%",
-    alignSelf: "center",
     fontWeight: "bold",
-    backgroundColor: "#00000000",
-    top: "18%"
-  },
-  activeHeadingTabView: {
-    backgroundColor: "#886BEA"
+    alignSelf: "center",
+    backgroundColor: "#00000000"
   },
   activeHeadingTabText: {
-    color: "white"
+    color: "#886BEA"
   },
   listView: {
     alignItems: "center"

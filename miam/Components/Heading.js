@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { LinearGradient } from "expo";
+import { LinearGradient, Font } from "expo";
 class Heading extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      fontLoaded: false
+    };
     this.backFunction = props.backFunction;
     this.headingText = props.text || "MiAM";
     this.createPostButton = props.postButtonVisible || false;
@@ -13,6 +16,13 @@ class Heading extends Component {
 
     this.goBack = this.goBack.bind(this);
     this.goToCreatePost = this.goToCreatePost.bind(this);
+  }
+  async componentDidMount() {
+    await Font.loadAsync({
+      rancho: require("../assets/fonts/Rancho-Regular.ttf")
+    });
+
+    this.setState({ fontLoaded: true });
   }
 
   goBack() {
@@ -38,7 +48,9 @@ class Heading extends Component {
           justifyContent: "center"
         }}
       >
-        <Text style={styles.logo}>{this.headingText}</Text>
+        {this.state.fontLoaded ? (
+          <Text style={styles.logo}>{this.headingText}</Text>
+        ) : null}
         {this.createPostButton && (
           <TouchableHighlight
             style={styles.postButton}
@@ -65,9 +77,10 @@ class Heading extends Component {
 const styles = StyleSheet.create({
   logo: {
     color: "#ffffff",
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily: "rancho"
   },
   postButton: {
     position: "absolute",

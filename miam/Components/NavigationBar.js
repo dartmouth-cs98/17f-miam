@@ -23,10 +23,10 @@ export default class NavigationBar extends React.Component {
               this.props.navigation.navigate("Feed");
             }
           }}
-          underlayColor="#f2d9d9"
+          underlayColor="#ffffff"
         >
           <View>
-            <Icon name="stars" color="#862d59" size={30} />
+            <Icon name="stars" color="#8c1aff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -36,10 +36,10 @@ export default class NavigationBar extends React.Component {
               this.props.navigation.navigate("Canvas");
             }
           }}
-          underlayColor="#f2d9d9"
+          underlayColor="#ffffff"
         >
           <View>
-            <Icon name="control-point" color="#862d59" size={30} />
+            <Icon name="control-point" color="#8c1aff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -49,10 +49,10 @@ export default class NavigationBar extends React.Component {
               this.props.navigation.navigate("BattleList");
             }
           }}
-          underlayColor="#f2d9d9"
+          underlayColor="#ffffff"
         >
           <View>
-            <Icon name="whatshot" color="#862d59" size={30} />
+            <Icon name="whatshot" color="#8c1aff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -62,10 +62,10 @@ export default class NavigationBar extends React.Component {
               this.props.navigation.navigate("History");
             }
           }}
-          underlayColor="#f2d9d9"
+          underlayColor="#ffffff"
         >
           <View>
-            <Icon name="history" color="#862d59" size={30} />
+            <Icon name="history" color="#8c1aff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -75,10 +75,10 @@ export default class NavigationBar extends React.Component {
               this.props.navigation.navigate("Profile");
             }
           }}
-          underlayColor="#f2d9d9"
+          underlayColor="#ffffff"
         >
           <View>
-            <Icon name="account-circle" color="#862d59" size={30} />
+            <Icon name="account-circle" color="#9933ff" size={30} />
           </View>
         </TouchableHighlight>
       </View>
@@ -88,11 +88,13 @@ export default class NavigationBar extends React.Component {
 const styles = StyleSheet.create({
   Navigation: {
     width: "100%",
-    height: "5%",
-    backgroundColor: "#f2d9d9",
+    height: "6%",
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center"
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#6a3093"
   }
 });
 module.exports = NavigationBar;
