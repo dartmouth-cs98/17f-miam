@@ -35,7 +35,11 @@ export function uploadProfile(profileUrl, token, cb) {
 export function uploadBackground(backgroundUrl, token, cb) {
   const url = `${ROOT_URL}/users`;
   axios
-    .put(url, { backgroundPic: backgroundUrl }, { headers: { Authorization: token } })
+    .put(
+      url,
+      { backgroundPic: backgroundUrl },
+      { headers: { Authorization: token } }
+    )
     .then(async response => {
       cb(response, null);
     })
@@ -47,7 +51,11 @@ export function uploadBackground(backgroundUrl, token, cb) {
 export function followUser(newFollower, token, cb) {
   const url = `${ROOT_URL}/users/follow`;
   axios
-    .put(url, { followedUserId: newFollower }, { headers: { Authorization: token } })
+    .put(
+      url,
+      { followedUserId: newFollower },
+      { headers: { Authorization: token } }
+    )
     .then(async response => {
       cb(response, null);
     })
@@ -291,6 +299,18 @@ export function likeMeme(msgID, action, token, cb) {
   const url = `${ROOT_URL}/battles/like-msg/${msgID}`;
   axios
     .put(url, { action: action }, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function followBattle(battleId, token, cb) {
+  const url = `${ROOT_URL}/battles/follow/${battleId}`;
+  axios
+    .put(url, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })
