@@ -17,8 +17,12 @@ class Meme extends React.Component {
     this.state = {
       imgURL: this.props.imgURL,
       text: this.props.text || "",
-      layers: this.props.layers || []
+      layers: this.props.layers || [],
+      viewScale: this.props.scale || 1
     };
+
+    this.defaultWidth = 300;
+    this.defaultHeight = 200;
 
     this.renderLayers = this.renderLayers.bind(this);
   }
@@ -35,11 +39,11 @@ class Meme extends React.Component {
     var layerObjects = [];
     for(let i = 0; i < this.state.layers.length; i++){
       if(this.state.layers[i].type == "text")
-        layerObjects.push(<TextObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
+        layerObjects.push(<TextObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
       if(this.state.layers[i].type == "gif")
-        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
+        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
       if(this.state.layers[i].type == "img")
-        layerObjects.push(<ImgObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
+        layerObjects.push(<ImgObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
       // console.log(this.state.layers[i]);       // TODO: Debugging purposes
     }
 
@@ -52,7 +56,7 @@ class Meme extends React.Component {
 
     return (
       <View style={styles.memeContainer}>
-        <Image source={{ uri: this.state.imgURL }} style={styles.memeStyle} resizeMode="contain">
+        <Image source={{ uri: this.state.imgURL }} style={[styles.memeStyle, {width: this.defaultWidth * this.state.viewScale, height: this.defaultHeight * this.state.viewScale}]} resizeMode="contain">
           {layerObjects}
         </Image>
         <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
@@ -68,8 +72,6 @@ const styles = StyleSheet.create({
     marginBottom: "2%"
   },
   memeStyle: {
-    width: 300,
-    height: 200,
     alignSelf: "center"
   }
 });
