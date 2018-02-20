@@ -86,15 +86,19 @@ class Battle extends React.Component {
     }
   }
 
+//
+
   handleMessage(message) {
     console.log(message);
     let messages = this.state.messages.slice();
     messages.push(message);
-    if (this.refs.myRef) {
+    if (this.refs.myRef && message.sender._id !== this.props.myId) {
       this.setState({
         messages: messages,
         msgDataSource: ds.cloneWithRows(messages)
       });
+    } else {
+      console.log(this.refs.myRef);
     }
   }
 
@@ -110,6 +114,7 @@ class Battle extends React.Component {
           this.setState({
             text: "",
           });
+          this.fetchBattle();
         }
       }
     );
@@ -175,8 +180,6 @@ class Battle extends React.Component {
     //   </TouchableHighlight>) : (<View />);
 
     const time = moment(msg.sentAt).fromNow();
-    console.log("opopop");
-    console.log(msg.sender);
 
     if (msg.text !== undefined || msg.meme !== undefined) {
       return (
@@ -383,7 +386,8 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     backgroundColor: "#F8F8FF",
     marginTop: 20,
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 0.1*vh
   },
   textArea: {
     backgroundColor: "white",
@@ -478,7 +482,6 @@ const styles = StyleSheet.create({
 
   scrollView: {
     flexDirection: "column",
-    marginBottom: 25,
     justifyContent: "space-between"
   },
 
