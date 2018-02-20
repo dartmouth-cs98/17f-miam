@@ -18,10 +18,8 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { ImagePicker } from "expo";
 
-import { getUserProfile, getTargetUserProfile } from "../api";
-import { uploadProfile, uploadBackground, followUser, beingFollowed } from "../api";
+import { getUserNotification } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -52,6 +50,26 @@ export default class History extends React.Component {
       postDataSource: ds.cloneWithRows(customData),
       loaded: true,
     });
+
+    this.getNotification();
+  }
+
+  async getNotification() {
+    try {
+      const token = await AsyncStorage.getItem("@Token:key");
+      getUserNotification(token, async (response, error) => {
+        if (response.data) {
+          console.log(response.data);
+          this.setState({
+            dataSource: lv.cloneWithRows(response.data),
+          });
+        } else {
+          console.log(error);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   renderListView(post) {

@@ -8,6 +8,7 @@ import {
   TouchableHighlight
 } from "react-native";
 import TextObj from "./MemeObjects/TextMemeObj.js";
+import ImgObj from "./MemeObjects/ImgMemeObj.js";
 import GifObj from "./MemeObjects/GifMemeObj.js";
 
 class Meme extends React.Component {
@@ -36,7 +37,9 @@ class Meme extends React.Component {
       if(this.state.layers[i].type == "text")
         layerObjects.push(<TextObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
       if(this.state.layers[i].type == "gif")
-        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>)
+        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
+      if(this.state.layers[i].type == "img")
+        layerObjects.push(<ImgObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]}/>);
       // console.log(this.state.layers[i]);       // TODO: Debugging purposes
     }
 

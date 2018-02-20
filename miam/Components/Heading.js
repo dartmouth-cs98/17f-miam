@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-
+import { LinearGradient, Font } from "expo";
 class Heading extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      fontLoaded: false
+    };
     this.backFunction = props.backFunction;
     this.headingText = props.text || "MiAM";
     this.createPostButton = props.postButtonVisible || false;
@@ -13,6 +16,13 @@ class Heading extends Component {
 
     this.goBack = this.goBack.bind(this);
     this.goToCreatePost = this.goToCreatePost.bind(this);
+  }
+  async componentDidMount() {
+    await Font.loadAsync({
+      rancho: require("../assets/fonts/Rancho-Regular.ttf")
+    });
+
+    this.setState({ fontLoaded: true });
   }
 
   goBack() {
@@ -29,8 +39,18 @@ class Heading extends Component {
 
   render() {
     return (
-      <View style={styles.heading}>
-        <Text style={styles.logo}>{this.headingText}</Text>
+      <LinearGradient
+        colors={["#6a3093", "#a044ff"]}
+        style={{
+          height: "7%",
+          width: "100%",
+          backgroundColor: "transparent",
+          justifyContent: "center"
+        }}
+      >
+        {this.state.fontLoaded ? (
+          <Text style={styles.logo}>{this.headingText}</Text>
+        ) : null}
         {this.createPostButton && (
           <TouchableHighlight
             style={styles.postButton}
@@ -49,23 +69,18 @@ class Heading extends Component {
             <Icon name="ios-arrow-back" size={38} color="white" />
           </TouchableHighlight>
         )}
-      </View>
+      </LinearGradient>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  heading: {
-    height: "8%",
-    width: "100%",
-    backgroundColor: "#886BEA",
-    justifyContent: "center"
-  },
   logo: {
     color: "#ffffff",
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily: "rancho"
   },
   postButton: {
     position: "absolute",
