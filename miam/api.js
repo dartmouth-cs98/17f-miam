@@ -202,6 +202,17 @@ export function getUserProfile(token, cb) {
     });
 }
 
+export function getUserNotification(token, cb) {
+  axios
+    .get(`${ROOT_URL}/user-notifs`, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function getUserSavedMemes(token, cb) {
   axios
     .get(`${ROOT_URL}/user-memes`, { headers: { Authorization: token } })
