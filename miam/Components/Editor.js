@@ -26,6 +26,7 @@ import { createPost } from "../api";
 import { uploadImage } from "../api";
 import Test from "./MemeObjects/TestMemeObj.js";
 import TextObj from "./MemeObjects/TextMemeObj.js";
+import ImgObj from "./MemeObjects/ImgMemeObj.js";
 import GifObj from "./MemeObjects/GifMemeObj.js";
 // import { RNS3 } from "react-native-aws3";
 import Expo from "expo";
@@ -58,9 +59,12 @@ class Editor extends React.Component {
     this.deleteObj      = this.deleteObj.bind(this);
 
     // Instancing methods
-    this.addText = this.addText.bind(this);
-    this.addGif = this.addGif.bind(this);
-    this.getGifAPICall = this.getGifAPICall.bind(this);
+    this.addText          = this.addText.bind(this);
+    this.addLocalImg      = this.addLocalImg.bind(this);
+    this.getImageFromRoll = this.getImageFromRoll.bind(this);
+    this.uploadLocalPhoto = this.uploadLocalPhoto.bind(this);
+    this.addGif           = this.addGif.bind(this);
+    this.getGifAPICall    = this.getGifAPICall.bind(this);
 
     // Editing Modes
     this.editText         = this.editText.bind(this);
@@ -95,6 +99,8 @@ class Editor extends React.Component {
         this.addText(layers[i], i);
       if(layers[i].type == "gif")
         this.addGif(layers[i], i);
+      if(layers[i].type == "img")
+        this.addLocalImg(layers[i], i);
     }
   }
 
@@ -170,6 +176,28 @@ class Editor extends React.Component {
     }));
   }
 
+  addLocalImg(layer = null, key = null, imgURL = ""){
+    if(layer == null){
+      var newObj = <ImgObj
+                      key={key || this.state.key}
+                      selectionKey={key || this.state.key}
+                      editor={this}
+                      imgURL={imgURL}/>
+    }
+    else{
+      var newObj = <ImgObj
+                      key={key || this.state.key}
+                      selectionKey={key || this.state.key}
+                      editor={this}
+                      layer={layer}/>
+    }
+
+    this.setState(prevState => ({
+      key: prevState.key + 1,
+      layers: [...prevState.layers, newObj]
+    }));
+  }
+
   addGif(layer = null, key = null, gifURL = ""){
     if(layer == null){
       var newObj = <GifObj
@@ -190,6 +218,47 @@ class Editor extends React.Component {
       key: prevState.key + 1,
       layers: [...prevState.layers, newObj]
     }));
+  }
+
+  getImageFromRoll = async (action) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3]
+    });
+
+    if (!result.cancelled)
+      this.uploadLocalPhoto(action, result.uri)
+  };
+
+  uploadLocalPhoto(action, uri) {
+    pseudoRandomFileName =
+      Math.random()
+        .toString(36)
+        .substr(2) +
+      Math.random()
+        .toString(36)
+        .substr(2);
+    typeExtension = uri.substr(uri.length - 3);
+
+    const file = {
+      uri: uri,
+      name: pseudoRandomFileName + "." + typeExtension,
+      type: "image/" + typeExtension
+    };
+
+    that = this;
+
+    // Returning promise
+    uploadImage(file)
+      .then(function(datum) {
+        if (action === 'create')
+          that.addLocalImg(null, null, datum.url);
+        else if (action === 'update')
+          that.state.selectedObj.updateImgURL(datum.url);
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
   }
 
   addGifAPICallback(gifURL){
@@ -278,7 +347,7 @@ class Editor extends React.Component {
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
+            <TouchableHighlight onPress={() => this.getImageFromRoll("create")} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="collections" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
@@ -438,6 +507,49 @@ class Editor extends React.Component {
         }
 
 
+        {/** ================ IMG EDITOR DRAWER ================ **/}
+        {/* TODO: Look for a scrollable row online */}
+        {this.state.selectedType == "img" && 
+          <View style={styles.objEditorDrawer}>
+            <Text style={styles.mainEditorDrawerTitleText}> Image Editing Options </Text>
+
+            <View style={styles.objEditorDrawerRow}>
+              <TouchableHighlight onPress={() => this.getImageFromRoll("update")} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="add-to-photos" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="zoom-out-map" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="autorenew" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+                <Icon name="delete" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+            </View>
+
+            <View style={styles.objEditorDrawerRow}>
+              <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="remove-circle" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editBringToFront} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="file-upload" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editBringToBack} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="file-download" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+            </View>
+          </View>
+        }
 
         {/** ================ GIF EDITOR DRAWER ================ **/}
         {/* TODO: Look for a scrollable row online */}
@@ -483,8 +595,8 @@ class Editor extends React.Component {
           </View>
         }
 
-        {/** ================ SIZE EDITING ================ **/}
-        {this.state.selectedType == "gif" && this.state.editorMode == "size" &&
+        {/** ================ SIZE EDITING (IMG and GIF) ================ **/}
+        {(this.state.selectedType == "img" || this.state.selectedType == "gif") && this.state.editorMode == "size" &&
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Gif Scaling </Text>
             <Slider
@@ -497,8 +609,8 @@ class Editor extends React.Component {
           </View>
         }
 
-        {/** ================ ROTATION EDITING ================ **/}
-        {this.state.selectedType == "gif" && this.state.editorMode == "rotate" &&
+        {/** ================ ROTATION EDITING (IMG and GIF) ================ **/}
+        {(this.state.selectedType == "img" || this.state.selectedType == "gif") && this.state.editorMode == "rotate" &&
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Rotation </Text>
             <Slider
