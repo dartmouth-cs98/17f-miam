@@ -297,7 +297,7 @@ export default class BattleList extends React.Component {
               style={{
                 width: "75%",
                 borderColor: "#d9b3ff",
-                borderWidth: 2,
+                borderBottomWidth: 2,
                 height: "100%"
               }}
               maxLength={50}

@@ -26,7 +26,7 @@ export default class NavigationBar extends React.Component {
           underlayColor="#ffffff"
         >
           <View>
-            <Icon name="stars" color="#7a00cc" size={30} />
+            <Icon name="stars" color="#a044ff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -39,7 +39,7 @@ export default class NavigationBar extends React.Component {
           underlayColor="#ffffff"
         >
           <View>
-            <Icon name="control-point" color="#7a00cc" size={30} />
+            <Icon name="control-point" color="#a044ff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -52,7 +52,7 @@ export default class NavigationBar extends React.Component {
           underlayColor="#ffffff"
         >
           <View>
-            <Icon name="whatshot" color="#7a00cc" size={30} />
+            <Icon name="flash-on" color="#a044ff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -65,7 +65,7 @@ export default class NavigationBar extends React.Component {
           underlayColor="#ffffff"
         >
           <View>
-            <Icon name="history" color="#7a00cc" size={30} />
+            <Icon name="history" color="#a044ff" size={30} />
           </View>
         </TouchableHighlight>
 
@@ -78,7 +78,7 @@ export default class NavigationBar extends React.Component {
           underlayColor="#ffffff"
         >
           <View>
-            <Icon name="account-circle" color="#7a00cc" size={30} />
+            <Icon name="account-circle" color="#a044ff" size={30} />
           </View>
         </TouchableHighlight>
       </View>
