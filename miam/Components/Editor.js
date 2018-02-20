@@ -9,7 +9,8 @@ import {
   Dimensions,
   TextInput,
   TouchableWithoutFeedback,
-  AsyncStorage
+  AsyncStorage,
+  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Slider from "react-native-slider";
@@ -49,10 +50,12 @@ class Editor extends React.Component {
     this.addObjectsFromLayers = this.addObjectsFromLayers.bind(this);
 
     // Editor methods
-    this.getLayers   = this.getLayers.bind(this);
-    this.unselectObj = this.unselectObj.bind(this);
-    this.recenterObj = this.recenterObj.bind(this);
-    this.deleteObj   = this.deleteObj.bind(this);
+    this.getLayers      = this.getLayers.bind(this);
+    this.clearAll       = this.clearAll.bind(this);
+    this.unselectObj    = this.unselectObj.bind(this);
+    this.recenterObj    = this.recenterObj.bind(this);
+    this.deleteObjAlert = this.deleteObjAlert.bind(this);
+    this.deleteObj      = this.deleteObj.bind(this);
 
     // Instancing methods
     this.addText = this.addText.bind(this);
@@ -60,11 +63,13 @@ class Editor extends React.Component {
     this.getGifAPICall = this.getGifAPICall.bind(this);
 
     // Editing Modes
-    this.editText      = this.editText.bind(this);
-    this.editSize      = this.editSize.bind(this);
-    this.editRotate    = this.editRotate.bind(this);
-    this.editColor     = this.editColor.bind(this);
-    this.editNewGifUrl = this.editNewGifUrl.bind(this);
+    this.editText         = this.editText.bind(this);
+    this.editSize         = this.editSize.bind(this);
+    this.editRotate       = this.editRotate.bind(this);
+    this.editColor        = this.editColor.bind(this);
+    this.editNewGifUrl    = this.editNewGifUrl.bind(this);
+    this.editBringToFront = this.editBringToFront.bind(this);
+    this.editBringToBack  = this.editBringToBack.bind(this);
 
     this.finishEditing = this.finishEditing.bind(this);
   }
@@ -94,8 +99,6 @@ class Editor extends React.Component {
   }
 
   getLayers(){
-
-
     // TODO: This is just a placeholder for the Layers Button. Currently does the same things as 'FinishEditing' method.
     console.log("Number of Layers: " + this.state.layers.length);
     let layers = [];
@@ -105,6 +108,18 @@ class Editor extends React.Component {
     }
 
     console.log(layers);
+  }
+
+  clearAll(){
+    Alert.alert(
+      'DELETING ALL LAYERS',
+      'Are you sure you want to erase all layers?',
+      [
+        {text: 'No', style: 'cancel'},
+        {text: 'Yes', onPress: () => { this.setState({layers: []}); this.unselectObj(); }},
+      ],
+      { cancelable: false }
+    );
   }
 
   unselectObj(){
@@ -118,6 +133,18 @@ class Editor extends React.Component {
 
   recenterObj(){
     this.state.selectedObj.recenter();
+  }
+
+  deleteObjAlert(){
+    Alert.alert(
+      'DELETING CURRENT LAYER',
+      'Are you sure you want to erase the selected layer?',
+      [
+        {text: 'No', style: 'cancel'},
+        {text: 'Yes', onPress: () => this.deleteObj()},
+      ],
+      { cancelable: false }
+    );
   }
 
   deleteObj(){
@@ -201,6 +228,18 @@ class Editor extends React.Component {
     this.props.navigation.navigate("Search", {sendImgURLBack: this.editNewGifUrlCallback.bind(this)});
   }
 
+  editBringToFront(){
+    this.setState(prevState => ({
+      layers: [...prevState.layers.filter((element, i) => element["key"] != this.state.selectedObjKey)].concat(prevState.layers.filter((element, i) => element["key"] == this.state.selectedObjKey))
+    }));
+  }
+
+  editBringToBack(){
+    this.setState(prevState => ({
+      layers: [...prevState.layers.filter((element, i) => element["key"] == this.state.selectedObjKey)].concat(prevState.layers.filter((element, i) => element["key"] != this.state.selectedObjKey))
+    }));
+  }
+
   finishEditing(){
     let layers = [];
     for(let i = 0; i < this.state.layers.length; i++){
@@ -239,7 +278,7 @@ class Editor extends React.Component {
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
+            <TouchableHighlight underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="collections" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
@@ -248,17 +287,17 @@ class Editor extends React.Component {
           </View>
 
           <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#B1D877"}]}>
+            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="gif" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.getLayers} underlayColor="white" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
+            <TouchableHighlight onPress={this.clearAll} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#800000"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="layers" color="#FFFFFF" size={20}/>
-                <Text style={styles.mainEditorDrawerButtonText}>  Layers</Text>
+                <Icon name="layers-clear" color="#FFFFFF" size={20}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Clear All</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -267,7 +306,7 @@ class Editor extends React.Component {
 
         {/** ================ COMPLETE BUTTON ================ **/}
         {this.state.selectedType == "" &&
-          <TouchableHighlight onPress={this.finishEditing} underlayColor="white" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
+          <TouchableHighlight onPress={this.finishEditing} underlayColor="#ffffffaa" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
               <View style={styles.completeButtonView} >
                 <Icon name="check-circle" color="#FFFFFF" size={25}/>
                 <Text style={styles.completeButtonText}>  Finished</Text>
@@ -282,33 +321,45 @@ class Editor extends React.Component {
           <View style={styles.objEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Text Editing Options </Text>
 
-            <TouchableHighlight onPress={this.editText} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="mode-edit" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+            <View style={styles.objEditorDrawerRow}>
+              <TouchableHighlight onPress={this.editText} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="mode-edit" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="vertical-align-center" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="vertical-align-center" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="autorenew" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="autorenew" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.editColor} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="color-lens" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.editColor} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="color-lens" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+                <Icon name="delete" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+            </View>
 
-            <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="remove-circle" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+            <View style={styles.objEditorDrawerRow}>
+              <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
-              <Icon name="delete" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="remove-circle" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editBringToFront} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="file-upload" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editBringToBack} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="file-download" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+            </View>
           </View>
         }
 
@@ -332,6 +383,7 @@ class Editor extends React.Component {
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Font Size </Text>
             <Slider
+              style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.fontSize}
               maximumValue={50}
               minimumValue={10}
@@ -345,6 +397,7 @@ class Editor extends React.Component {
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Rotation </Text>
             <Slider
+              style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.rotation}
               maximumValue={180}
               minimumValue={-180}
@@ -358,6 +411,7 @@ class Editor extends React.Component {
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Color </Text>
             <Slider
+              style={[styles.sliderEditorStyle, {marginBottom: -5}]}
               value={this.state.selectedObj.state.red}
               maximumValue={255}
               minimumValue={0}
@@ -365,6 +419,7 @@ class Editor extends React.Component {
               thumbTintColor="#FF0000"
               onValueChange={(value) => this.state.selectedObj.setState({red: value})} />
             <Slider
+              style={[styles.sliderEditorStyle, {marginBottom: -5, marginTop: -5}]}
               value={this.state.selectedObj.state.green}
               maximumValue={255}
               minimumValue={0}
@@ -372,6 +427,7 @@ class Editor extends React.Component {
               thumbTintColor="#00AA00"
               onValueChange={(value) => this.state.selectedObj.setState({green: value})} />
             <Slider
+              style={[styles.sliderEditorStyle, {marginTop: -5}]}
               value={this.state.selectedObj.state.blue}
               maximumValue={255}
               minimumValue={0}
@@ -389,29 +445,41 @@ class Editor extends React.Component {
           <View style={styles.objEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Gif Editing Options </Text>
 
-            <TouchableHighlight onPress={this.editNewGifUrl} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="add-to-photos" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+            <View style={styles.objEditorDrawerRow}>
+              <TouchableHighlight onPress={this.editNewGifUrl} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="add-to-photos" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="zoom-out-map" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.editSize} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="zoom-out-map" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="autorenew" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.editRotate} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="autorenew" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
+                <Icon name="delete" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+            </View>
 
-            <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
-              <Icon name="remove-circle" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+            <View style={styles.objEditorDrawerRow}>
+              <TouchableHighlight onPress={this.recenterObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="center-focus-strong" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
 
-            <TouchableHighlight onPress={this.deleteObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
-              <Icon name="delete" color="#FFFFFF" size={25}/>
-            </TouchableHighlight>
+              <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="remove-circle" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editBringToFront} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="file-upload" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+
+              <TouchableHighlight onPress={this.editBringToBack} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+                <Icon name="file-download" color="#FFFFFF" size={25}/>
+              </TouchableHighlight>
+            </View>
           </View>
         }
 
@@ -420,6 +488,7 @@ class Editor extends React.Component {
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Gif Scaling </Text>
             <Slider
+              style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.scaling}
               maximumValue={3}
               minimumValue={0.5}
@@ -433,6 +502,7 @@ class Editor extends React.Component {
           <View style={styles.sliderEditorDrawer}>
             <Text style={styles.mainEditorDrawerTitleText}> Rotation </Text>
             <Slider
+              style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.rotation}
               maximumValue={180}
               minimumValue={-180}
@@ -514,14 +584,21 @@ const styles = StyleSheet.create({
     borderColor: "#FFFFFF",
     borderBottomWidth: 2,
     borderTopWidth: 2,
-    flexDirection: "row",
+    flexDirection: "column",
     marginTop: 25,
     width: "70%",
     justifyContent: 'center'
   },
+  objEditorDrawerRow: {
+    alignSelf: 'center',
+    backgroundColor: "#000000",
+    flexDirection: "row"
+  },
   objEditorDrawerButton: {
     margin: 3,
     padding: 5,
+    paddingLeft: "5%",
+    paddingRight: "5%",
     borderRadius: 3
   },
   sliderEditorDrawer:{
@@ -533,6 +610,10 @@ const styles = StyleSheet.create({
     marginTop: 25,
     width: "70%",
     justifyContent: 'center'
+  },
+  sliderEditorStyle: {
+    marginLeft: 10,
+    marginRight: 10
   },
   memeStyle: {
     width: 300,
