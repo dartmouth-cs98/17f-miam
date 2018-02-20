@@ -47,7 +47,6 @@ export default class Profile extends React.Component {
       followinglist: [],
       followers: -1,
       following: -1,
-      battlesWon: -1,
       image: null,
       background: null,
       self: true,
@@ -97,8 +96,8 @@ export default class Profile extends React.Component {
             followinglist: response.data.following,
             following: response.data.following.length,
             score: response.data.score,
-            battlesWon: response.data.battlesWon.length,
             image: response.data.profilePic,
+            background: response.data.backgroundPic,
             observer: response.data.username,
           });
         } else {
@@ -128,7 +127,6 @@ export default class Profile extends React.Component {
     }
   }
 
-
   async getTargetUser(username) {
     try {
       getTargetUserProfile(username, async (response, error) => {
@@ -140,10 +138,8 @@ export default class Profile extends React.Component {
             followinglist: response.data[0].following,
             following: response.data[0].following ? response.data[0].following.length : 0,
             score: response.data[0].score,
-            battlesWon: response.data[0].battlesWon ? response.data[0].battlesWon.length : 0,
             image: response.data[0].profilePic,
           });
-          //console.log(this.state.userName);
         } else {
           console.log(error);
         }
@@ -188,7 +184,6 @@ export default class Profile extends React.Component {
           console.log(error);
         } else {
           console.log("Successfully follows user.");
-          //this.saveProfile(response.data.token);
         }
       }
     );
@@ -255,20 +250,43 @@ export default class Profile extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ background: result.uri });
-      if (this.state.background !== null) {
+      if (result.uri !== null) {
+        pseudoRandomFileName =
+          Math.random()
+            .toString(36)
+            .substr(2) +
+          Math.random()
+            .toString(36)
+            .substr(2);
+        typeExtension = result.uri.substr(result.uri.length - 3);
+
+        const file = {
+          uri: result.uri,
+          name: pseudoRandomFileName + "." + typeExtension,
+          type: "image/" + typeExtension
+        };
+
+        let remoteUrl = result.uri;
         const token = await AsyncStorage.getItem("@Token:key");
-        uploadBackground(
-          result.uri,
-          token,
-          (response, error) => {
-            if (error) {
-              console.log(error);
-            } else {
-              //this.saveProfile(response.data.token);
-            }
-          }
-        );
+
+        var that = this;
+
+        uploadImage(file)
+          .then(function(datum) {
+            that.setState({ background: datum.url });
+            uploadBackground(
+              datum.url,
+              token,
+              (response, error) => {
+                if (error) {
+                  console.log(error);
+                }
+              }
+            );
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
       }
     }
   };
@@ -391,9 +409,6 @@ export default class Profile extends React.Component {
               }
               <Text style={styles.name}> {this.state.userName} </Text>
               <Text style={styles.score}>Score: {this.state.score}</Text>
-              <Text style={styles.battlewon}>
-                Battle Won: {this.state.battlesWon}
-              </Text>
             </View>
           </Image>
           <View style={styles.bodyMiddle}>
