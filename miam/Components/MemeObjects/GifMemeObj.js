@@ -21,7 +21,8 @@ class GifMemeObj extends React.Component{
 	    	scaling: 1,
 	    	rotation: 0,
 	    	editor: props.editor || null,
-	    	animatedValue: new Animated.ValueXY({x: 0, y: 0})
+	    	animatedValue: new Animated.ValueXY({x: 0, y: 0}),
+	    	viewScale: 1
 	    };
 
 	    this.defaultWidth = 150;
@@ -37,7 +38,11 @@ class GifMemeObj extends React.Component{
 	componentDidMount(){
 		if(this.props.layer){
 			this._value = {x: this.props.layer.x, y: this.props.layer.y};
-			this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
+			if(this.props.viewScale)
+				this.state.animatedValue.setValue({x: this.props.layer.x * this.props.viewScale, y: this.props.layer.y * this.props.viewScale});
+			else
+				this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
+
 			this.setState({
 				gifURL: this.props.layer.gifURL,
 				scaling: this.props.layer.scaling,
@@ -49,6 +54,9 @@ class GifMemeObj extends React.Component{
 				gifURL: this.props.gifURL
 			});
 		}
+
+		if(this.props.viewScale)
+			this.setState({viewScale: this.props.viewScale});
 	}
 
 	componentWillMount(){
@@ -147,8 +155,8 @@ class GifMemeObj extends React.Component{
 		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
 		            	{
 		            		alignSelf: "center",
-		            		width: this.defaultWidth * this.state.scaling,
-		            		height: this.defaultHeight * this.state.scaling
+		            		width: this.defaultWidth * this.state.scaling * this.state.viewScale,
+		            		height: this.defaultHeight * this.state.scaling * this.state.viewScale
 		            	}
 		            }/>
 		        </Animated.View>
