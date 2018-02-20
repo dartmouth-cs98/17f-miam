@@ -88,12 +88,14 @@ class Battle extends React.Component {
 
   handleMessage(message) {
     console.log(message);
-    const messages = this.state.messages.slice();
+    let messages = this.state.messages.slice();
     messages.push(message);
-    this.setState({
-      messages: messages,
-      msgDataSource: ds.cloneWithRows(messages)
-    });
+    if (this.refs.myRef) {
+      this.setState({
+        messages: messages,
+        msgDataSource: ds.cloneWithRows(messages)
+      });
+    }
   }
 
   sendMsg(msg) {
@@ -201,11 +203,11 @@ class Battle extends React.Component {
                     username: msg.sender.username,
                   })}
               >
-                <Text>
+                <Text style={{ fontSize: 16 }}>
                   {msg.sender.username}
                 </Text>
               </TouchableHighlight>
-              <Text>{time}</Text>
+              <Text style={{ fontSize: 10 }}>{time}</Text>
             </View>
             <View style={styles.messageContent}>
               {msg.text !== undefined && this.renderText(msg.text)}
@@ -249,15 +251,16 @@ class Battle extends React.Component {
     );
   }
 
+  // <TouchableHighlight
+  //   underlayColor="white"
+  //   onPress={() => this.setState({ invitingUser: true })}
+  //   style={styles.iconStyle}>
+  //   <IconMaterial name="group-add" color="#ac3973" size={30} />
+  // </TouchableHighlight>
+
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-        <TouchableHighlight
-          underlayColor="white"
-          onPress={() => this.setState({ invitingUser: true })}
-          style={styles.iconStyle}>
-          <IconMaterial name="group-add" color="#ac3973" size={30} />
-        </TouchableHighlight>
         <TouchableHighlight
           underlayColor="white"
           onPress={() => this.setState({ selectingMeme: true })}
@@ -284,7 +287,7 @@ class Battle extends React.Component {
   renderList() {
     if (this.state.messages.length < 5) {
       return (
-        <View>
+        <View ref="myRef">
           <KeyboardAwareScrollView
             ref={ref => {
               this.scrollView = ref;
@@ -309,25 +312,27 @@ class Battle extends React.Component {
       );
     } else {
       return (
-        <KeyboardAwareScrollView
-          ref={ref => {
-            this.scrollView = ref;
-          }}
-          onContentSizeChange={(contentWidth, contentHeight) => {
-            this.scrollView.scrollToEnd({ animated: true });
-          }}
-          contentContainerStyle={styles.scrollView}
-        >
-          <ListView
-            initialListSize={5}
-            enableEmptySections={true}
-            dataSource={this.state.msgDataSource}
-            renderRow={msg => {
-              return this.renderMsgRow(msg);
+        <View ref="myRef">
+          <KeyboardAwareScrollView
+            ref={ref => {
+              this.scrollView = ref;
             }}
-          />
-          {this.renderInputBar()}
-        </KeyboardAwareScrollView>
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.scrollView.scrollToEnd({ animated: true });
+            }}
+            contentContainerStyle={styles.scrollView}
+          >
+            <ListView
+              initialListSize={5}
+              enableEmptySections={true}
+              dataSource={this.state.msgDataSource}
+              renderRow={msg => {
+                return this.renderMsgRow(msg);
+              }}
+            />
+            {this.renderInputBar()}
+          </KeyboardAwareScrollView>
+        </View>
       );
     }
   }
@@ -468,7 +473,7 @@ const styles = StyleSheet.create({
   // },
 
   listView: {
-    height: vh*0.75
+    height: vh*0.77
   },
 
   scrollView: {
@@ -488,7 +493,7 @@ const styles = StyleSheet.create({
 
   memeStyle: {
     borderWidth: 1,
-    borderColor: "#000000",
+    borderColor: "#9999ff",
     borderRadius: 10,
     padding: 5
   },
