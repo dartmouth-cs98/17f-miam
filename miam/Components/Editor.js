@@ -115,8 +115,8 @@ class Editor extends React.Component {
       'DELETING ALL LAYERS',
       'Are you sure you want to erase all layers?',
       [
-        {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        {text: 'Yes', onPress: () => this.setState({layers: []})},
+        {text: 'No', style: 'cancel'},
+        {text: 'Yes', onPress: () => { this.setState({layers: []}); this.unselectObj(); }},
       ],
       { cancelable: false }
     );
@@ -140,7 +140,7 @@ class Editor extends React.Component {
       'DELETING CURRENT LAYER',
       'Are you sure you want to erase the selected layer?',
       [
-        {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'No', style: 'cancel'},
         {text: 'Yes', onPress: () => this.deleteObj()},
       ],
       { cancelable: false }
@@ -229,11 +229,15 @@ class Editor extends React.Component {
   }
 
   editBringToFront(){
-
+    this.setState(prevState => ({
+      layers: [...prevState.layers.filter((element, i) => element["key"] != this.state.selectedObjKey)].concat(prevState.layers.filter((element, i) => element["key"] == this.state.selectedObjKey))
+    }));
   }
 
   editBringToBack(){
-
+    this.setState(prevState => ({
+      layers: [...prevState.layers.filter((element, i) => element["key"] == this.state.selectedObjKey)].concat(prevState.layers.filter((element, i) => element["key"] != this.state.selectedObjKey))
+    }));
   }
 
   finishEditing(){
@@ -341,6 +345,14 @@ class Editor extends React.Component {
               <Icon name="remove-circle" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
 
+            <TouchableHighlight onPress={this.editBringToFront} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="file-upload" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editBringToBack} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="file-download" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
             <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
               <Icon name="delete" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
@@ -442,6 +454,14 @@ class Editor extends React.Component {
 
             <TouchableHighlight onPress={this.unselectObj} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
               <Icon name="remove-circle" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editBringToFront} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="file-upload" color="#FFFFFF" size={25}/>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={this.editBringToBack} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#4A3677"}]}>
+              <Icon name="file-download" color="#FFFFFF" size={25}/>
             </TouchableHighlight>
 
             <TouchableHighlight onPress={this.deleteObjAlert} underlayColor="#ffffffaa" style={[styles.objEditorDrawerButton, {backgroundColor: "#FF0000"}]}>
