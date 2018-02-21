@@ -14,8 +14,7 @@ import {
 } from "react-native";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
-import { postComment } from "../api";
-import { fetchComment } from "../api";
+import { postComment, fetchComment, fetchSinglePost, likePost } from "../api";
 import update from "react-addons-update";
 import moment from "moment";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -43,7 +42,9 @@ class Comment extends Component {
     this.comment = this.comment.bind(this);
     this.getComment = this.getComment.bind(this);
     this.sortByNewest = this.sortByNewest.bind(this);
+    this.like = this.like.bind(this);
 
+    this.renderPost = this.renderPost.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.runStarAnim = this.runStarAnim.bind(this);
   }
@@ -67,10 +68,18 @@ class Comment extends Component {
         this.runStarAnim();
       }
 
-
       for (i = 0; i < this.props.navigation.state.params.comments.length; i++) {
         this.getComment(this.props.navigation.state.params.comments[i]);
       }
+
+      fetchSinglePost(this.props.navigation.state.params.postID, (res, err) => {
+        if(err)
+          alert(err);
+        else{
+          console.log(this.props.navigation.state.params.postID);
+          // TODO: Save post data to state
+        }
+      });
     }
   }
 
@@ -138,6 +147,177 @@ class Comment extends Component {
     }
   }
 
+  like(postID, action) {
+    likePost(postID, action, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        // Re-fetching posts
+        fetchPosts((response, error) => {
+          if (error) {
+            alert(error);
+          } else {
+            if (response.data) {
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response.data)
+                  : this.sortPostByHottest(response.data);
+
+              this.setState({
+                data: sortedData,
+                postDataSource: ds.cloneWithRows(sortedData),
+                loaded: true
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
+  renderPost(post) {
+    var userId = post.user._id;
+    var username = post.anon ? "Anonymous" : post.user.username;
+
+    var tempUsrImg =
+      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" + username.charAt(0);
+    const time = moment(post.createdAt).fromNow();
+
+    const likeButton = (
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.like(post._id, "like")}
+      >
+        <Icon name="favorite-border" color="#cc6699" size={25} />
+      </TouchableHighlight>
+    );
+    const unlikeButton = (
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.like(post._id, "unlike")}
+      >
+        <Icon name="favorite" color="#cc6699" size={25} />
+      </TouchableHighlight>
+    );
+    var id = this.state.userId;
+    var postLiked = post.likes.some(function(likeId) {
+      return likeId === id;
+    });
+
+    let meme = (
+      <Meme
+        imgURL={post.meme.imgURL}
+        text={post.posttext}
+        layers={post.meme.layers}
+      />
+    );
+
+    return (
+      <View style={styles.postContainer}>
+        <View style={styles.postHeadingContainer}>
+          {post.anon ? (
+            <View style={styles.iconContainer}>
+              <TouchableHighlight>
+                <Image
+                  source={{ uri: tempUsrImg }}
+                  style={styles.userIconStyle}
+                  resizeMode="contain"
+                />
+              </TouchableHighlight>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  marginLeft: "2%",
+                  marginTop: "3%"
+                }}
+              >
+                {username}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.iconContainer}>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate("Profile", {
+                    // userId: userId,
+                    username: username
+                  })}
+              >
+                <Image
+                  source={{ uri: tempUsrImg }}
+                  style={styles.userIconStyle}
+                  resizeMode="contain"
+                />
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() =>
+                  this.props.navigation.navigate("Profile", {
+                    // userId: userId,
+                    username: username
+                  })}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    marginLeft: "2%",
+                    marginTop: "10%"
+                  }}
+                >
+                  {username}
+                </Text>
+              </TouchableHighlight>
+            </View>
+          )}
+
+          <View style={{ alignSelf: "flex-end" }}>
+            <Text style={{ fontSize: 8 }}>{time}</Text>
+          </View>
+        </View>
+        <View style={styles.separatorLine} />
+
+        <View style={styles.postContentContainer}>
+          <Text style={{ fontSize: 12, marginLeft: "2%", marginTop: "3%" }}>
+            {post.hashtags}
+          </Text>
+          {meme}
+        </View>
+        <View style={styles.separatorLine} />
+
+        <View style={styles.postFooterContainer}>
+          <View style={styles.postFooterIconContainer}>
+            {postLiked ? unlikeButton : likeButton}
+            <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "5%" }}>
+              {post.likes.length}
+            </Text>
+          </View>
+          <View>
+            <TouchableHighlight
+              underlayColor="white"
+              onPress={() => this.save(post.meme._id)}
+            >
+              <Icon name="save" color="#cc6699" size={25} />
+            </TouchableHighlight>
+          </View>
+          <View>
+            <TouchableHighlight
+              underlayColor="white"
+              onPress={() =>
+                this.props.navigation.navigate("Canvas", {
+                  imgURL: post.meme.imgURL,
+                  layers: post.meme.layers,
+                  originalPoster: "post.meme.originalPoster",    // TODO: IN CANVAS, ONLY USE THIS WHEN IT ISN"T ANONYMOUS
+                  username: username
+                })}>
+              <Icon name="autorenew" color="#cc6699" size={25} />
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   renderHeader(){
     const interpolRotLeft = this.animRot.interpolate({
       inputRange: [0, 1],
@@ -166,9 +346,9 @@ class Comment extends Component {
     var rightAnimStar = <Animated.View style={{left: "150%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
     var opButton = null;
 
-    if(this.state.originalPoster != null && 
+    if(this.state.originalPoster != null /*&& 
        this.state.originalPoster != this.props.navigation.state.params.username &&
-       this.props.navigation.state.params.username != "Anonymous"){
+       this.props.navigation.state.params.username != "Anonymous"*/){
       opButton = <TouchableHighlight
                         underlayColor="#FFFFFFAA"
                         onPress={() => {

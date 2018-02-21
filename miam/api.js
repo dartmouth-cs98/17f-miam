@@ -177,6 +177,17 @@ export function fetchPosts(cb) {
     });
 }
 
+export function fetchSinglePost(postID, cb) {
+  axios
+    .get(`${ROOT_URL}/posts/${postID}`)
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      console.log(error.response);
+    });
+}
+
 export function fetchBattles(cb) {
   axios
     .get(`${ROOT_URL}/battles/`)
