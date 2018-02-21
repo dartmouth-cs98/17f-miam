@@ -18,12 +18,22 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
+<<<<<<< HEAD
 import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme } from "../api";
+=======
+import {
+  fetchPosts,
+  getUserProfile,
+  likePost,
+  getTargetUserProfile,
+  saveExistingMeme
+} from "../api";
+>>>>>>> 1531559e1c05f6a0afeef98d072f403c0f5aa54a
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
 var customData = require("../data/customData.json");
-const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
+const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 
 export default class Feed extends React.Component {
@@ -50,7 +60,6 @@ export default class Feed extends React.Component {
         alert(error);
       } else {
         if (response.data) {
-
           sortedData = this.sortPostByNewest(response.data);
           this.setState({
             data: sortedData,
@@ -76,7 +85,7 @@ export default class Feed extends React.Component {
           if (response.data) {
             try {
               await AsyncStorage.setItem("@UserId:key", response.data.id);
-              console.log("Successfully saved user id");
+              consfccessfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }
@@ -92,21 +101,22 @@ export default class Feed extends React.Component {
 
   sortPostByNewest(array, key) {
     return array.sort(function(a, b) {
-      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf() ? -1 : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
+      return moment(b.createdAt).valueOf() < moment(a.createdAt).valueOf()
+        ? -1
+        : moment(b.createdAt).valueOf() > moment(a.createdAt).valueOf() ? 1 : 0;
     });
   }
 
   sortPostByHottest(array, key) {
     return array.sort(function(a, b) {
-      return b.likes.length < a.likes.length ? -1 : b.likes.length > a.likes.length ? 1 : 0;
+      return b.likes.length < a.likes.length
+        ? -1
+        : b.likes.length > a.likes.length ? 1 : 0;
     });
   }
 
   newHeadingTabPress() {
-    sortedPosts = this.sortPostByNewest(
-      this.state.data,
-      "ignore this for now"
-    );
+    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "new"
@@ -129,28 +139,26 @@ export default class Feed extends React.Component {
       if (error) {
         alert(error);
       } else {
-        console.log(response.data)
+        alert("You have successfully saved this meme!");
       }
-    })
+    });
   }
 
   like(postID, action) {
-    console.log(postID);
-    console.log(this.state.token);
     likePost(postID, action, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
-
         // Re-fetching posts
         fetchPosts((response, error) => {
           if (error) {
             alert(error);
           } else {
             if (response.data) {
-              var sortedData = (this.state.headingTabSelected == "new") ?
-                                this.sortPostByNewest(response.data) :
-                                this.sortPostByHottest(response.data);
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response.data)
+                  : this.sortPostByHottest(response.data);
 
               this.setState({
                 data: sortedData,
@@ -210,37 +218,53 @@ export default class Feed extends React.Component {
   }
 
   renderPostRow(post) {
-
     var userId = post.user._id;
     var username = post.anon ? "Anonymous" : post.user.username;
 
     var tempUsrImg =
-      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" +
-      username.charAt(0);
+      "https://dummyimage.com/70x70/886BEA/FFF.png&text=" + username.charAt(0);
     const time = moment(post.createdAt).fromNow();
 
-    const likeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "like")}>
-                        <Icon name="favorite-border" color="#cc6699" size={25} />
-                       </TouchableHighlight>;
-    const unlikeButton = <TouchableHighlight underlayColor="white" onPress={() => this.like(post._id, "unlike")}>
-                          <Icon name="favorite" color="#cc6699" size={25} />
-                         </TouchableHighlight>;
+    const likeButton = (
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.like(post._id, "like")}
+      >
+        <Icon name="favorite-border" color="#cc6699" size={25} />
+      </TouchableHighlight>
+    );
+    const unlikeButton = (
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.like(post._id, "unlike")}
+      >
+        <Icon name="favorite" color="#cc6699" size={25} />
+      </TouchableHighlight>
+    );
     var id = this.state.userId;
-    var postLiked = post.likes.some(function (likeId) {
+    var postLiked = post.likes.some(function(likeId) {
       return likeId === id;
     });
 
-    let meme = <Meme imgURL={post.meme.imgURL} text={post.posttext} layers={post.meme.layers}/>;
+    let meme = (
+      <Meme
+        imgURL={post.meme.imgURL}
+        text={post.posttext}
+        layers={post.meme.layers}
+      />
+    );
 
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeadingContainer}>
-          
-
-          {post.anon ?
+          {post.anon ? (
             <View style={styles.iconContainer}>
               <TouchableHighlight>
-                <Image source={{ uri: tempUsrImg }} style={styles.userIconStyle} resizeMode="contain"/>
+                <Image
+                  source={{ uri: tempUsrImg }}
+                  style={styles.userIconStyle}
+                  resizeMode="contain"
+                />
               </TouchableHighlight>
               <Text
                 style={{
@@ -253,13 +277,15 @@ export default class Feed extends React.Component {
                 {username}
               </Text>
             </View>
-            :
+          ) : (
             <View style={styles.iconContainer}>
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    username: username,
-                  })}>
+                    userId: userId,
+                    username: username
+                  })}
+              >
                 <Image
                   source={{ uri: tempUsrImg }}
                   style={styles.userIconStyle}
@@ -269,8 +295,10 @@ export default class Feed extends React.Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    username: username,
-                  })}>
+                    userId: userId,
+                    username: username
+                  })}
+              >
                 <Text
                   style={{
                     fontSize: 15,
@@ -283,7 +311,7 @@ export default class Feed extends React.Component {
                 </Text>
               </TouchableHighlight>
             </View>
-          }
+          )}
 
           <View style={{ alignSelf: "flex-end" }}>
             <Text style={{ fontSize: 8 }}>{time}</Text>
@@ -326,9 +354,7 @@ export default class Feed extends React.Component {
           <View>
             <TouchableHighlight
               underlayColor="white"
-              onPress={() =>
-                this.save(post.meme._id)
-              }
+              onPress={() => this.save(post.meme._id)}
             >
               <Icon name="save" color="#cc6699" size={25} />
             </TouchableHighlight>
@@ -381,10 +407,11 @@ const styles = StyleSheet.create({
   headingTabBar: {
     width: "50%",
     height: 28,
-    borderWidth: 1,
-    borderRadius: 5,
+    borderBottomWidth: 2,
+    borderColor: "#a044ff",
+    borderRadius: 10,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "center",
     margin: "3%"
@@ -396,16 +423,12 @@ const styles = StyleSheet.create({
   },
   headingTabText: {
     height: "100%",
-    alignSelf: "center",
     fontWeight: "bold",
-    backgroundColor: "#00000000",
-    top: "18%"
-  },
-  activeHeadingTabView: {
-    backgroundColor: "#886BEA"
+    alignSelf: "center",
+    backgroundColor: "#00000000"
   },
   activeHeadingTabText: {
-    color: "white"
+    color: "#886BEA"
   },
   listView: {
     alignItems: "center"

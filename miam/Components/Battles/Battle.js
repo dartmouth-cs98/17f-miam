@@ -26,6 +26,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Meme from "../Meme";
 import moment from "moment";
 import SelectingMeme from "./SelectingMeme";
+import SearchProfile from "../SearchProfile";
 
 class Battle extends React.Component {
   constructor(props) {
@@ -34,7 +35,8 @@ class Battle extends React.Component {
       msgDataSource: ds.cloneWithRows([]),
       messages: [],
       text: "",
-      selectingMeme: false
+      selectingMeme: false,
+      invitingUser: false
     };
 
     this.channel = props.pusher.subscribe(props.battleId);
@@ -56,6 +58,8 @@ class Battle extends React.Component {
     this.renderText = this.renderText.bind(this);
     this.renderMsgRow = this.renderMsgRow.bind(this);
     this.like = this.like.bind(this);
+
+    this.renderList = this.renderList.bind(this);
   }
 
   fetchBattle() {
@@ -67,9 +71,9 @@ class Battle extends React.Component {
           msgDataSource: ds.cloneWithRows(response.messages),
           messages: response.messages,
         });
-        // console.log(response);
       }
     });
+    this.forceUpdate();
   }
 
   componentWillMount() {
@@ -82,14 +86,17 @@ class Battle extends React.Component {
     }
   }
 
+
   handleMessage(message) {
     console.log(message);
-    const messages = this.state.messages.slice();
+    let messages = this.state.messages.slice();
     messages.push(message);
-    this.setState({
-      messages: messages,
-      msgDataSource: ds.cloneWithRows(messages)
-    });
+    if (this.refs.myRef) {
+      this.setState({
+        messages: messages,
+        msgDataSource: ds.cloneWithRows(messages)
+      });
+    }
   }
 
   sendMsg(msg) {
@@ -170,8 +177,6 @@ class Battle extends React.Component {
     //   </TouchableHighlight>) : (<View />);
 
     const time = moment(msg.sentAt).fromNow();
-    console.log("opopop");
-    console.log(msg.sender);
 
     if (msg.text !== undefined || msg.meme !== undefined) {
       return (
@@ -198,11 +203,11 @@ class Battle extends React.Component {
                     username: msg.sender.username,
                   })}
               >
-                <Text>
+                <Text style={{ fontSize: 16 }}>
                   {msg.sender.username}
                 </Text>
               </TouchableHighlight>
-              <Text>{time}</Text>
+              <Text style={{ fontSize: 10 }}>{time}</Text>
             </View>
             <View style={styles.messageContent}>
               {msg.text !== undefined && this.renderText(msg.text)}
@@ -225,7 +230,7 @@ class Battle extends React.Component {
     if (meme) {
       return (
         <View style={styles.memeStyle}>
-          <Meme imgURL={meme.imgURL} layers={meme.layers}/>
+          <Meme imgURL={meme.imgURL} layers={meme.layers} scale={0.9}/>
         </View>
       );
     } else {
@@ -246,14 +251,22 @@ class Battle extends React.Component {
     );
   }
 
+  // <TouchableHighlight
+  //   underlayColor="white"
+  //   onPress={() => this.setState({ invitingUser: true })}
+  //   style={styles.iconStyle}>
+  //   <IconMaterial name="group-add" color="#ac3973" size={30} />
+  // </TouchableHighlight>
+
   renderInputBar() {
     return (
       <View style={styles.inputBar}>
-      <TouchableHighlight
-        underlayColor="white"
-        onPress={() => this.setState({ selectingMeme: true })}>
-        <IconMaterial name="control-point" color="#ac3973" size={35} />
-      </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor="white"
+          onPress={() => this.setState({ selectingMeme: true })}
+          style={styles.iconStyle}>
+          <IconMaterial name="control-point" color="#ac3973" size={30} />
+        </TouchableHighlight>
         <TextInput
           onChangeText={text => this.setState({ text })}
           placeholder="Say something..."
@@ -271,16 +284,10 @@ class Battle extends React.Component {
     );
   }
 
-  render() {
-    if (!this.state.selectingMeme) {
+  renderList() {
+    if (this.state.messages.length < 5) {
       return (
-        <View style={styles.body}>
-          <StatusBarColor />
-          <Heading
-            text={'#'+this.props.theme}
-            backButtonVisible={true}
-            backFunction={this.props.returnToList}
-          />
+        <View ref="myRef">
           <KeyboardAwareScrollView
             ref={ref => {
               this.scrollView = ref;
@@ -305,11 +312,58 @@ class Battle extends React.Component {
       );
     } else {
       return (
+        <View ref="myRef">
+          <KeyboardAwareScrollView
+            ref={ref => {
+              this.scrollView = ref;
+            }}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              this.scrollView.scrollToEnd({ animated: true });
+            }}
+            contentContainerStyle={styles.scrollView}
+          >
+            <ListView
+              initialListSize={5}
+              enableEmptySections={true}
+              dataSource={this.state.msgDataSource}
+              renderRow={msg => {
+                return this.renderMsgRow(msg);
+              }}
+            />
+            {this.renderInputBar()}
+          </KeyboardAwareScrollView>
+        </View>
+      );
+    }
+  }
+
+  render() {
+    if (this.state.selectingMeme) {
+      return (
         <SelectingMeme
           token={this.props.token}
           returnToBattle={() => this.setState({ selectingMeme: false })}
-          sendMemeMsg={this.sendMemeMsg}
+          sendMemeMsg={this.sendMemeMsg}/>
+      );
+    } else if (this.state.invitingUser) {
+      return (
+        <SearchProfile
+          nav={this.props.navigation}
+          token={this.props.token}
+          returnToBattle={() => this.setState({ invitingUser: false })}
+          myId={this.props.myId}/>
+      );
+    } else {
+      return (
+        <View style={styles.body}>
+          <StatusBarColor />
+          <Heading
+            text={'#'+this.props.theme}
+            backButtonVisible={true}
+            backFunction={this.props.returnToList}
           />
+          {this.renderList()}
+        </View>
       );
     }
   }
@@ -329,7 +383,8 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     backgroundColor: "#F8F8FF",
     marginTop: 20,
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 0.1*vh
   },
   textArea: {
     backgroundColor: "white",
@@ -367,13 +422,10 @@ const styles = StyleSheet.create({
 
   messageContainer: {
     flexDirection: "column",
-    flex: 1,
-    marginRight: "5%"
+    flex: 1
   },
 
   messageContent: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
     margin: 10
   },
 
@@ -418,13 +470,12 @@ const styles = StyleSheet.create({
   //   color: "white"
   // },
 
-  // listView: {
-  //   height: vh*0.75
-  // },
+  listView: {
+    height: vh*0.77
+  },
 
   scrollView: {
     flexDirection: "column",
-    marginBottom: 25,
     justifyContent: "space-between"
   },
 
@@ -439,9 +490,8 @@ const styles = StyleSheet.create({
 
   memeStyle: {
     borderWidth: 1,
-    borderColor: "#000000",
-    borderRadius: 10,
-    padding: 5
+    borderColor: "#9999ff",
+    borderRadius: 10
   },
 
   senderInfo: {
@@ -455,6 +505,10 @@ const styles = StyleSheet.create({
     height: 43,
     borderRadius: 20,
     margin: 2
+  },
+
+  iconStyle: {
+    marginLeft: 5
   }
 });
 

@@ -19,7 +19,7 @@ import Button from "react-native-button";
 import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
-import { fetchBattles, createBattle } from "../../api";
+import { fetchBattles, createBattle, followBattle } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
@@ -34,9 +34,6 @@ import Pusher from "pusher-js/react-native";
 import moment from "moment";
 
 var mockData = require("../../mock_data/mockBattleData.json");
-
-// Enable pusher logging - don't include this in production
-// Pusher.logToConsole = true;
 
 export default class BattleList extends React.Component {
   constructor(props) {
@@ -56,8 +53,9 @@ export default class BattleList extends React.Component {
       pusher: {},
       myId: "",
       token: "",
-      headingTabSelected: "hot",
-      theme: ""
+      headingTabSelected: "new",
+      theme: "",
+      data: null
     };
 
     this.pusher = new Pusher("8bf10764c83bdb2f6afd", {
@@ -68,6 +66,8 @@ export default class BattleList extends React.Component {
     this.selectBattle = this.selectBattle.bind(this);
     this.returnToList = this.returnToList.bind(this);
     this.startBattle = this.startBattle.bind(this);
+    this.getTimeLeft = this.getTimeLeft.bind(this);
+    this.follow = this.follow.bind(this);
   }
 
   async getMyId() {
@@ -90,8 +90,15 @@ export default class BattleList extends React.Component {
           if (error) {
             console.log(error);
           } else {
+            console.log(response);
+            var sortedData =
+              this.state.headingTabSelected == "new"
+                ? this.sortPostByNewest(response)
+                : this.sortPostByHottest(response);
+
             this.setState({
               battleDataSource: ds.cloneWithRows(response),
+              data: sortedData,
               loaded: true
             });
           }
@@ -106,9 +113,40 @@ export default class BattleList extends React.Component {
       selectedBattleTheme: theme
     });
   }
-  newHeadingTabPress() {}
 
-  hotHeadingTabPress() {}
+  sortPostByNewest(array, key) {
+    return array.sort(function(a, b) {
+      return moment(b.startTime).valueOf() < moment(a.startTime).valueOf()
+        ? -1
+        : moment(b.startTime).valueOf() > moment(a.startTime).valueOf() ? 1 : 0;
+    });
+  }
+  sortPostByHottest(array, key) {
+    return array.sort(function(a, b) {
+      return b.followers.length < a.followers.length
+        ? -1
+        : b.followers.length > a.followers.length ? 1 : 0;
+    });
+  }
+
+  newHeadingTabPress() {
+    sortedPosts = this.sortPostByNewest(this.state.data, "ignore this");
+    this.setState({
+      battleDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "new"
+    });
+  }
+
+  hotHeadingTabPress() {
+    sortedPosts = this.sortPostByHottest(
+      this.state.data,
+      "ignore this for now"
+    );
+    this.setState({
+      postDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "hot"
+    });
+  }
   returnToList() {
     this.setState({
       selectedBattle: "",
@@ -117,7 +155,7 @@ export default class BattleList extends React.Component {
     this.props.navigation.state.params = {};
   }
   startBattle() {
-    if (this.state.meme !== undefined && this.state.meme !== "theme") {
+    if (this.state.theme !== undefined && this.state.theme !== "theme") {
       createBattle(this.state.theme, this.state.token, (response, error) => {
         if (error) {
           console.log(error);
@@ -127,9 +165,15 @@ export default class BattleList extends React.Component {
             if (error) {
               console.log(error);
             } else {
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response)
+                  : this.sortPostByHottest(response);
+
               this.setState({
                 battleDataSource: ds.cloneWithRows(response),
                 loaded: true,
+                data: sortedData,
                 theme: ""
               });
             }
@@ -140,8 +184,36 @@ export default class BattleList extends React.Component {
       Alert.alert("Create an actual theme!");
     }
   }
+  getTimeLeft(startTime) {
+    var start = moment(startTime);
+    var deadline = start.clone().add(24, "h");
+    if (start.isAfter(deadline)) {
+      return "expired";
+    } else {
+      return deadline.from(start);
+    }
+  }
+  follow(battleId) {
+    followBattle(battleId, this.state.token, (response, error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        fetchBattles((response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.setState({
+              battleDataSource: ds.cloneWithRows(response),
+              loaded: true,
+              theme: ""
+            });
+          }
+        });
+      }
+    });
+  }
   renderBattleRow(battle) {
-    const time = moment(battle.startTime).fromNow();
+    const remainedTime = this.getTimeLeft(battle.startTime);
     return (
       <View style={styles.battleContainer}>
         <TouchableHighlight
@@ -153,19 +225,25 @@ export default class BattleList extends React.Component {
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <View style={{ marginTop: "1%", marginLeft: "1%" }}>
-                <Text
-                  style={{ fontSize: 12, color: "#000000", fontWeight: "bold" }}
-                >
+                <Text style={{ fontSize: 10, color: "#000000" }}>
                   Challenger:{battle.initiatedBy.username}
                 </Text>
               </View>
-              <View>
-                <Text
-                  style={{ fontSize: 11, color: "#000000", fontWeight: "bold" }}
+              <View style={{ marginTop: "1%", marginRight: "1%" }}>
+                <TouchableHighlight
+                  onPress={() => this.follow(battle._id)}
+                  underlayColor="#ffffff"
                 >
-                  {" "}
-                  follow{" "}
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#000000",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    follow
+                  </Text>
+                </TouchableHighlight>
               </View>
             </View>
             <View>
@@ -174,7 +252,7 @@ export default class BattleList extends React.Component {
                   style={{
                     textAlign: "center",
                     color: "#000000",
-                    fontSize: 15,
+                    fontSize: 20,
                     fontWeight: "bold"
                   }}
                 >
@@ -184,7 +262,9 @@ export default class BattleList extends React.Component {
             </View>
             <View style={styles.battleInfoContainer}>
               <View style={{ marginLeft: "2%" }}>
-                <Text style={{ fontSize: 10, color: "#000000" }}>{time}</Text>
+                <Text style={{ fontSize: 10, color: "#000000" }}>
+                  expire {remainedTime}
+                </Text>
               </View>
               <View style={{ flexDirection: "row", marginRight: "2%" }}>
                 <Icon name="people" color="#886BEA" size={15} />
@@ -196,7 +276,7 @@ export default class BattleList extends React.Component {
                     textAlign: "center"
                   }}
                 >
-                  {battle.participants.length}
+                  {battle.followers.length}
                 </Text>
               </View>
             </View>
@@ -217,7 +297,7 @@ export default class BattleList extends React.Component {
               style={{
                 width: "75%",
                 borderColor: "#d9b3ff",
-                borderWidth: 2,
+                borderBottomWidth: 2,
                 height: "100%"
               }}
               maxLength={50}

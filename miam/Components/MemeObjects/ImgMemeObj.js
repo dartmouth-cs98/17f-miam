@@ -10,14 +10,14 @@ import {
     Image
 } from 'react-native';
 
-class GifMemeObj extends React.Component{
+class ImgMemeObj extends React.Component{
 	constructor(props){
 	    super(props);
 	    
 	    this.state = {
 	    	key: props.selectionKey,
-	    	gifURL: "https://media2.giphy.com/media/3o7WIJ7OlVcqS9Nxny/giphy.gif",
-	    	type: "gif",
+	    	imgURL: "https://vignette.wikia.nocookie.net/creation/images/7/7e/Red_x.png/revision/latest?cb=20160323201834",
+	    	type: "img",
 	    	scaling: 1,
 	    	rotation: 0,
 	    	editor: props.editor || null,
@@ -32,7 +32,7 @@ class GifMemeObj extends React.Component{
 	    	props.editor.addLayerRef(props.selectionKey, this);
 
 	    this.recenter = this.recenter.bind(this);
-	    this.updateGifURL = this.updateGifURL.bind(this);
+	    this.updateImgURL = this.updateImgURL.bind(this);
 	}
 
 	componentDidMount(){
@@ -44,14 +44,14 @@ class GifMemeObj extends React.Component{
 				this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
 
 			this.setState({
-				gifURL: this.props.layer.gifURL,
+				imgURL: this.props.layer.imgURL,
 				scaling: this.props.layer.scaling,
 				rotation: this.props.layer.rotation
 			});
 		}
 		else{
 			this.setState({
-				gifURL: this.props.gifURL
+				imgURL: this.props.imgURL
 			});
 		}
 
@@ -86,9 +86,9 @@ class GifMemeObj extends React.Component{
 		}
 	}
 
-	updateGifURL(gifURL){
+	updateImgURL(imgURL){
 		this.setState({
-			gifURL: gifURL
+			imgURL: imgURL
 		});
 	}
 
@@ -100,10 +100,10 @@ class GifMemeObj extends React.Component{
 		let coordinates = JSON.parse(JSON.stringify(this.state.animatedValue));
 
 		return {
-			type: "gif",
+			type: "img",
 			x: coordinates.x,
 			y: coordinates.y,
-			gifURL: this.state.gifURL,
+			imgURL: this.state.imgURL,
 			scaling: this.state.scaling,
 			rotation: this.state.rotation
 		}
@@ -126,7 +126,7 @@ class GifMemeObj extends React.Component{
 		                bottom: '50%'
 		              }}
 		            {...this._panResponder.panHandlers}>
-		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
+		            <Image source={{ uri: this.state.imgURL }} resizeMode="contain" style={
 		            	{
 		            		alignSelf: "center",
 		            		width: this.defaultWidth * this.state.scaling,
@@ -152,7 +152,7 @@ class GifMemeObj extends React.Component{
 		                alignSelf: 'center',
 		                bottom: '50%'
 		              }}>
-		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
+		            <Image source={{ uri: this.state.imgURL }} resizeMode="contain" style={
 		            	{
 		            		alignSelf: "center",
 		            		width: this.defaultWidth * this.state.scaling * this.state.viewScale,
@@ -173,4 +173,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default GifMemeObj;
+export default ImgMemeObj;

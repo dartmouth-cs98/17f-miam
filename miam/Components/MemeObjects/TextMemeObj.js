@@ -23,7 +23,8 @@ class TextMemeObj extends React.Component{
 	    	rotation: 0,
 	    	editor: props.editor || null,
 	    	text: "Place Text Here",
-	    	animatedValue: new Animated.ValueXY({x: 0, y: 0})
+	    	animatedValue: new Animated.ValueXY({x: 0, y: 0}),
+	    	viewScale: 1
 	    };
 
 	    if(props.editor)
@@ -35,7 +36,11 @@ class TextMemeObj extends React.Component{
 	componentDidMount(){
 		if(this.props.layer){
 			this._value = {x: this.props.layer.x, y: this.props.layer.y};
-			this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
+			if(this.props.viewScale)
+				this.state.animatedValue.setValue({x: this.props.layer.x * this.props.viewScale, y: this.props.layer.y * this.props.viewScale});
+			else
+				this.state.animatedValue.setValue({x: this.props.layer.x, y: this.props.layer.y});
+
 			this.setState({
 				red: this.props.layer.red,
 				green: this.props.layer.green,
@@ -45,6 +50,9 @@ class TextMemeObj extends React.Component{
 				text: this.props.layer.text
 			});
 		}
+
+		if(this.props.viewScale)
+			this.setState({viewScale: this.props.viewScale});
 	}
 
 	componentWillMount(){
@@ -143,7 +151,7 @@ class TextMemeObj extends React.Component{
 		            <Text style={
 		            	{
 		            		color: 'rgb(' + this.state.red + ',' + this.state.green + ',' + this.state.blue + ')',
-		            		fontSize: this.state.fontSize,
+		            		fontSize: this.state.fontSize * this.state.viewScale,
 		            		fontWeight: 'bold',
 		            		textAlign: "center"
 		            	}

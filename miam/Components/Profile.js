@@ -18,10 +18,10 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { ImagePicker } from "expo";
+import { ImagePicker, LinearGradient } from "expo";
 
-import { getUserProfile, getTargetUserProfile } from "../api";
-import { uploadProfile, uploadBackground, followUser, beingFollowed } from "../api";
+import { getUserProfile, getTargetUserProfile, getUserProfileFromID } from "../api";
+import { uploadProfile, uploadBackground, followUser, beingFollowed, uploadImage } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -42,17 +42,18 @@ export default class Profile extends React.Component {
       userId: "",
       userName: "Default",
       score: -1,
+      post: [],
       followerlist: [],
       followinglist: [],
       followers: -1,
       following: -1,
-      battlesWon: -1,
       image: null,
       background: null,
       self: true,
       observer: "",
       observerFollowingList: [],
       followed: false,
+      tab: "follower",
     };
 
     this.signOut = this.signOut.bind(this);
@@ -62,17 +63,18 @@ export default class Profile extends React.Component {
   componentDidMount() {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
+<<<<<<< HEAD
       let userId = this.props.navigation.state.params.userId || null;
       //console.log(this.props.navigation.state.params);
+=======
+      let userId = this.props.navigation.state.params.userId;
+>>>>>>> 1531559e1c05f6a0afeef98d072f403c0f5aa54a
       this.getTargetUser(username);
       this.setState({
         userId: userId,
         self: false,
       });
       this.getObserver();
-      // console.log("gygygy");
-      // console.log(this.state.observer);
-      // console.log(this.state.observerFollowingList);
       if (this.state.observerFollowingList.indexOf(userId) >= 0){
         this.setState({ followed: true });
       }
@@ -81,7 +83,7 @@ export default class Profile extends React.Component {
     }
 
     this.setState({
-      dataSource: lv.cloneWithRows(listData),
+      dataSource: lv.cloneWithRows([this.state.followerlist]),
       postDataSource: ds.cloneWithRows(customData),
       loaded: true,
     });
@@ -99,8 +101,8 @@ export default class Profile extends React.Component {
             followinglist: response.data.following,
             following: response.data.following.length,
             score: response.data.score,
-            battlesWon: response.data.battlesWon.length,
             image: response.data.profilePic,
+            background: response.data.backgroundPic,
             observer: response.data.username,
           });
         } else {
@@ -130,7 +132,6 @@ export default class Profile extends React.Component {
     }
   }
 
-
   async getTargetUser(username) {
     try {
       getTargetUserProfile(username, async (response, error) => {
@@ -142,10 +143,8 @@ export default class Profile extends React.Component {
             followinglist: response.data[0].following,
             following: response.data[0].following ? response.data[0].following.length : 0,
             score: response.data[0].score,
-            battlesWon: response.data[0].battlesWon ? response.data[0].battlesWon.length : 0,
             image: response.data[0].profilePic,
           });
-          //console.log(this.state.userName);
         } else {
           console.log(error);
         }
@@ -189,28 +188,10 @@ export default class Profile extends React.Component {
         if (error) {
           console.log(error);
         } else {
-          console.log(myUsername);
           console.log("Successfully follows user.");
-          //this.saveProfile(response.data.token);
         }
       }
     );
-
-    // Add Jenny to Coda's followee list
-    // this.setState({ followerlist: this.state.followerlist.push(myUsername) });
-    // beingFollowed(
-    //   this.state.followerlist,
-    //   targetUsername,
-    //   (response, error) => {
-    //     if (error) {
-    //       console.log(error);
-    //     } else {
-    //       console.log(targetUsername);
-    //       console.log("is successfully being followed.");
-    //       //this.saveProfile(response.data.token);
-    //     }
-    //   }
-    // );
 
     this.setState({ followed: true });
   };
@@ -226,20 +207,43 @@ export default class Profile extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri });
-      if (this.state.image !== null) {
+      if (result.uri !== null) {
+        pseudoRandomFileName =
+          Math.random()
+            .toString(36)
+            .substr(2) +
+          Math.random()
+            .toString(36)
+            .substr(2);
+        typeExtension = result.uri.substr(result.uri.length - 3);
+
+        const file = {
+          uri: result.uri,
+          name: pseudoRandomFileName + "." + typeExtension,
+          type: "image/" + typeExtension
+        };
+
+        let remoteUrl = result.uri;
         const token = await AsyncStorage.getItem("@Token:key");
-        uploadProfile(
-          result.uri,
-          token,
-          (response, error) => {
-            if (error) {
-              console.log(error);
-            } else {
-              //this.saveProfile(response.data.token);
-            }
-          }
-        );
+
+        var that = this;
+
+        uploadImage(file)
+          .then(function(datum) {
+            that.setState({ image: datum.url });
+            uploadProfile(
+              datum.url,
+              token,
+              (response, error) => {
+                if (error) {
+                  console.log(error);
+                }
+              }
+            );
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
       }
     }
   };
@@ -251,51 +255,98 @@ export default class Profile extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ background: result.uri });
-      if (this.state.background !== null) {
+      if (result.uri !== null) {
+        pseudoRandomFileName =
+          Math.random()
+            .toString(36)
+            .substr(2) +
+          Math.random()
+            .toString(36)
+            .substr(2);
+        typeExtension = result.uri.substr(result.uri.length - 3);
+
+        const file = {
+          uri: result.uri,
+          name: pseudoRandomFileName + "." + typeExtension,
+          type: "image/" + typeExtension
+        };
+
+        let remoteUrl = result.uri;
         const token = await AsyncStorage.getItem("@Token:key");
-        uploadBackground(
-          result.uri,
-          token,
-          (response, error) => {
-            if (error) {
-              console.log(error);
-            } else {
-              //this.saveProfile(response.data.token);
-            }
-          }
-        );
+
+        var that = this;
+
+        uploadImage(file)
+          .then(function(datum) {
+            that.setState({ background: datum.url });
+            uploadBackground(
+              datum.url,
+              token,
+              (response, error) => {
+                if (error) {
+                  console.log(error);
+                }
+              }
+            );
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
       }
     }
   };
 
+  onPressFollowerTab = () => {
+    this.setState({
+      tab: "follower",
+      dataSource: lv.cloneWithRows(this.state.followerlist),
+    });
+  };
+
+  onPressPostTab = () => {
+    this.setState({
+      tab: "post",
+      dataSource: lv.cloneWithRows(this.state.post),
+    });
+  };
+
+  onPressFollowingTab = () => {
+    this.setState({
+      tab: "following",
+      dataSource: lv.cloneWithRows(this.state.followinglist),
+    });
+  };
+
   setEditorRef = editor => (this.editor = editor);
 
+
+  async signOut() {
+    try {
+      await AsyncStorage.removeItem("@Token:key");
+      await AsyncStorage.removeItem("@UserId:key");
+      console.log("Successfully log out");
+      this.props.navigation.navigate("LogIn");
+    } catch (error) {
+      console.log(`Cannot log out. ${error}`);
+    }
+  }
+
   renderListView(post) {
-    var message = "";
-
-    if (post.event == "follow") {
-      message = "is now following you.";
-    }
-
-    if (post.event == "challenge") {
-      message = "challenged you!";
-    }
-
+    console.log(post.profilePic);
     return (
       <View style={styles.singleListContainer}>
         <Image
           style={styles.audienceProfile}
-          source={{ uri: post.userProfile }}
+          source={{ uri: post.profilePic }}
         />
         <View style={styles.audienceBox}>
           <Text style={styles.message}>
-            {post.userName} {message}
+            {post.username}
           </Text>
-          <Text style={styles.time}>{post.time}</Text>
         </View>
       </View>
     );
+
   }
 
   render() {
@@ -363,25 +414,44 @@ export default class Profile extends React.Component {
               }
               <Text style={styles.name}> {this.state.userName} </Text>
               <Text style={styles.score}>Score: {this.state.score}</Text>
-              <Text style={styles.battlewon}>
-                Battle Won: {this.state.battlesWon}
-              </Text>
             </View>
           </Image>
+          <LinearGradient
+            colors={["#6a3093", "#a044ff"]}
+            style={{
+              height: "7%",
+              width: "100%",
+              backgroundColor: "transparent",
+              justifyContent: "center"
+            }}
+          >
           <View style={styles.bodyMiddle}>
-            <View style={styles.box}>
-              <Text style={styles.fda}>{this.state.followers}</Text>
-              <Text style={styles.fda}>Followers</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.fda}>32</Text>
-              <Text style={styles.fda}>Post</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.fda}>{this.state.following}</Text>
-              <Text style={styles.fda}>Followering</Text>
-            </View>
+            <TouchableHighlight
+              onPress={() => this.onPressFollowerTab()}
+            >
+              <View style={styles.box}>
+                <Text style={styles.fda}>{this.state.followers}</Text>
+                <Text style={styles.fda}>Followers</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.onPressPostTab()}
+            >
+              <View style={styles.box}>
+                <Text style={styles.fda}>32</Text>
+                <Text style={styles.fda}>Post</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.onPressFollowingTab()}
+            >
+              <View style={styles.box}>
+                <Text style={styles.fda}>{this.state.following}</Text>
+                <Text style={styles.fda}>Following</Text>
+              </View>
+            </TouchableHighlight>
           </View>
+          </LinearGradient>
           <ListView
             style={styles.listviewcontainer}
             initialListSize={5}
@@ -462,8 +532,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     height: 50,
-    borderColor: "#D3D3D3",
-    backgroundColor: "#886BEA"
   },
   box: {
     justifyContent: "center",
