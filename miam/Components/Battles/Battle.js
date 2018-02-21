@@ -71,9 +71,9 @@ class Battle extends React.Component {
           msgDataSource: ds.cloneWithRows(response.messages),
           messages: response.messages,
         });
-        // console.log(response);
       }
     });
+    this.forceUpdate();
   }
 
   componentWillMount() {
@@ -86,19 +86,16 @@ class Battle extends React.Component {
     }
   }
 
-//
 
   handleMessage(message) {
     console.log(message);
     let messages = this.state.messages.slice();
     messages.push(message);
-    if (this.refs.myRef && message.sender._id !== this.props.myId) {
+    if (this.refs.myRef) {
       this.setState({
         messages: messages,
         msgDataSource: ds.cloneWithRows(messages)
       });
-    } else {
-      console.log(this.refs.myRef);
     }
   }
 
@@ -233,7 +230,7 @@ class Battle extends React.Component {
     if (meme) {
       return (
         <View style={styles.memeStyle}>
-          <Meme imgURL={meme.imgURL} layers={meme.layers}/>
+          <Meme imgURL={meme.imgURL} layers={meme.layers} scale={0.9}/>
         </View>
       );
     } else {
@@ -425,13 +422,10 @@ const styles = StyleSheet.create({
 
   messageContainer: {
     flexDirection: "column",
-    flex: 1,
-    marginRight: "5%"
+    flex: 1
   },
 
   messageContent: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
     margin: 10
   },
 
@@ -497,8 +491,7 @@ const styles = StyleSheet.create({
   memeStyle: {
     borderWidth: 1,
     borderColor: "#9999ff",
-    borderRadius: 10,
-    padding: 5
+    borderRadius: 10
   },
 
   senderInfo: {
