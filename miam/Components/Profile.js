@@ -63,12 +63,9 @@ export default class Profile extends React.Component {
   componentDidMount() {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
-<<<<<<< HEAD
       let userId = this.props.navigation.state.params.userId || null;
       //console.log(this.props.navigation.state.params);
-=======
-      let userId = this.props.navigation.state.params.userId;
->>>>>>> 1531559e1c05f6a0afeef98d072f403c0f5aa54a
+
       this.getTargetUser(username);
       this.setState({
         userId: userId,

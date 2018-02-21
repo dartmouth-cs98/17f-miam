@@ -18,17 +18,7 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-<<<<<<< HEAD
 import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme } from "../api";
-=======
-import {
-  fetchPosts,
-  getUserProfile,
-  likePost,
-  getTargetUserProfile,
-  saveExistingMeme
-} from "../api";
->>>>>>> 1531559e1c05f6a0afeef98d072f403c0f5aa54a
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -85,7 +75,7 @@ export default class Feed extends React.Component {
           if (response.data) {
             try {
               await AsyncStorage.setItem("@UserId:key", response.data.id);
-              consfccessfully saved user id");
+              console.log("successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }
