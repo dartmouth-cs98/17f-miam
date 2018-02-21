@@ -10,17 +10,22 @@ import {
   TouchableHighlight,
   Alert,
   Animated,
-  Easing
+  Easing,
+  Dimensions,
+  Image
 } from "react-native";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
-import { postComment, fetchComment, fetchSinglePost, likePost } from "../api";
+import { postComment, fetchComment, fetchSinglePost, likePost, saveExistingMeme } from "../api";
 import update from "react-addons-update";
 import moment from "moment";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Meme from "./Meme";
 import { LinearGradient } from 'expo';
 import { KeyboardAwareView } from "react-native-keyboard-aware-view";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
+const vw = Dimensions.get("window").width;
+
 class Comment extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +36,8 @@ class Comment extends Component {
       comment: "",
       originalPoster: null,
       postID: null,
-      token: null
+      token: null,
+      post: null
     };
 
     this.animRot = new Animated.Value(0);
@@ -42,8 +48,9 @@ class Comment extends Component {
     this.comment = this.comment.bind(this);
     this.getComment = this.getComment.bind(this);
     this.sortByNewest = this.sortByNewest.bind(this);
-    this.like = this.like.bind(this);
 
+    this.like = this.like.bind(this);
+    this.save = this.save.bind(this);
     this.renderPost = this.renderPost.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.runStarAnim = this.runStarAnim.bind(this);
@@ -75,10 +82,8 @@ class Comment extends Component {
       fetchSinglePost(this.props.navigation.state.params.postID, (res, err) => {
         if(err)
           alert(err);
-        else{
-          console.log(this.props.navigation.state.params.postID);
-          // TODO: Save post data to state
-        }
+        else
+          this.setState({post: res.data});
       });
     }
   }
@@ -152,25 +157,23 @@ class Comment extends Component {
       if (error) {
         alert(error);
       } else {
-        // Re-fetching posts
-        fetchPosts((response, error) => {
-          if (error) {
-            alert(error);
-          } else {
-            if (response.data) {
-              var sortedData =
-                this.state.headingTabSelected == "new"
-                  ? this.sortPostByNewest(response.data)
-                  : this.sortPostByHottest(response.data);
-
-              this.setState({
-                data: sortedData,
-                postDataSource: ds.cloneWithRows(sortedData),
-                loaded: true
-              });
-            }
-          }
+        // Refetch post
+        fetchSinglePost(this.props.navigation.state.params.postID, (res, err) => {
+          if(err)
+            alert(err);
+          else
+            this.setState({post: res.data});
         });
+      }
+    });
+  }
+
+  save(memeId) {
+    saveExistingMeme(memeId, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        alert("You have successfully saved this meme!");
       }
     });
   }
@@ -204,7 +207,8 @@ class Comment extends Component {
       return likeId === id;
     });
 
-    let meme = (
+    var meme = null;
+    meme = (
       <Meme
         imgURL={post.meme.imgURL}
         text={post.posttext}
@@ -240,7 +244,6 @@ class Comment extends Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    // userId: userId,
                     username: username
                   })}
               >
@@ -253,7 +256,6 @@ class Comment extends Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    // userId: userId,
                     username: username
                   })}
               >
@@ -361,7 +363,7 @@ class Comment extends Component {
                         colors={[ '#1D2671', '#9733EE' ]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}>
-                        {starBar}
+                        {/*starBar*/}
                         
                         <View style={{flexDirection: "row", paddingTop: 3, paddingBottom: 3}}>
                           {leftAnimStar}
@@ -371,14 +373,19 @@ class Comment extends Component {
                           </View>
                           {rightAnimStar}
                         </View>
-                        {starBar}
+                        {/*starBar*/}
                       </LinearGradient>
                     </View>
                   </TouchableHighlight>;
     }
 
+    var postView = null;
+    if(this.state.post != null)
+      postView = this.renderPost(this.state.post);
+
     return(
       <View>
+        {postView}
         {opButton}
         <LinearGradient style={styles.commentTitleBox} colors={['#9733EE', '#DA22FF']} start={{ x:0, y:0 }} end={{ x:1, y:0 }}>
           <Text style={{fontWeight: "bold", color: "#FFFFFF", backgroundColor: "#00000000", fontStyle: "italic", fontSize: 15}}>COMMENTS:</Text>
@@ -503,7 +510,53 @@ const styles = StyleSheet.create({
   },
   originalPosterBox: {
     alignItems: 'center', 
-    marginBottom: 3
+    margin: 3,
+    borderRadius: 15,
+    padding: 5
+
+  },
+  postContainer: {
+    backgroundColor: "#ffffff",
+    borderColor: "#000000",
+    flexDirection: "column",
+    width: 0.9 * vw,
+    margin: 7,
+    borderRadius: 10,
+    shadowColor: "#291D56",
+    shadowOffset: { height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    padding: 5,
+    alignSelf: "center"
+  },
+  postHeadingContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingBottom: "1%"
+  },
+  iconContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "flex-start"
+  },
+  userIconStyle: {
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    marginLeft: "2%"
+  },
+  postFooterContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
+  separatorLine: {
+    height: 1,
+    backgroundColor: "#ecc6ec"
+  },
+  postFooterIconContainer: {
+    flexDirection: "row",
+    alignItems: "center"
   }
 });
 module.exports = Comment;
