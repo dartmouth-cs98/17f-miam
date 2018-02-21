@@ -18,6 +18,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
+import moment from "moment";
 
 import { getUserNotification } from "../api";
 
@@ -35,7 +36,6 @@ export default class History extends React.Component {
 
     this.state = {
       dataSource: lv.cloneWithRows(["row 1", "row 2"]),
-      postDataSource: ds.cloneWithRows([]),
       loaded: false,
     };
   }
@@ -46,8 +46,7 @@ export default class History extends React.Component {
     }
 
     this.setState({
-      dataSource: lv.cloneWithRows(listData),
-      postDataSource: ds.cloneWithRows(customData),
+      //dataSource: lv.cloneWithRows(listData),
       loaded: true,
     });
 
@@ -73,27 +72,25 @@ export default class History extends React.Component {
   }
 
   renderListView(post) {
+    var target = post.target != null ? post.target.username : "";
+    var picture = post.target != null ? post.target.profilePic : "http://sprintresources.com/wp-content/uploads/2016/12/icon-user.png";
+    var time = post.createdAt;
     var message = "";
-
-    if (post.event == "follow") {
+    if (post.action == "follow") {
       message = "is now following you.";
-    }
-
-    if (post.event == "challenge") {
-      message = "challenged you!";
     }
 
     return (
       <View style={styles.singleListContainer}>
         <Image
           style={styles.audienceProfile}
-          source={{ uri: post.userProfile }}
+          source={{ uri: picture }}
         />
         <View style={styles.audienceBox}>
           <Text style={styles.message}>
-            {post.userName} {message}
+            {target} {message}
           </Text>
-          <Text style={styles.time}>{post.time}</Text>
+          <Text style={styles.time}>{time}</Text>
         </View>
       </View>
     );
@@ -155,6 +152,7 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   time: {
+    marginTop: 3,
     fontSize: 10,
     color: "grey"
   },

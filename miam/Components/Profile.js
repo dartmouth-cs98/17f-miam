@@ -18,7 +18,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { ImagePicker } from "expo";
+import { ImagePicker, LinearGradient } from "expo";
 
 import { getUserProfile, getTargetUserProfile, getUserProfileFromID } from "../api";
 import { uploadProfile, uploadBackground, followUser, beingFollowed, uploadImage } from "../api";
@@ -411,6 +411,15 @@ export default class Profile extends React.Component {
               <Text style={styles.score}>Score: {this.state.score}</Text>
             </View>
           </Image>
+          <LinearGradient
+            colors={["#6a3093", "#a044ff"]}
+            style={{
+              height: "7%",
+              width: "100%",
+              backgroundColor: "transparent",
+              justifyContent: "center"
+            }}
+          >
           <View style={styles.bodyMiddle}>
             <TouchableHighlight
               onPress={() => this.onPressFollowerTab()}
@@ -437,6 +446,7 @@ export default class Profile extends React.Component {
               </View>
             </TouchableHighlight>
           </View>
+          </LinearGradient>
           <ListView
             style={styles.listviewcontainer}
             initialListSize={5}
@@ -517,8 +527,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     height: 50,
-    borderColor: "#D3D3D3",
-    backgroundColor: "#886BEA"
   },
   box: {
     justifyContent: "center",
