@@ -121,6 +121,13 @@ export default class BattleList extends React.Component {
         : moment(b.startTime).valueOf() > moment(a.startTime).valueOf() ? 1 : 0;
     });
   }
+  sortPostByHottest(array, key) {
+    return array.sort(function(a, b) {
+      return b.followers.length < a.followers.length
+        ? -1
+        : b.followers.length > a.followers.length ? 1 : 0;
+    });
+  }
 
   newHeadingTabPress() {
     sortedPosts = this.sortPostByNewest(this.state.data, "ignore this");
@@ -130,7 +137,16 @@ export default class BattleList extends React.Component {
     });
   }
 
-  hotHeadingTabPress() {}
+  hotHeadingTabPress() {
+    sortedPosts = this.sortPostByHottest(
+      this.state.data,
+      "ignore this for now"
+    );
+    this.setState({
+      postDataSource: ds.cloneWithRows(sortedPosts),
+      headingTabSelected: "hot"
+    });
+  }
   returnToList() {
     this.setState({
       selectedBattle: "",
@@ -149,9 +165,15 @@ export default class BattleList extends React.Component {
             if (error) {
               console.log(error);
             } else {
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response)
+                  : this.sortPostByHottest(response);
+
               this.setState({
                 battleDataSource: ds.cloneWithRows(response),
                 loaded: true,
+                data: sortedData,
                 theme: ""
               });
             }
@@ -275,7 +297,7 @@ export default class BattleList extends React.Component {
               style={{
                 width: "75%",
                 borderColor: "#d9b3ff",
-                borderWidth: 2,
+                borderBottomWidth: 2,
                 height: "100%"
               }}
               maxLength={50}
