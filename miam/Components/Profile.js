@@ -460,7 +460,9 @@ export default class Profile extends React.Component {
             )}
           />
         </View>
-        <Button onPress={this.signOut}>Sign Out</Button>
+        {this.state.self &&
+          <Button onPress={this.signOut}>Sign Out</Button>
+        }
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
