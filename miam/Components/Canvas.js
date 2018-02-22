@@ -193,7 +193,6 @@ class Canvas extends React.Component {
       anon: this.state.anon,
       originalPost: this.state.originalPostID
     };
-    console.log(postObj.originalPost);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);

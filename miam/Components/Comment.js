@@ -335,9 +335,7 @@ class Comment extends Component {
     var rightAnimStar = <Animated.View style={{left: "75%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
     var opButton = null;
     var postView = null;
-    // TODO: If 'this.state.post.originalPost' == -1 or == -2, then do not render. Otherwise, render.
-    // TODO: Navigation should be towards "Comment" page, postID: this.state.post.originalPost.
-    // TODO: Maybe it's possible to get username by fetching post by 'this.state.post.originalPost' and grabbing the username field.
+
     if(this.state.post != null){
       postView = this.renderPost(this.state.post);
 
