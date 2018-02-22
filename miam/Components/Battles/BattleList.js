@@ -297,7 +297,7 @@ export default class BattleList extends React.Component {
               style={{
                 width: "75%",
                 borderColor: "#d9b3ff",
-                borderBottomWidth: 2,
+                borderWidth: 2,
                 height: "100%"
               }}
               maxLength={50}
@@ -525,7 +525,6 @@ const styles = StyleSheet.create({
   textInput: {
     flexDirection: "row",
     height: "5%",
-    marginTop: "0.5%",
     justifyContent: "flex-start"
   },
   startBattleButton: {
