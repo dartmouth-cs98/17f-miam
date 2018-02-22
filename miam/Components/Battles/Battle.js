@@ -73,7 +73,6 @@ class Battle extends React.Component {
         });
       }
     });
-    this.forceUpdate();
   }
 
   componentWillMount() {
@@ -88,10 +87,11 @@ class Battle extends React.Component {
 
 
   handleMessage(message) {
-    console.log(message);
+    // console.log(message);
     let messages = this.state.messages.slice();
     messages.push(message);
-    if (this.refs.myRef) {
+    console.log(this.props.myId !== message.sender._id);
+    if (this.refs.myRef && this.props.myId !== message.sender._id) {
       this.setState({
         messages: messages,
         msgDataSource: ds.cloneWithRows(messages)
