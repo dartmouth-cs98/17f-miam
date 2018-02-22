@@ -90,7 +90,7 @@ class Battle extends React.Component {
     // console.log(message);
     let messages = this.state.messages.slice();
     messages.push(message);
-    console.log(this.props.myId !== message.sender._id);
+    // console.log(this.props.myId !== message.sender._id);
     if (this.refs.myRef && this.props.myId !== message.sender._id) {
       this.setState({
         messages: messages,
