@@ -156,11 +156,14 @@ class Battle extends React.Component {
   renderMsgRow(msg) {
 
     if (msg.meme) {
-      var likeButton = (
-        <TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
-          <IconMaterial name="favorite-border" color="#cc6699" size={25} />
-        </TouchableHighlight>
-      );
+      var likeButton = msg.likes.includes(this.props.myId) ?
+       (<TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+          <IconMaterial name="favorite" color="#cc6699" size={25} />
+        </TouchableHighlight>) :
+       (<TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+           <IconMaterial name="favorite-border" color="#cc6699" size={25} />
+         </TouchableHighlight>);
+
       var likeNum = (
         <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "1%" }}>
           {msg.likes.length}
