@@ -44,8 +44,8 @@ class Canvas extends React.Component {
       gifWords: "Sup",
       res: null,
       token: "",
-      originalPoster: "",
-      username: ""
+
+      originalPostID: null
     };
 
     this.goGetImageFromGiphy = this.goGetImageFromGiphy.bind(this);
@@ -75,16 +75,25 @@ class Canvas extends React.Component {
           image: this.props.navigation.state.params.gifurl,
           isLocalPhoto: false
         });
+      } else if (this.props.navigation.state.params.fromEditor) {
+        this.setState({
+          image: this.props.navigation.state.params.imgURL,
+          layers: this.props.navigation.state.params.layers,
+          originalPostID: this.props.navigation.state.params.originalPostID,
+          isLocalPhoto: false
+        });
       } else if (this.props.navigation.state.params.imgURL) {
-        var originalPoster = ((this.props.navigation.state.params.username != "Anonymous") && 
-                               this.props.navigation.state.params.originalPoster ? 
-                               this.props.navigation.state.params.originalPoster :
-                               "");
+                  
+        var originalPostID = null;
+        if(this.props.navigation.state.params.originalPost != null)
+          originalPostID = this.props.navigation.state.params.originalPost;
+        else
+          originalPostID = this.props.navigation.state.params.postID;
 
         this.setState({
           image: this.props.navigation.state.params.imgURL,
           layers: this.props.navigation.state.params.layers,
-          originalPoster: originalPoster,
+          originalPostID: originalPostID,
           isLocalPhoto: false
         });
       }
@@ -182,9 +191,9 @@ class Canvas extends React.Component {
       memetext: this.state.text,
       posttext: this.state.text,
       anon: this.state.anon,
-      originalPoster: this.state.originalPoster
+      originalPost: this.state.originalPostID
     };
-    console.log(this.state.token);
+    console.log(postObj.originalPost);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);
@@ -197,7 +206,8 @@ class Canvas extends React.Component {
           showCaption: false,
           res: null,
           layers: [],
-          anon: false
+          anon: false,
+          originalPostID: null
         });
         alert("Successfully posted your meme!");
       }
@@ -262,7 +272,6 @@ class Canvas extends React.Component {
 
     if (!result.cancelled) {
       this.setState({ image: result.uri, isLocalPhoto: true });
-      console.log(result);
     }
   };
 
@@ -300,7 +309,7 @@ class Canvas extends React.Component {
   editImage() {
     if(this.state.image != null){
       var imgURL = this.state.image;
-      this.props.navigation.navigate("Editor", { imgURL: this.state.image, layers: this.state.layers });
+      this.props.navigation.navigate("Editor", { imgURL: this.state.image, layers: this.state.layers, originalPostID: this.state.originalPostID });
     }
     else{
       alert("Select an image before entering Editor Mode");

@@ -329,10 +329,7 @@ export default class Feed extends React.Component {
               underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Comment", {
-                  postID: post._id,
-                  comments: post.comments,
-                  originalPoster: "ColaDude",      // TODO: CHANGE THIS LATER 
-                  username: username
+                  postID: post._id
                 })}
             >
               <Icon name="mode-comment" color="#cc6699" size={25} />
@@ -356,8 +353,8 @@ export default class Feed extends React.Component {
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
                   layers: post.meme.layers,
-                  originalPoster: "post.meme.originalPoster",    // TODO: IN CANVAS, ONLY USE THIS WHEN IT ISN"T ANONYMOUS
-                  username: username
+                  postID: post._id,
+                  originalPost: post.originalPost
                 })}>
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>

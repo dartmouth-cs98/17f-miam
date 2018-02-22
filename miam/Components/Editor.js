@@ -316,7 +316,7 @@ class Editor extends React.Component {
       layers.push(this.layerRefs[key].getLayerInfo());
     }
 
-    this.props.navigation.navigate("Canvas", { imgURL: this.state.imgURL, layers: layers });
+    this.props.navigation.navigate("Canvas", { imgURL: this.state.imgURL, layers: layers, originalPostID: this.props.navigation.state.params.originalPostID, fromEditor: true });
   }
 
   render() {

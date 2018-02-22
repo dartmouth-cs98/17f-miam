@@ -32,7 +32,7 @@ class Meme extends React.Component {
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({ imgURL: nextProps.imgURL, text: nextProps.text, layers: nextProps.layers });
+    this.setState({ imgURL: nextProps.imgURL, text: "", layers: nextProps.layers });
   }
 
   renderLayers(){

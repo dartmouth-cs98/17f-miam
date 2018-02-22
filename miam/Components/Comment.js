@@ -34,11 +34,12 @@ class Comment extends Component {
       commentDataSource: ds.cloneWithRows([]),
       comments: [],
       comment: "",
-      originalPoster: null,
       postID: null,
       token: null,
       post: null
     };
+
+    this.tempAnimTest = false;
 
     this.animRot = new Animated.Value(0);
 
@@ -65,25 +66,22 @@ class Comment extends Component {
   componentDidMount() {
     if (this.props.navigation.state.params) {
       this.setState({
-        postID: this.props.navigation.state.params.postID,
-        originalPoster: this.props.navigation.state.params.originalPoster || null
+        postID: this.props.navigation.state.params.postID
       });
-
-      // Create animation loop if there is an original poster
-      if(this.props.navigation.state.params.originalPoster){
-        // console.log(this.props.navigation.state.params.originalPoster);
-        this.runStarAnim();
-      }
-
-      for (i = 0; i < this.props.navigation.state.params.comments.length; i++) {
-        this.getComment(this.props.navigation.state.params.comments[i]);
-      }
 
       fetchSinglePost(this.props.navigation.state.params.postID, (res, err) => {
         if(err)
           alert(err);
-        else
+        else{
           this.setState({post: res.data});
+
+          if(res.data.originalPost)
+            this.runStarAnim();
+
+          for (i = 0; i < res.data.comments.length; i++)
+            this.getComment(res.data.comments[i]);
+        }
+
       });
     }
   }
@@ -161,8 +159,10 @@ class Comment extends Component {
         fetchSinglePost(this.props.navigation.state.params.postID, (res, err) => {
           if(err)
             alert(err);
-          else
+          else{
             this.setState({post: res.data});
+            console.log(res.data);
+          }
         });
       }
     });
@@ -309,8 +309,8 @@ class Comment extends Component {
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
                   layers: post.meme.layers,
-                  originalPoster: "post.meme.originalPoster",    // TODO: IN CANVAS, ONLY USE THIS WHEN IT ISN"T ANONYMOUS
-                  username: username
+                  postID: this.state.post._id,
+                  originalPost: this.state.post.originalPost
                 })}>
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
@@ -330,58 +330,44 @@ class Comment extends Component {
       inputRange: [0, 1],
       outputRange: ['45deg', '-45deg'],
     });
-
-    var starBar = <View style={{flexDirection: "row", justifyContent: 'space-between', padding: 3}}>
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                      <Icon style={{paddingLeft: "3%", paddingRight: "3%"}} name="stars" color="#FFDF00" size={14} />
-                    </View>;
          
-    var leftAnimStar = <Animated.View style={{right: "150%", transform: [{rotate: interpolRotLeft}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
-    var rightAnimStar = <Animated.View style={{left: "150%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+    var leftAnimStar = <Animated.View style={{right: "75%", transform: [{rotate: interpolRotLeft}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+    var rightAnimStar = <Animated.View style={{left: "75%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
     var opButton = null;
-
-    if(this.state.originalPoster != null /*&& 
-       this.state.originalPoster != this.props.navigation.state.params.username &&
-       this.props.navigation.state.params.username != "Anonymous"*/){
-      opButton = <TouchableHighlight
-                        underlayColor="#FFFFFFAA"
-                        onPress={() => {
-                          this.setState({ stopAnimation: true });
-                          this.props.navigation.navigate("Profile", { username: this.state.originalPoster})}}
-                  >
-                    <View>
-                      <LinearGradient
-                        style={styles.originalPosterBox}
-                        colors={[ '#1D2671', '#9733EE' ]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}>
-                        {/*starBar*/}
-                        
-                        <View style={{flexDirection: "row", paddingTop: 3, paddingBottom: 3}}>
-                          {leftAnimStar}
-                          <View style={{alignItems: "center"}}>
-                            <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 12}}> Original Poster is </Text>
-                            <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 20}}>{this.state.originalPoster}</Text>
-                          </View>
-                          {rightAnimStar}
-                        </View>
-                        {/*starBar*/}
-                      </LinearGradient>
-                    </View>
-                  </TouchableHighlight>;
-    }
-
     var postView = null;
-    if(this.state.post != null)
+    // TODO: If 'this.state.post.originalPost' == -1 or == -2, then do not render. Otherwise, render.
+    // TODO: Navigation should be towards "Comment" page, postID: this.state.post.originalPost.
+    // TODO: Maybe it's possible to get username by fetching post by 'this.state.post.originalPost' and grabbing the username field.
+    if(this.state.post != null){
       postView = this.renderPost(this.state.post);
+
+      console.log(this.state.post);
+
+      if(this.state.post.originalPost && this.state.post.originalPost != null){
+        opButton = <TouchableHighlight
+                          underlayColor="#FFFFFFAA"
+                          onPress={() => {
+                            this.setState({ stopAnimation: true });
+                            this.props.navigation.navigate("Comment", { postID: this.state.post.originalPost})}}>
+                      <View>
+                        <LinearGradient
+                          style={styles.originalPosterBox}
+                          colors={[ '#1D2671', '#9733EE' ]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}>      
+                          <View style={{flexDirection: "row", paddingTop: 3, paddingBottom: 3, justifyContent: "center", alignItems: "center"}}>
+                            {leftAnimStar}
+                            <View style={{alignItems: "center"}}>
+                              <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 16}}> This is a REMIXED post </Text>
+                              <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 12}}> Tap here to see original </Text>
+                            </View>
+                            {rightAnimStar}
+                          </View>
+                        </LinearGradient>
+                      </View>
+                    </TouchableHighlight>;
+                  }
+    }
 
     return(
       <View>
