@@ -86,8 +86,11 @@ export default class Search extends React.Component {
   selectMeme(url) {
     var params = this.props.navigation.state.params;
 
-    if ( params && params.source === 'battle') {
-      this.props.navigation.navigate("BattleList", { gifUrl: url, battleId: params.battleId });
+    if (params && params.source === "battle") {
+      this.props.navigation.navigate("BattleList", {
+        gifUrl: url,
+        battleId: params.battleId
+      });
     } else {
       params.sendImgURLBack(url);
       this.props.navigation.goBack();
@@ -171,7 +174,6 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     height: "5%",
-    paddingTop: "1%",
     flexDirection: "row"
   },
   headingContainer: {
