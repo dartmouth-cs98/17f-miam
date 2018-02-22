@@ -371,12 +371,7 @@ class Canvas extends React.Component {
                   onPress={this.editImage}
                   underlayColor="white"
                 >
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      flexDirection: "row"
-                    }}
-                  >
+                  <View style={styles.mainIcons}>
                     <Text
                       style={{
                         fontSize: 23,
@@ -392,18 +387,8 @@ class Canvas extends React.Component {
                 </TouchableHighlight>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                marginTop: "5%",
-                width: "80%",
-                justifyContent: "space-between",
-                borderWidth: 0.5,
-                borderColor: "#ac3973",
-                alignItems: "center"
-              }}
-            >
-              <View style={styles.savePost}>
+            <View style={styles.savePost}>
+              <View style={{ flexDirection: "column", marginLeft: "2%" }}>
                 <TouchableHighlight
                   onPress={this.saveMeme}
                   underlayColor="#ffffff"
@@ -413,7 +398,7 @@ class Canvas extends React.Component {
                 <Text style={styles.savePostText}>save</Text>
               </View>
               {this.state.anon ? anonOnButton : anonOffButton}
-              <View style={styles.savePost}>
+              <View style={{ flexDirection: "column", marginRight: "2%" }}>
                 <TouchableHighlight
                   onPress={this.sendPost}
                   underlayColor="#ffffff"
@@ -445,7 +430,7 @@ const styles = StyleSheet.create({
   canvas: {
     width: "90%",
     height: 350,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: 3,
     flexDirection: "column",
     borderColor: "#a64dff"
@@ -511,7 +496,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   savePost: {
-    flexDirection: "column"
+    flexDirection: "row",
+    marginTop: "5%",
+    width: "80%",
+    justifyContent: "space-between",
+    borderWidth: 0.5,
+    borderColor: "#ac3973",
+    alignItems: "center"
   },
   savePostText: {
     fontSize: 15,
