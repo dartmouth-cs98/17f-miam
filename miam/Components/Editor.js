@@ -46,6 +46,8 @@ class Editor extends React.Component {
       key: 0
     };
 
+    this.layerLimit = 25;
+
     this.layerRefs            = [];
     this.addLayerRef          = this.addLayerRef.bind(this);
     this.addObjectsFromLayers = this.addObjectsFromLayers.bind(this);
@@ -164,6 +166,18 @@ class Editor extends React.Component {
   }
 
   addText(layer = null, key = null){
+    if(this.state.layers.length >= this.layerLimit){
+      Alert.alert(
+        'Too many layers',
+        'Please delete a canvas layer before adding another',
+        [
+          {text: 'Ok', style: 'cancel'},
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+
     let newObj = <TextObj
                     key={key || this.state.key}
                     selectionKey={key || this.state.key}
@@ -177,6 +191,18 @@ class Editor extends React.Component {
   }
 
   addLocalImg(layer = null, key = null, imgURL = ""){
+    if(this.state.layers.length >= this.layerLimit){
+      Alert.alert(
+        'Too many layers',
+        'Please delete a canvas layer before adding another',
+        [
+          {text: 'Ok', style: 'cancel'},
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+
     if(layer == null){
       var newObj = <ImgObj
                       key={key || this.state.key}
@@ -199,6 +225,18 @@ class Editor extends React.Component {
   }
 
   addGif(layer = null, key = null, gifURL = ""){
+    if(this.state.layers.length >= this.layerLimit){
+      Alert.alert(
+        'Too many layers',
+        'Please delete a canvas layer before adding another',
+        [
+          {text: 'Ok', style: 'cancel'},
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+    
     if(layer == null){
       var newObj = <GifObj
                       key={key || this.state.key}
