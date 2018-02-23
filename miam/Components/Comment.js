@@ -12,8 +12,7 @@ import {
 } from "react-native";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
-import { postComment } from "../api";
-import { fetchComment } from "../api";
+import { postComment, fetchComment } from "../api";
 import update from "react-addons-update";
 import moment from "moment";
 import { KeyboardAwareView } from "react-native-keyboard-aware-view";
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#9999ff"
   },
   createCommentContainer: {
-    height: 30,
+    height: 40,
     flexDirection: "row"
   }
 });

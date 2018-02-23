@@ -321,7 +321,7 @@ export function likeMeme(msgID, action, token, cb) {
 export function followBattle(battleId, token, cb) {
   const url = `${ROOT_URL}/battles/follow/${battleId}`;
   axios
-    .put(url, { headers: { Authorization: token } })
+    .put(url, {}, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })

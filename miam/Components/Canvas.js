@@ -173,7 +173,6 @@ class Canvas extends React.Component {
       posttext: this.state.text,
       anon: this.state.anon
     };
-    console.log(this.state.token);
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
         alert(error);
@@ -331,22 +330,25 @@ class Canvas extends React.Component {
         <StatusBarColor />
         <Heading text="MiAM Editor" />
         <KeyboardAwareScrollView>
-          <Text style={{ fontSize: 20, color: "#cc66cc", textAlign: "center" }}>
-            Select a local file or Gif
-          </Text>
-          <View style={styles.mainIcons}>
+          <View style={styles.uploadIcons}>
             <TouchableHighlight
               onPress={this.getImageFromRoll}
               underlayColor="white"
             >
-              <Icon name="photo" color="#ac3973" size={45} />
+              <View style={styles.uploadContainer}>
+                <Icon name="photo" color="#ac3973" size={45} />
+                <Text>Upload local files</Text>
+              </View>
             </TouchableHighlight>
 
             <TouchableHighlight
               onPress={this.goGetImageFromGiphy}
               underlayColor="white"
             >
-              <Icon name="gif" color="#ac3973" size={45} />
+              <View style={styles.uploadContainer}>
+                <Icon name="gif" color="#ac3973" size={45} />
+                <Text>Search Gif</Text>
+              </View>
             </TouchableHighlight>
           </View>
           <View style={styles.canvasContainer}>
@@ -509,5 +511,17 @@ const styles = StyleSheet.create({
     color: "#ac3973",
     textAlign: "center",
     fontWeight: "bold"
+  },
+  uploadIcons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#ac3973",
+    marginTop: "1%",
+    width: "90%",
+    alignSelf: "center"
+  },
+  uploadContainer: {
+    flexDirection: "row"
   }
 });
