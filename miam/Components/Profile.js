@@ -21,7 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker, LinearGradient } from "expo";
 
 import { getUserProfile, getTargetUserProfile, getUserProfileFromID } from "../api";
-import { uploadProfile, uploadBackground, followUser, uploadImage } from "../api";
+import { uploadProfile, uploadBackground, followUser, unFollowUser, uploadImage } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -184,12 +184,13 @@ export default class Profile extends React.Component {
   onFollowUser = async () => {
     let myUsername = this.state.observer;
     let targetUserId = this.props.navigation.state.params.userId;
+    const token = await AsyncStorage.getItem("@Token:key");
 
     console.log("fdayu");
     console.log(this.state.followed);
+
     if (!this.state.followed) {
       this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
-      const token = await AsyncStorage.getItem("@Token:key");
       followUser(
         targetUserId,
         token,
@@ -197,7 +198,7 @@ export default class Profile extends React.Component {
           if (error) {
             console.log(error);
           } else {
-            console.log("Successfully follows user.");
+            console.log("Successfully follow user.");
           }
         }
       );
@@ -207,8 +208,17 @@ export default class Profile extends React.Component {
       console.log(this.state.observerFollowingList);
 
       // this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
-      //const token = await AsyncStorage.getItem("@Token:key");
-
+      unFollowUser(
+        targetUserId,
+        token,
+        (response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Successfully unfollow user.");
+          }
+        }
+      );
       this.setState({ followed: false });
     }
   };

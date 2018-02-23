@@ -64,6 +64,22 @@ export function followUser(newFollower, token, cb) {
     });
 }
 
+export function unFollowUser(lostFollower, token, cb) {
+  const url = `${ROOT_URL}/users/follow`;
+  axios
+    .delete(
+      url,
+      { followedUserId: lostFollower },
+      { headers: { Authorization: token } }
+    )
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function saveExistingMeme(memeId, token, cb) {
   const url = `${ROOT_URL}/users/save-existing-meme`;
   axios
