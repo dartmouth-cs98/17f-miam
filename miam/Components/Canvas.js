@@ -430,8 +430,8 @@ const styles = StyleSheet.create({
   canvas: {
     width: "90%",
     height: 350,
-    borderWidth: 1.5,
-    borderRadius: 3,
+    borderWidth: 1,
+    borderRadius: 10,
     flexDirection: "column",
     borderColor: "#a64dff"
   },

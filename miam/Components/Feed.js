@@ -266,7 +266,8 @@ export default class Feed extends React.Component {
                   fontSize: 15,
                   fontWeight: "bold",
                   marginLeft: "2%",
-                  marginTop: "3%"
+                  marginTop: "3%",
+                  color: "#535372"
                 }}
               >
                 {username}
@@ -299,7 +300,8 @@ export default class Feed extends React.Component {
                     fontSize: 15,
                     fontWeight: "bold",
                     marginLeft: "2%",
-                    marginTop: "10%"
+                    marginTop: "10%",
+                    color: "#535372"
                   }}
                 >
                   {username}
@@ -435,7 +437,8 @@ const styles = StyleSheet.create({
     shadowColor: "#291D56",
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 3
+    shadowRadius: 3,
+    padding: 7
   },
   postHeadingContainer: {
     flexDirection: "row",
