@@ -64,6 +64,22 @@ export function followUser(newFollower, token, cb) {
     });
 }
 
+export function unFollowUser(lostFollower, token, cb) {
+  const url = `${ROOT_URL}/users/follow`;
+  axios
+    .delete(
+      url,
+      { followedUserId: lostFollower },
+      { headers: { Authorization: token } }
+    )
+    .then(async response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function saveExistingMeme(memeId, token, cb) {
   const url = `${ROOT_URL}/users/save-existing-meme`;
   axios
@@ -180,6 +196,17 @@ export function fetchPosts(cb) {
 export function fetchBattles(cb) {
   axios
     .get(`${ROOT_URL}/battles/`)
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
+export function fetchMyBattles(token, cb) {
+  axios
+    .get(`${ROOT_URL}/user-battles`, { headers: { Authorization: token } })
     .then(response => {
       cb(response.data, null);
     })
@@ -321,7 +348,7 @@ export function likeMeme(msgID, action, token, cb) {
 export function followBattle(battleId, token, cb) {
   const url = `${ROOT_URL}/battles/follow/${battleId}`;
   axios
-    .put(url, { headers: { Authorization: token } })
+    .put(url, {}, { headers: { Authorization: token } })
     .then(response => {
       cb(response, null);
     })
