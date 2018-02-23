@@ -204,6 +204,17 @@ export function fetchBattles(cb) {
     });
 }
 
+export function fetchMyBattles(token, cb) {
+  axios
+    .get(`${ROOT_URL}/user-battles`, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response.data, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function getBattle(battleId, cb) {
   axios
     .get(`${ROOT_URL}/battles/${battleId}`)
