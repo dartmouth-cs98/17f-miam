@@ -73,7 +73,6 @@ class Battle extends React.Component {
         });
       }
     });
-    this.forceUpdate();
   }
 
   componentWillMount() {
@@ -88,10 +87,11 @@ class Battle extends React.Component {
 
 
   handleMessage(message) {
-    console.log(message);
+    // console.log(message);
     let messages = this.state.messages.slice();
     messages.push(message);
-    if (this.refs.myRef) {
+    // console.log(this.props.myId !== message.sender._id);
+    if (this.refs.myRef && this.props.myId !== message.sender._id) {
       this.setState({
         messages: messages,
         msgDataSource: ds.cloneWithRows(messages)
@@ -156,11 +156,14 @@ class Battle extends React.Component {
   renderMsgRow(msg) {
 
     if (msg.meme) {
-      var likeButton = (
-        <TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
-          <IconMaterial name="favorite-border" color="#cc6699" size={25} />
-        </TouchableHighlight>
-      );
+      var likeButton = msg.likes.includes(this.props.myId) ?
+       (<TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+          <IconMaterial name="favorite" color="#cc6699" size={25} />
+        </TouchableHighlight>) :
+       (<TouchableHighlight underlayColor="white" onPress={() => this.like(msg._id)}>
+           <IconMaterial name="favorite-border" color="#cc6699" size={25} />
+         </TouchableHighlight>);
+
       var likeNum = (
         <Text style={{ fontSize: 12, color: "#a3a3c2", marginLeft: "1%" }}>
           {msg.likes.length}
