@@ -21,6 +21,7 @@ class TextMemeObj extends React.Component{
 	    	blue: 255,
 	    	fontSize: 20,
 	    	rotation: 0,
+	    	selected: false,
 	    	editor: props.editor || null,
 	    	text: "Place Text Here",
 	    	animatedValue: new Animated.ValueXY({x: 0, y: 0}),
@@ -30,6 +31,7 @@ class TextMemeObj extends React.Component{
 	    if(props.editor)
 	    	props.editor.addLayerRef(props.selectionKey, this);
 
+	    this.deselect = this.deselect.bind(this);
 	    this.getLayerInfo = this.getLayerInfo.bind(this);
 	}
 
@@ -66,7 +68,8 @@ class TextMemeObj extends React.Component{
 		        onMoveShouldSetResponderCapture: () => true, //Tell iOS that we are allowing the movement
 		        onMoveShouldSetPanResponderCapture: () => true, // Same here, tell iOS that we allow dragging
 		        onPanResponderStart: (e, gestureState) => {
-				  this.state.editor.setState({ selectedObj: this, selectedType: this.state.type, selectedObjKey: this.state.key });
+				  this.state.editor.selectObj(this, this.state.type, this.state.key);
+				  this.setState({selected: true});
 		        },
 		        onPanResponderGrant: (e, gestureState) => {
 		          this.state.animatedValue.setOffset({x: this._value.x, y: this._value.y});
@@ -98,6 +101,10 @@ class TextMemeObj extends React.Component{
 		}
 	}
 
+	deselect(){
+		this.setState({selected: false});
+	}
+	
 	recenter(){
 		this.state.animatedValue.setValue({x: 0, y: 0});
 	}
@@ -116,7 +123,10 @@ class TextMemeObj extends React.Component{
 		                backgroundColor: '#00000000',
 		                position: 'absolute',
 		                alignSelf: 'center',
-		                bottom: '50%'
+		                bottom: '50%',
+	                    borderRadius: this.state.selected ? 5 : 0,
+					    borderColor: this.state.selected ? "#ffaa00" : "#ffffff00",
+					    borderWidth: 3
 		              }} 
 		            {...this._panResponder.panHandlers}>
 		            <Text style={
@@ -146,7 +156,10 @@ class TextMemeObj extends React.Component{
 		                backgroundColor: '#00000000',
 		                position: 'absolute',
 		                alignSelf: 'center',
-		                bottom: '50%'
+		                bottom: '50%',
+	                    borderRadius: 0,
+					    borderColor: "#ffffff00",
+					    borderWidth: 3 * this.state.viewScale
 		              }}>
 		            <Text style={
 		            	{
