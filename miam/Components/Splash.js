@@ -161,7 +161,7 @@ class Splash extends React.Component {
           <Image source={this.state.mingPic}/>
         </Animated.View>
         { this.state.fontLoaded && 
-          <Animated.Text style={[styles.miamLogo, { opacity: textOpacity, letterSpacing: textSpacing, transform:[{translateY: 130}, {scale: textScaling}] }]}>
+          <Animated.Text style={[styles.miamLogo, { opacity: textOpacity, letterSpacing: textSpacing, transform:[{translateY: 80}, {scale: textScaling}] }]}>
             MiAM
           </Animated.Text>
         }
