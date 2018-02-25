@@ -401,9 +401,6 @@ const styles = StyleSheet.create({
   headingTabBar: {
     width: "50%",
     height: 28,
-    borderBottomWidth: 2,
-    borderColor: "#a044ff",
-    borderRadius: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -413,12 +410,19 @@ const styles = StyleSheet.create({
   headingTabButton: {
     flex: 1,
     alignItems: "stretch",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "#aaaaaa"
+  },
+  activeHeadingTabView: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#a044ff"
   },
   headingTabText: {
     height: "100%",
     fontWeight: "bold",
     alignSelf: "center",
+    color: "#aaaaaa",
     backgroundColor: "#00000000"
   },
   activeHeadingTabText: {
