@@ -21,7 +21,6 @@ class GifMemeObj extends React.Component{
 	    	scaling: 1,
 	    	rotation: 0,
 	    	editor: props.editor || null,
-	    	meme: props.meme || null,
 	    	selected: false,
 	    	animatedValue: new Animated.ValueXY({x: 0, y: 0}),
 	    	viewScale: 1
@@ -166,7 +165,7 @@ class GifMemeObj extends React.Component{
 					    borderColor: "#ffffff00",
 					    borderWidth: 3 * this.state.viewScale
 		              }}>
-		            <Image source={{ uri: this.state.gifURL }} onLoad={() => this.state.meme.imageLayerLoaded()} resizeMode="contain" style={
+		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
 		            	{
 		            		alignSelf: "center",
 		            		width: this.defaultWidth * this.state.scaling * this.state.viewScale,
