@@ -18,13 +18,17 @@ class Meme extends React.Component {
       imgURL: this.props.imgURL,
       text: this.props.text || "",
       layers: this.props.layers || [],
-      viewScale: this.props.scale || 1
+      viewScale: this.props.scale || 1,
+      loaded: false
     };
 
     this.defaultWidth = 300;
     this.defaultHeight = 200;
 
+    this.imagesToLoad = 1;
+
     this.renderLayers = this.renderLayers.bind(this);
+    this.imageLayerLoaded = this.imageLayerLoaded.bind(this);
   }
 
   componentWillMount() {
@@ -32,7 +36,10 @@ class Meme extends React.Component {
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: ""}, () => this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text }));
+    this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: "", loaded: false}, () => {
+      this.imagesToLoad = 1;
+      this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text })
+    });
   }
 
   renderLayers(){
@@ -40,30 +47,50 @@ class Meme extends React.Component {
     for(let i = 0; i < this.state.layers.length; i++){
       if(this.state.layers[i].type == "text")
         layerObjects.push(<TextObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
-      if(this.state.layers[i].type == "gif")
-        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
-      if(this.state.layers[i].type == "img")
-        layerObjects.push(<ImgObj key={i} selectionKey={i} editor={null} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
-      // console.log(this.state.layers[i]);       // TODO: Debugging purposes
+      
+      if(this.state.layers[i].type == "gif"){
+        layerObjects.push(<GifObj key={i} selectionKey={i} editor={null} meme={this} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
+        this.renderLayers++;
+      }
+      
+      if(this.state.layers[i].type == "img"){
+        layerObjects.push(<ImgObj key={i} selectionKey={i} editor={null} meme={this} layer={this.state.layers[i]} viewScale={this.state.viewScale}/>);
+        this.renderLayers++;
+      }
     }
 
     return layerObjects;
   }
 
+  imageLayerLoaded(){
+    this.renderLayers--;
+    console.log("Hello");
+    if(this.renderLayers <= 0)
+      this.setState({loaded: true});
+  }
+
   render() {
 
     var layerObjects = this.renderLayers();
+    var image = <Image source={{ uri: this.state.imgURL }} onLoad={this.imageLayerLoaded} style={[styles.memeStyle, {width: this.defaultWidth * this.state.viewScale, height: this.defaultHeight * this.state.viewScale}]} resizeMode="contain">
+      {layerObjects}
+    </Image>
 
-    return (
-      <View style={styles.memeContainer}>
-        <Image source={{ uri: this.state.imgURL }} style={[styles.memeStyle, {width: this.defaultWidth * this.state.viewScale, height: this.defaultHeight * this.state.viewScale}]} resizeMode="contain">
-          {layerObjects}
-        </Image>
-        <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
-          {this.state.text}
-        </Text>
-      </View>
-    );
+    if(!this.state.loaded){
+      return (
+        <View></View>
+      )
+    }
+    else {
+      return (
+        <View style={styles.memeContainer}>
+          {image}
+          <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
+            {this.state.text}
+          </Text>
+        </View>
+      );
+    }
   }
 }
 
