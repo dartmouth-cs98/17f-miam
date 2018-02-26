@@ -60,7 +60,6 @@ class Splash extends React.Component {
   }
 
   async componentDidMount() {
-    // this.retrieveToken();
     this.spin();
 
     await Font.loadAsync({
@@ -75,7 +74,7 @@ class Splash extends React.Component {
       this.sunRotateVal,
       {
         toValue: 1,
-        duration: 6000,
+        duration: 4000,
         easing: Easing.linear
       }
     )
@@ -99,7 +98,7 @@ class Splash extends React.Component {
       this.textAppearVal,
       {
         toValue: 1,
-        duration: 400,
+        duration: 300,
         easing: Easing.out(Easing.cubic)
       }
     )
@@ -111,7 +110,7 @@ class Splash extends React.Component {
       this.disappearVal,
       {
         toValue: 1,
-        duration: 500,
+        duration: 350,
         easing: Easing.in(Easing.cubic)
       }
     )

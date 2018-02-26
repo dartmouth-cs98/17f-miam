@@ -266,7 +266,7 @@ export default class Feed extends React.Component {
                   fontSize: 15,
                   fontWeight: "bold",
                   marginLeft: "2%",
-                  marginTop: "3%",
+                  marginTop: "2%",
                   color: "#535372"
                 }}
               >
@@ -300,7 +300,7 @@ export default class Feed extends React.Component {
                     fontSize: 15,
                     fontWeight: "bold",
                     marginLeft: "2%",
-                    marginTop: "10%",
+                    marginTop: "8%",
                     color: "#535372"
                   }}
                 >
