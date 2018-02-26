@@ -28,11 +28,11 @@ class Meme extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({ imgURL: this.props.imgURL, text: this.props.text, layers: this.props.layers});
+    this.setState({ imgURL: this.props.imgURL, layers: this.props.layers, text: this.props.text});
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({ imgURL: nextProps.imgURL, text: nextProps.text, layers: nextProps.layers });
+    this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: ""}, () => this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text }));
   }
 
   renderLayers(){
