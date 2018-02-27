@@ -335,8 +335,8 @@ class Canvas extends React.Component {
               underlayColor="white"
             >
               <View style={styles.uploadContainer}>
-                <Icon name="photo" color="#ac3973" size={45} />
-                <Text>Upload local files</Text>
+                <Icon name="photo" color="#ac3973" size={43} />
+                <Text style={styles.uploadContainerText}>Local files</Text>
               </View>
             </TouchableHighlight>
 
@@ -345,8 +345,8 @@ class Canvas extends React.Component {
               underlayColor="white"
             >
               <View style={styles.uploadContainer}>
-                <Icon name="gif" color="#ac3973" size={45} />
-                <Text>Search Gif</Text>
+                <Icon name="gif" color="#ac3973" size={50} />
+                <Text style={styles.uploadContainerText}>Search Gif</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -383,30 +383,33 @@ class Canvas extends React.Component {
                     >
                       Enter Edit Mode
                     </Text>
-                    <Icon name="edit" color="#a64dff" size={28} />
+                    <Icon name="edit" color="#a64dff" size={25} />
                   </View>
                 </TouchableHighlight>
               </View>
             </View>
             <View style={styles.savePost}>
-              <View style={{ flexDirection: "column", marginLeft: "2%" }}>
-                <TouchableHighlight
-                  onPress={this.saveMeme}
-                  underlayColor="#ffffff"
-                >
-                  <Icon name="save" color="#ac3973" size={28} />
-                </TouchableHighlight>
-                <Text style={styles.savePostText}>save</Text>
-              </View>
+              <TouchableHighlight
+                onPress={this.saveMeme}
+                underlayColor="#ffffff"
+              >
+                <View style={styles.savePostContainer}>
+                  <Icon name="save" color="#ac3973" size={30} />
+                  <Text style={styles.savePostText}>Save</Text>
+                </View>
+              </TouchableHighlight>
+
               {this.state.anon ? anonOnButton : anonOffButton}
               <View style={{ flexDirection: "column", marginRight: "2%" }}>
                 <TouchableHighlight
                   onPress={this.sendPost}
                   underlayColor="#ffffff"
                 >
-                  <Icon name="send" color="#ac3973" size={28} />
+                  <View style={styles.savePostContainer}>
+                    <Icon name="send" color="#ac3973" size={30} />
+                    <Text style={styles.savePostText}>Post</Text>
+                  </View>
                 </TouchableHighlight>
-                <Text style={styles.savePostText}>post</Text>
               </View>
             </View>
           </View>
@@ -501,26 +504,31 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     width: "80%",
     justifyContent: "space-between",
-    borderWidth: 0.5,
-    borderColor: "#ac3973",
     alignItems: "center"
   },
   savePostText: {
     fontSize: 15,
-    color: "#ac3973",
+    color: "#a64dff",
     textAlign: "center",
     fontWeight: "bold"
+  },
+  savePostContainer: {
+    flexDirection: "column"
   },
   uploadIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderWidth: 1,
-    borderColor: "#ac3973",
     marginTop: "1%",
-    width: "90%",
+    width: "80%",
     alignSelf: "center"
   },
   uploadContainer: {
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  uploadContainerText: {
+    fontSize: 15,
+    color: "#a64dff",
+    fontWeight: "bold"
   }
 });
