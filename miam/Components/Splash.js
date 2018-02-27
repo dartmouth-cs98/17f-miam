@@ -21,6 +21,7 @@ class Splash extends React.Component {
       mingPic: require('./Assets/Ming.png'),
 
       nextState: "",
+      durationVar: Math.floor(Math.random() * 4500) + 1,
 
       fontLoaded: false
     };
@@ -74,7 +75,7 @@ class Splash extends React.Component {
       this.sunRotateVal,
       {
         toValue: 1,
-        duration: 4000,
+        duration: 1500 + this.state.durationVar,
         easing: Easing.linear
       }
     )
