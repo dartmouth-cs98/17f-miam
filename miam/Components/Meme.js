@@ -32,7 +32,10 @@ class Meme extends React.Component {
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: ""}, () => this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text }));
+    if(nextProps.lastFeedAction && (nextProps.lastFeedAction === "sort" || nextProps.lastFeedAction === "delete"))
+      this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: ""}, () => this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text }));
+    else
+      this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text });
   }
 
   renderLayers(){

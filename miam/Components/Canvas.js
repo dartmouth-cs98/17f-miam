@@ -248,7 +248,6 @@ class Canvas extends React.Component {
 
     if (!result.cancelled) {
       this.setState({ image: result.uri, isLocalPhoto: true });
-      console.log(result);
     }
   };
 
