@@ -25,6 +25,13 @@ import {
   getTargetUserProfile,
   saveExistingMeme
 } from "../api";
+import {
+  Menu,
+  MenuProvider,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger
+} from 'react-native-popup-menu';
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -42,12 +49,14 @@ export default class Feed extends React.Component {
       headingTabSelected: "new",
       token: "",
       userId: "",
+      username: "",
       key: 1
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
     this.save = this.save.bind(this);
     this.setUserId = this.setUserId.bind(this);
+    this.popUpMenuAction = this.popUpMenuAction.bind(this);
   }
 
   componentDidMount() {
@@ -72,15 +81,19 @@ export default class Feed extends React.Component {
     try {
       const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
+      const username = await AsyncStorage.getItem("@Username:key");
       this.setState({
         userId: userId,
-        token: token
+        token: token,
+        username: username
       });
-      if (token && userId === null) {
+      if (token && userId && username === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {
               await AsyncStorage.setItem("@UserId:key", response.data.id);
+              await AsyncStorage.setItem("@Username:key", response.data.username);
+              this.setState({ userId: response.data.id, username: response.data.username });
               console.log("Successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
@@ -167,6 +180,12 @@ export default class Feed extends React.Component {
       }
     });
   }
+
+  popUpMenuAction(action, postID, memeID){
+    if(action == "save")
+      this.save(memeID);
+  }
+
   renderHeadingTabs() {
     return (
       <View style={styles.headingTabBar}>
@@ -241,6 +260,32 @@ export default class Feed extends React.Component {
       return likeId === id;
     });
 
+    var menuOptionArr = [
+      <MenuOption key={1} value={"save"}>
+        <View style={styles.popUpMenuButton}>
+          <Icon name="save" color="#cc6699" size={18}/>
+          <Text style={styles.popUpMenuText}> Save Meme </Text>
+        </View>
+      </MenuOption>,
+      <MenuOption key={2} value={"flag"}>
+        <View style={styles.popUpMenuButton}>
+          <Icon name="flag" color="#cc6699" size={18}/>
+          <Text style={styles.popUpMenuText}> Flag Meme </Text>
+        </View>
+      </MenuOption>
+    ];
+
+    if(this.state.username == post.user.username){
+      menuOptionArr.push(
+        <MenuOption key={3} value={"delete"} style={{backgroundColor: "#FF0000"}}>
+          <View style={styles.popUpMenuButton}>
+            <Icon name="delete" color="#FFFFFF" size={18}/>
+            <Text style={[styles.popUpMenuText, {color: "#FFFFFF"}]}> Delete Meme </Text>
+          </View>
+        </MenuOption>
+      );
+    }
+
     let meme = (
       <Meme
         imgURL={post.meme.imgURL}
@@ -265,9 +310,9 @@ export default class Feed extends React.Component {
                 style={{
                   fontSize: 15,
                   fontWeight: "bold",
-                  marginLeft: "2%",
-                  marginTop: "2%",
-                  color: "#535372"
+                  marginLeft: 5,
+                  marginTop: 6,
+                  color: "#333342"
                 }}
               >
                 {username}
@@ -299,9 +344,9 @@ export default class Feed extends React.Component {
                   style={{
                     fontSize: 15,
                     fontWeight: "bold",
-                    marginLeft: "2%",
-                    marginTop: "8%",
-                    color: "#535372"
+                    marginLeft: 5,
+                    marginTop: 6,
+                    color: "#333342"
                   }}
                 >
                   {username}
@@ -310,8 +355,18 @@ export default class Feed extends React.Component {
             </View>
           )}
 
-          <View style={{ alignSelf: "flex-end" }}>
-            <Text style={{ fontSize: 8 }}>{time}</Text>
+          <View style={{ alignSelf: "flex-end", flexDirection: "row" }}>
+            <Text style={{ fontSize: 9, alignSelf: "flex-end" }}>{time}</Text>
+
+            <Menu onSelect={(value) => this.popUpMenuAction(value, post._id, post.meme._id)}>
+              <MenuTrigger>
+                <Icon style={{ paddingHorizontal: 5, marginBottom: 2 }} name="more-vert" color="#cc6699" size={25}/>
+              </MenuTrigger>
+              <MenuOptions>
+                {menuOptionArr}
+              </MenuOptions>
+            </Menu>
+
           </View>
         </View>
         <View style={styles.separatorLine} />
@@ -349,14 +404,6 @@ export default class Feed extends React.Component {
           <View>
             <TouchableHighlight
               underlayColor="white"
-              onPress={() => this.save(post.meme._id)}
-            >
-              <Icon name="save" color="#cc6699" size={25} />
-            </TouchableHighlight>
-          </View>
-          <View>
-            <TouchableHighlight
-              underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
@@ -376,6 +423,7 @@ export default class Feed extends React.Component {
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
+        <MenuProvider>
         <ListView
           key={this.state.key}
           initialListSize={5}
@@ -387,6 +435,7 @@ export default class Feed extends React.Component {
             return this.renderPostRow(post);
           }}
         />
+        </MenuProvider>
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -472,7 +521,18 @@ const styles = StyleSheet.create({
   postFooterIconContainer: {
     flexDirection: "row",
     alignItems: "center"
-  }
+  },
+  popUpMenuButton: {
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  popUpMenuText: {
+    color: "#cc6699",
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingLeft: 10
+  },
 });
 
 module.exports = Feed;
