@@ -34,7 +34,6 @@ class Canvas extends React.Component {
     this.state = {
       image: null,
       layers: [],
-      isLocalPhoto: false,
 
       anon: false,
 
@@ -70,14 +69,12 @@ class Canvas extends React.Component {
     if (this.props.navigation.state.params) {
       if (this.props.navigation.state.params.gifurl) {
         this.setState({
-          image: this.props.navigation.state.params.gifurl,
-          isLocalPhoto: false
+          image: this.props.navigation.state.params.gifurl
         });
       } else if (this.props.navigation.state.params.imgURL) {
         this.setState({
           image: this.props.navigation.state.params.imgURL,
-          layers: this.props.navigation.state.params.layers,
-          isLocalPhoto: false
+          layers: this.props.navigation.state.params.layers
         });
       }
     }
@@ -106,9 +103,7 @@ class Canvas extends React.Component {
   }
 
   saveMeme() {
-    if (this.state.isLocalPhoto) {
-      this.uploadLocalPhoto("save");
-    } else this.save();
+    this.save();
   }
 
   save() {
@@ -122,13 +117,12 @@ class Canvas extends React.Component {
       layers: this.state.layers
     };
 
-    saveNewMeme(meme, this.state.token, (response, error) => {
+  saveNewMeme(meme, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
         this.setState({
           image: null,
-          isLocalPhoto: false,
           tags: [],
           text: "",
           showCaption: false,
@@ -142,9 +136,7 @@ class Canvas extends React.Component {
   }
 
   sendPost() {
-    if (this.state.isLocalPhoto) {
-      this.uploadLocalPhoto("post");
-    } else this.createMeme();
+    this.createMeme();
   }
 
   createMeme() {
@@ -179,7 +171,6 @@ class Canvas extends React.Component {
       } else {
         this.setState({
           image: null,
-          isLocalPhoto: false,
           tags: [],
           text: "",
           showCaption: false,
@@ -192,7 +183,7 @@ class Canvas extends React.Component {
     });
   }
 
-  uploadLocalPhoto(action) {
+  uploadLocalPhoto(uri) {
     pseudoRandomFileName =
       Math.random()
         .toString(36)
@@ -200,10 +191,10 @@ class Canvas extends React.Component {
       Math.random()
         .toString(36)
         .substr(2);
-    typeExtension = this.state.image.substr(this.state.image.length - 3);
+    typeExtension = uri.substr(uri.length - 3);
 
     const file = {
-      uri: this.state.image,
+      uri: uri,
       name: pseudoRandomFileName + "." + typeExtension,
       type: "image/" + typeExtension
     };
@@ -214,8 +205,6 @@ class Canvas extends React.Component {
     uploadImage(file)
       .then(function(datum) {
         canvasObj.setState({ image: datum.url });
-        if (action === "post") canvasObj.createMeme();
-        else if (action === "save") canvasObj.save();
       })
       .catch(function(err) {
         console.log(err);
@@ -247,7 +236,7 @@ class Canvas extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri, isLocalPhoto: true });
+      this.uploadLocalPhoto(result.uri);
     }
   };
 
@@ -259,8 +248,7 @@ class Canvas extends React.Component {
 
   receiveGifURL(gifURL) {
     this.setState({
-      image: gifURL,
-      isLocalPhoto: false
+      image: gifURL
     });
   }
 
