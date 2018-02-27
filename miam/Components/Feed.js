@@ -10,7 +10,8 @@ import {
   ScrollView,
   Dimensions,
   AsyncStorage,
-  TextInput
+  TextInput,
+  Alert
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -23,7 +24,8 @@ import {
   getUserProfile,
   likePost,
   getTargetUserProfile,
-  saveExistingMeme
+  saveExistingMeme,
+  deletePost
 } from "../api";
 import {
   Menu,
@@ -50,13 +52,15 @@ export default class Feed extends React.Component {
       token: "",
       userId: "",
       username: "",
-      key: 1
+      key: 1,
+      lastFeedAction: ""
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
     this.save = this.save.bind(this);
     this.setUserId = this.setUserId.bind(this);
     this.popUpMenuAction = this.popUpMenuAction.bind(this);
+    this.popUpMenuDeletePost = this.popUpMenuDeletePost.bind(this);
   }
 
   componentDidMount() {
@@ -128,7 +132,8 @@ export default class Feed extends React.Component {
     sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
-      headingTabSelected: "new"
+      headingTabSelected: "new",
+      lastFeedAction: "sort"
     });
   }
 
@@ -139,7 +144,8 @@ export default class Feed extends React.Component {
     );
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
-      headingTabSelected: "hot"
+      headingTabSelected: "hot",
+      lastFeedAction: "sort"
     });
   }
 
@@ -154,6 +160,7 @@ export default class Feed extends React.Component {
   }
 
   like(postID, action) {
+    this.setState({ lastFeedAction: "like" });
     likePost(postID, action, this.state.token, (response, error) => {
       if (error) {
         alert(error);
@@ -184,6 +191,59 @@ export default class Feed extends React.Component {
   popUpMenuAction(action, postID, memeID){
     if(action == "save")
       this.save(memeID);
+    else if(action == "flag"){
+      Alert.alert(
+        'FLAGGING POST',
+        'Are you sure you want to flag this post?',
+        [
+          {text: 'No', style: 'cancel'},
+          {text: 'Yes', onPress: () => alert("This post has been flagged.")},
+        ],
+        { cancelable: false }
+      );
+    }
+    else if(action == "delete"){
+      Alert.alert(
+        'DELETING MEME',
+        'Are you sure you want to delete this post?',
+        [
+          {text: 'No', style: 'cancel'},
+          {text: 'Yes', onPress: () => this.popUpMenuDeletePost(postID)}
+        ],
+        { cancelable: false }
+      );
+    }
+  }
+
+  popUpMenuDeletePost(postID){
+    this.setState({ lastFeedAction: "delete" });
+    deletePost(postID, this.state.token, (response, error) => {
+      if (error)
+        alert(error);
+      else {
+        alert("Post deleted successfully!");
+
+        // Re-fetching posts
+        fetchPosts((response, error) => {
+          if (error) {
+            alert(error);
+          } else {
+            if (response.data) {
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response.data)
+                  : this.sortPostByHottest(response.data);
+
+              this.setState({
+                data: sortedData,
+                postDataSource: ds.cloneWithRows(sortedData),
+                loaded: true
+              });
+            }
+          }
+        });
+      }
+    });
   }
 
   renderHeadingTabs() {
@@ -263,14 +323,14 @@ export default class Feed extends React.Component {
     var menuOptionArr = [
       <MenuOption key={1} value={"save"}>
         <View style={styles.popUpMenuButton}>
-          <Icon name="save" color="#cc6699" size={18}/>
+          <Icon name="save" color="#6a3093" size={18}/>
           <Text style={styles.popUpMenuText}> Save Meme </Text>
         </View>
       </MenuOption>,
       <MenuOption key={2} value={"flag"}>
         <View style={styles.popUpMenuButton}>
-          <Icon name="flag" color="#cc6699" size={18}/>
-          <Text style={styles.popUpMenuText}> Flag Meme </Text>
+          <Icon name="flag" color="#6a3093" size={18}/>
+          <Text style={styles.popUpMenuText}> Flag Post </Text>
         </View>
       </MenuOption>
     ];
@@ -280,7 +340,7 @@ export default class Feed extends React.Component {
         <MenuOption key={3} value={"delete"} style={{backgroundColor: "#FF0000"}}>
           <View style={styles.popUpMenuButton}>
             <Icon name="delete" color="#FFFFFF" size={18}/>
-            <Text style={[styles.popUpMenuText, {color: "#FFFFFF"}]}> Delete Meme </Text>
+            <Text style={[styles.popUpMenuText, {color: "#FFFFFF"}]}> Delete Post </Text>
           </View>
         </MenuOption>
       );
@@ -291,6 +351,7 @@ export default class Feed extends React.Component {
         imgURL={post.meme.imgURL}
         text={post.posttext}
         layers={post.meme.layers}
+        lastFeedAction={this.state.lastFeedAction}
       />
     );
 
@@ -527,7 +588,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   popUpMenuText: {
-    color: "#cc6699",
+    color: "#6a3093",
     fontSize: 13,
     fontWeight: "bold",
     textAlign: "center",

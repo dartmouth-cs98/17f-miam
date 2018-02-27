@@ -193,6 +193,18 @@ export function fetchPosts(cb) {
     });
 }
 
+export function deletePost(postID, token, cb) {
+  const url = `${ROOT_URL}/posts/${postID}`;
+  axios
+    .delete(url, { headers: { Authorization: token } })
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      cb(null, error);
+    });
+}
+
 export function fetchBattles(cb) {
   axios
     .get(`${ROOT_URL}/battles/`)

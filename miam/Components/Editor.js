@@ -584,7 +584,6 @@ class Editor extends React.Component {
 
 
         {/** ================ IMG EDITOR DRAWER ================ **/}
-        {/* TODO: Look for a scrollable row online */}
         <FadeAnim style={styles.objEditorDrawer} visible={imgEditorVisible}>
           <Text style={styles.mainEditorDrawerTitleText}> Image Editing Options </Text>
 
