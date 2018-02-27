@@ -9,7 +9,7 @@ import {
   Text,
   StyleSheet
 } from "react-native";
-import { Font } from "expo";
+import { Font, LinearGradient } from "expo";
 
 const window = Dimensions.get("window");
 
@@ -154,31 +154,36 @@ class Splash extends React.Component {
     });
 
     return (
-      <Animated.View style={[styles.container, { opacity: containerOpacity, transform:[{translateY: -100}, {scale: containerScale}] }]}>
-        <Animated.View style={{ transform:[{scale: imgScaleVal}] }}>
-          <Animated.Image source={this.state.sunPic} onLoad={this.elasticBringIn} style={{ position: 'absolute', transform:[{rotate: sunRotateVal}] }}/>
-          <Image source={this.state.mingPic}/>
-        </Animated.View>
-        { this.state.fontLoaded && 
-          <Animated.Text style={[styles.miamLogo, { opacity: textOpacity, letterSpacing: textSpacing, transform:[{translateY: 80}, {scale: textScaling}] }]}>
-            MiAM
-          </Animated.Text>
-        }
+      <Animated.View style={[styles.background, { opacity: containerOpacity, transform:[{scale: containerScale}] }]}>
+        <LinearGradient colors={["#6E48AA", "#9D50BB"]} style={styles.background}>
+          <Animated.View style={styles.container}>
+            <Animated.View style={{ transform:[{scale: imgScaleVal}] }}>
+              <Animated.Image source={this.state.sunPic} onLoad={this.elasticBringIn} style={{ position: 'absolute', transform:[{rotate: sunRotateVal}] }}/>
+              <Image source={this.state.mingPic}/>
+            </Animated.View>
+            { this.state.fontLoaded && 
+              <Animated.Text style={[styles.miamLogo, { opacity: textOpacity, letterSpacing: textSpacing, transform:[{translateY: 140}, {scale: textScaling}] }]}>
+                MiAM
+              </Animated.Text>
+            }
+          </Animated.View>
+        </LinearGradient>
       </Animated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1
+  },
   container: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    transform:[{translateY: -100}]
+    justifyContent: 'center'
   },
   miamLogo: {
     position: 'absolute',
-    color: "#5A1BE2",
+    color: "#FFFFFF", /*"#5A1BE2",*/
     backgroundColor: "#ffffff00",
     fontSize: 70,
     fontWeight: "bold",
