@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: "#8A2BE2",
     borderWidth: 1,
     borderRadius: 100,
-    backgroundColor: "#D8BFD8"
+    backgroundColor: "#D8BFD8",
   }
 });
 module.exports = Search;
