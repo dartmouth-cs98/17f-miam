@@ -230,6 +230,16 @@ export default class BattleList extends React.Component {
             });
           }
         });
+        fetchMyBattles(this.state.token, (response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(response);
+            this.setState({
+              myBattleDataSource: ds.cloneWithRows(response)
+            });
+          }
+        });
       }
     });
   }
@@ -316,10 +326,13 @@ export default class BattleList extends React.Component {
           <View style={styles.textInput}>
             <TextInput
               style={{
-                width: "75%",
+                width: "65%",
                 borderColor: "#d9b3ff",
                 borderWidth: 2,
-                height: "100%"
+                height: "100%",
+                borderRadius: 5,
+                margin: 5,
+                paddingHorizontal: 10
               }}
               maxLength={50}
               onChangeText={text => this.setState({ theme: text })}
@@ -544,7 +557,8 @@ const styles = StyleSheet.create({
     height: "100%",
     fontWeight: "bold",
     alignSelf: "center",
-    backgroundColor: "#00000000"
+    backgroundColor: "#00000000",
+    color: "#aaaaaa"
   },
   activeHeadingTabView: {},
   activeHeadingTabText: {
@@ -565,13 +579,21 @@ const styles = StyleSheet.create({
   textInput: {
     flexDirection: "row",
     height: "5%",
-    justifyContent: "flex-start"
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "2%",
+    marginLeft: "2%",
+    marginRight: "2%"
   },
   startBattleButton: {
     backgroundColor: "#b366ff",
     height: "100%",
     width: "25%",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderRadius: 5,
+    margin: 5,
+    padding: 5,
+    width: "30%"
   }
 });
 

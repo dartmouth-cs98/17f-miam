@@ -21,6 +21,7 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 import StatusBarColor from "../StatusBarColor";
 import Heading from "../Heading";
 import { getUserSavedMemes } from "../../api";
+import { LinearGradient } from "expo";
 
 import Meme from "../Meme";
 
@@ -54,11 +55,16 @@ class SelectingMeme extends React.Component {
     return (
       <View style={styles.memeContainer}>
         <Meme imgURL={meme.imgURL} layers={meme.layers} />
-        <Button
+        <LinearGradient
+          colors={["#6a3093", "#a044ff"]}
           style={styles.sendButton}
-          onPress={() => this.props.sendMemeMsg(meme._id)}>
-          Send
-        </Button>
+        >
+          <TouchableHighlight
+            onPress={() => this.props.sendMemeMsg(meme._id)}
+          >
+            <Text style={{ color: "white" }}>Send</Text>
+          </TouchableHighlight>
+        </LinearGradient>
       </View>
     );
   }
@@ -91,7 +97,7 @@ class SelectingMeme extends React.Component {
               backFunction={this.props.returnToBattle}
             />
             <ListView
-              style={styles.listView}
+              contentContainerStyle={styles.listView}
               initialListSize={5}
               enableEmptySections={true}
               dataSource={this.state.memesDataSource}
@@ -122,8 +128,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     flexDirection: 'column',
-    justifyContent: 'space-around',
-    padding: 5
+    justifyContent: 'center',
+    padding: "4%",
+    flex: 1
   },
   memeStyle: {
     width: 300,
@@ -140,8 +147,18 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   listView: {
-    marginBottom: 20
+    paddingBottom: "15%"
   },
+
+  sendButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "1%",
+    borderRadius: 5,
+    backgroundColor: "transparent",
+    width: "40%",
+    height: "11%"
+  }
 });
 
 export default SelectingMeme;

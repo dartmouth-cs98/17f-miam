@@ -27,6 +27,7 @@ import Meme from "../Meme";
 import moment from "moment";
 import SelectingMeme from "./SelectingMeme";
 import SearchProfile from "../SearchProfile";
+import { LinearGradient } from "expo";
 
 class Battle extends React.Component {
   constructor(props) {
@@ -206,11 +207,11 @@ class Battle extends React.Component {
                     username: msg.sender.username,
                   })}
               >
-                <Text style={{ fontSize: 16 }}>
+                <Text style={{ fontSize: 16, color: "#aaaaaa" }}>
                   {msg.sender.username}
                 </Text>
               </TouchableHighlight>
-              <Text style={{ fontSize: 10 }}>{time}</Text>
+              <Text style={{ fontSize: 10, color: "#aaaaaa" }}>{time}</Text>
             </View>
             <View style={styles.messageContent}>
               {msg.text !== undefined && this.renderText(msg.text)}
@@ -277,18 +278,22 @@ class Battle extends React.Component {
           autoCapitalize="none"
           style={styles.textArea}
         />
-        <TouchableHighlight
-          onPress={() => this.sendTextMsg()}
+        <LinearGradient
+          colors={["#6a3093", "#a044ff"]}
           style={styles.sendButton}
         >
-          <Text style={{ color: "white" }}>Send</Text>
-        </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => this.sendTextMsg()}
+          >
+            <Text style={{ color: "white" }}>Send</Text>
+          </TouchableHighlight>
+        </LinearGradient>
       </View>
     );
   }
 
   renderList() {
-    if (this.state.messages.length < 5) {
+    if (this.state.messages.length < 8) {
       return (
         <View ref="myRef">
           <KeyboardAwareScrollView
@@ -372,6 +377,27 @@ class Battle extends React.Component {
   }
 }
 
+// <View>
+//   <Image
+//     style={styles.backgroundImage}
+//     source={{uri: "https://vignette.wikia.nocookie.net/deathbattlefanon/images/0/0a/Vs_logo.png/revision/latest?cb=20160707222803"}}>
+//     <View>
+//       <StatusBarColor />
+//       <Heading
+//         text={'#'+this.props.theme}
+//         backButtonVisible={true}
+//         backFunction={this.props.returnToList}
+//       />
+//       {this.renderList()}
+//     </View>
+//   </Image>
+// </View>
+//
+// backgroundImage: {
+//   flex: 1,
+//   resizeMode: "cover"
+// },
+
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -384,7 +410,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 5,
     paddingVertical: 3,
-    backgroundColor: "#F8F8FF",
+    backgroundColor: "#E5E5E5",
     marginTop: 20,
     alignItems: "center",
     marginBottom: 0.1*vh
@@ -406,10 +432,10 @@ const styles = StyleSheet.create({
   sendButton: {
     justifyContent: "center",
     alignItems: "center",
-    padding: 15,
+    padding: 12,
     margin: 5,
     borderRadius: 5,
-    backgroundColor: "#66db30"
+    backgroundColor: "transparent"
   },
 
   messageMain: {
@@ -474,7 +500,7 @@ const styles = StyleSheet.create({
   // },
 
   listView: {
-    height: vh*0.77
+    height: vh*0.79
   },
 
   scrollView: {
@@ -494,7 +520,11 @@ const styles = StyleSheet.create({
   memeStyle: {
     borderWidth: 1,
     borderColor: "#9999ff",
-    borderRadius: 10
+    borderRadius: 10,
+    paddingTop: "6%",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column"
   },
 
   senderInfo: {
