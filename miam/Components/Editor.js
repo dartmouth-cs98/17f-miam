@@ -777,7 +777,7 @@ module.exports = Editor;
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: "#000000"
+    backgroundColor: "#000000",
   },
   mainEditorDrawer: {
     alignSelf: 'center',
