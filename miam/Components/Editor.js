@@ -531,7 +531,7 @@ class Editor extends React.Component {
               style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.fontSize}
               maximumValue={50}
-              minimumValue={10}
+              minimumValue={5}
               step={1}
               onValueChange={(value) => this.state.selectedObj.setState({fontSize: value})} />
           </View>
@@ -655,7 +655,7 @@ class Editor extends React.Component {
               style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.scaling}
               maximumValue={3}
-              minimumValue={0.5}
+              minimumValue={0.1}
               step={0.1}
               onValueChange={(value) => this.state.selectedObj.setState({scaling: value})} />
           </View>
@@ -748,7 +748,7 @@ class Editor extends React.Component {
               style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.scaling}
               maximumValue={3}
-              minimumValue={0.5}
+              minimumValue={0.1}
               step={0.1}
               onValueChange={(value) => this.state.selectedObj.setState({scaling: value})} />
           </View>
