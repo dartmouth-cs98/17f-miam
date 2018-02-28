@@ -10,7 +10,8 @@ import {
   ScrollView,
   Dimensions,
   AsyncStorage,
-  TextInput
+  TextInput,
+  Alert
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -18,7 +19,21 @@ import StatusBarColor from "./StatusBarColor";
 import SearchProfile from "./SearchProfile";
 import Heading from "./Heading";
 import NavigationBar from "./NavigationBar";
-import { fetchPosts, getUserProfile, likePost, getTargetUserProfile, saveExistingMeme } from "../api";
+import {
+  fetchPosts,
+  getUserProfile,
+  likePost,
+  getTargetUserProfile,
+  saveExistingMeme,
+  deletePost
+} from "../api";
+import {
+  Menu,
+  MenuProvider,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger
+} from 'react-native-popup-menu';
 import ViewShot from "react-native-view-shot";
 import Meme from "./Meme";
 import moment from "moment";
@@ -36,12 +51,16 @@ export default class Feed extends React.Component {
       headingTabSelected: "new",
       token: "",
       userId: "",
-      key: 1
+      username: "",
+      key: 1,
+      lastFeedAction: ""
     };
     this.nav = props.nav;
     this.like = this.like.bind(this);
     this.save = this.save.bind(this);
     this.setUserId = this.setUserId.bind(this);
+    this.popUpMenuAction = this.popUpMenuAction.bind(this);
+    this.popUpMenuDeletePost = this.popUpMenuDeletePost.bind(this);
   }
 
   componentDidMount() {
@@ -66,16 +85,20 @@ export default class Feed extends React.Component {
     try {
       const userId = await AsyncStorage.getItem("@UserId:key");
       const token = await AsyncStorage.getItem("@Token:key");
+      const username = await AsyncStorage.getItem("@Username:key");
       this.setState({
         userId: userId,
-        token: token
+        token: token,
+        username: username
       });
-      if (token && userId === null) {
+      if ((token && userId && username) === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {
               await AsyncStorage.setItem("@UserId:key", response.data.id);
-              console.log("successfully saved user id");
+              await AsyncStorage.setItem("@Username:key", response.data.username);
+              this.setState({ userId: response.data.id, username: response.data.username });
+              console.log("Successfully saved user id");
             } catch (error) {
               console.log(`Cannot save userId. ${error}`);
             }
@@ -109,7 +132,8 @@ export default class Feed extends React.Component {
     sortedPosts = this.sortPostByNewest(this.state.data, "ignore this for now");
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
-      headingTabSelected: "new"
+      headingTabSelected: "new",
+      lastFeedAction: "sort"
     });
   }
 
@@ -120,7 +144,8 @@ export default class Feed extends React.Component {
     );
     this.setState({
       postDataSource: ds.cloneWithRows(sortedPosts),
-      headingTabSelected: "hot"
+      headingTabSelected: "hot",
+      lastFeedAction: "sort"
     });
   }
 
@@ -135,10 +160,69 @@ export default class Feed extends React.Component {
   }
 
   like(postID, action) {
+    this.setState({ lastFeedAction: "like" });
     likePost(postID, action, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
+        // Re-fetching posts
+        fetchPosts((response, error) => {
+          if (error) {
+            alert(error);
+          } else {
+            if (response.data) {
+              var sortedData =
+                this.state.headingTabSelected == "new"
+                  ? this.sortPostByNewest(response.data)
+                  : this.sortPostByHottest(response.data);
+
+              this.setState({
+                data: sortedData,
+                postDataSource: ds.cloneWithRows(sortedData),
+                loaded: true
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
+  popUpMenuAction(action, postID, memeID){
+    if(action == "save")
+      this.save(memeID);
+    else if(action == "flag"){
+      Alert.alert(
+        'FLAGGING POST',
+        'Are you sure you want to flag this post?',
+        [
+          {text: 'No', style: 'cancel'},
+          {text: 'Yes', onPress: () => alert("This post has been flagged.")},
+        ],
+        { cancelable: false }
+      );
+    }
+    else if(action == "delete"){
+      Alert.alert(
+        'DELETING MEME',
+        'Are you sure you want to delete this post?',
+        [
+          {text: 'No', style: 'cancel'},
+          {text: 'Yes', onPress: () => this.popUpMenuDeletePost(postID)}
+        ],
+        { cancelable: false }
+      );
+    }
+  }
+
+  popUpMenuDeletePost(postID){
+    this.setState({ lastFeedAction: "delete" });
+    deletePost(postID, this.state.token, (response, error) => {
+      if (error)
+        alert(error);
+      else {
+        alert("Post deleted successfully!");
+
         // Re-fetching posts
         fetchPosts((response, error) => {
           if (error) {
@@ -236,11 +320,38 @@ export default class Feed extends React.Component {
       return likeId === id;
     });
 
+    var menuOptionArr = [
+      <MenuOption key={1} value={"save"}>
+        <View style={styles.popUpMenuButton}>
+          <Icon name="save" color="#6a3093" size={18}/>
+          <Text style={styles.popUpMenuText}> Save Meme </Text>
+        </View>
+      </MenuOption>,
+      <MenuOption key={2} value={"flag"}>
+        <View style={styles.popUpMenuButton}>
+          <Icon name="flag" color="#6a3093" size={18}/>
+          <Text style={styles.popUpMenuText}> Flag Post </Text>
+        </View>
+      </MenuOption>
+    ];
+
+    if(this.state.username == post.user.username){
+      menuOptionArr.push(
+        <MenuOption key={3} value={"delete"} style={{backgroundColor: "#FF0000"}}>
+          <View style={styles.popUpMenuButton}>
+            <Icon name="delete" color="#FFFFFF" size={18}/>
+            <Text style={[styles.popUpMenuText, {color: "#FFFFFF"}]}> Delete Post </Text>
+          </View>
+        </MenuOption>
+      );
+    }
+
     let meme = (
       <Meme
         imgURL={post.meme.imgURL}
         text={post.posttext}
         layers={post.meme.layers}
+        lastFeedAction={this.state.lastFeedAction}
       />
     );
 
@@ -260,8 +371,9 @@ export default class Feed extends React.Component {
                 style={{
                   fontSize: 15,
                   fontWeight: "bold",
-                  marginLeft: "2%",
-                  marginTop: "3%"
+                  marginLeft: 5,
+                  marginTop: 6,
+                  color: "#333342"
                 }}
               >
                 {username}
@@ -293,8 +405,9 @@ export default class Feed extends React.Component {
                   style={{
                     fontSize: 15,
                     fontWeight: "bold",
-                    marginLeft: "2%",
-                    marginTop: "10%"
+                    marginLeft: 5,
+                    marginTop: 6,
+                    color: "#333342"
                   }}
                 >
                   {username}
@@ -303,8 +416,18 @@ export default class Feed extends React.Component {
             </View>
           )}
 
-          <View style={{ alignSelf: "flex-end" }}>
-            <Text style={{ fontSize: 8 }}>{time}</Text>
+          <View style={{ alignSelf: "flex-end", flexDirection: "row" }}>
+            <Text style={{ fontSize: 9, alignSelf: "flex-end" }}>{time}</Text>
+
+            <Menu onSelect={(value) => this.popUpMenuAction(value, post._id, post.meme._id)}>
+              <MenuTrigger>
+                <Icon style={{ paddingHorizontal: 5, marginBottom: 2 }} name="more-vert" color="#cc6699" size={25}/>
+              </MenuTrigger>
+              <MenuOptions>
+                {menuOptionArr}
+              </MenuOptions>
+            </Menu>
+
           </View>
         </View>
         <View style={styles.separatorLine} />
@@ -341,14 +464,6 @@ export default class Feed extends React.Component {
           <View>
             <TouchableHighlight
               underlayColor="white"
-              onPress={() => this.save(post.meme._id)}
-            >
-              <Icon name="save" color="#cc6699" size={25} />
-            </TouchableHighlight>
-          </View>
-          <View>
-            <TouchableHighlight
-              underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
@@ -369,6 +484,7 @@ export default class Feed extends React.Component {
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM" />
+        <MenuProvider>
         <ListView
           key={this.state.key}
           initialListSize={5}
@@ -380,6 +496,7 @@ export default class Feed extends React.Component {
             return this.renderPostRow(post);
           }}
         />
+        </MenuProvider>
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -394,9 +511,6 @@ const styles = StyleSheet.create({
   headingTabBar: {
     width: "50%",
     height: 28,
-    borderBottomWidth: 2,
-    borderColor: "#a044ff",
-    borderRadius: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -406,12 +520,19 @@ const styles = StyleSheet.create({
   headingTabButton: {
     flex: 1,
     alignItems: "stretch",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "#aaaaaa"
+  },
+  activeHeadingTabView: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#a044ff"
   },
   headingTabText: {
     height: "100%",
     fontWeight: "bold",
     alignSelf: "center",
+    color: "#aaaaaa",
     backgroundColor: "#00000000"
   },
   activeHeadingTabText: {
@@ -431,7 +552,7 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    padding: 5
+    padding: 7
   },
   postHeadingContainer: {
     flexDirection: "row",
@@ -461,7 +582,18 @@ const styles = StyleSheet.create({
   postFooterIconContainer: {
     flexDirection: "row",
     alignItems: "center"
-  }
+  },
+  popUpMenuButton: {
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  popUpMenuText: {
+    color: "#6a3093",
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingLeft: 10
+  },
 });
 
 module.exports = Feed;

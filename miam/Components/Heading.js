@@ -64,7 +64,7 @@ class Heading extends Component {
           <TouchableHighlight
             style={styles.backButton}
             onPress={this.goBack}
-            underlayColor="#886BEA"
+            underlayColor="transparent"
           >
             <Icon name="ios-arrow-back" size={38} color="white" />
           </TouchableHighlight>

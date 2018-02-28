@@ -21,7 +21,7 @@ import NavigationBar from "./NavigationBar";
 import { ImagePicker, LinearGradient } from "expo";
 
 import { getUserProfile, getTargetUserProfile, getUserProfileFromID } from "../api";
-import { uploadProfile, uploadBackground, followUser, beingFollowed, uploadImage } from "../api";
+import { uploadProfile, uploadBackground, followUser, unFollowUser, uploadImage } from "../api";
 
 var customData = require("../data/customData.json");
 var listData = require("../data/listData.json");
@@ -37,7 +37,6 @@ export default class Profile extends React.Component {
 
     this.state = {
       dataSource: lv.cloneWithRows(["row 1", "row 2"]),
-      postDataSource: ds.cloneWithRows([]),
       loaded: false,
       userId: "",
       userName: "Default",
@@ -68,20 +67,17 @@ export default class Profile extends React.Component {
 
       this.getTargetUser(username);
       this.setState({
+        userName: username,
         userId: userId,
         self: false,
       });
-      this.getObserver();
-      if (this.state.observerFollowingList.indexOf(userId) >= 0){
-        this.setState({ followed: true });
-      }
+      this.getObserver(username);
     } else {
       this.getUser();
     }
 
     this.setState({
-      dataSource: lv.cloneWithRows([this.state.followerlist]),
-      postDataSource: ds.cloneWithRows(customData),
+      dataSource: lv.cloneWithRows(this.state.followerlist),
       loaded: true,
     });
   }
@@ -111,7 +107,7 @@ export default class Profile extends React.Component {
     }
   }
 
-  async getObserver() {
+  async getObserver(username) {
     try {
       const token = await AsyncStorage.getItem("@Token:key");
       getUserProfile(token, async (response, error) => {
@@ -120,6 +116,19 @@ export default class Profile extends React.Component {
             observer: response.data.username,
             observerFollowingList: response.data.following,
           });
+
+          let followlist = this.state.observerFollowingList;
+          var that = this;
+
+          if (followlist !== null){
+            followlist.forEach(function(element) {
+              if (element.username == username){
+                that.setState({
+                  followed: true,
+                });
+              }
+            });
+          }
         } else {
           console.log(error);
         }
@@ -133,6 +142,7 @@ export default class Profile extends React.Component {
     try {
       getTargetUserProfile(username, async (response, error) => {
         if (response.data) {
+          console.log(response.data);
           this.setState({
             userName: response.data[0].username,
             followerlist: response.data[0].followers,
@@ -173,11 +183,11 @@ export default class Profile extends React.Component {
   };
 
   onFollowUser = async () => {
-    let myUsername = this.state.observer; // Jenny
-    let targetUserId = this.props.navigation.state.params.userId; // Coda's id
-    // Add Coda to Jenny's following list
-    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
+    let myUsername = this.state.observer;
+    let targetUserId = this.props.navigation.state.params.userId;
     const token = await AsyncStorage.getItem("@Token:key");
+
+    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
     followUser(
       targetUserId,
       token,
@@ -185,16 +195,38 @@ export default class Profile extends React.Component {
         if (error) {
           console.log(error);
         } else {
-          console.log("Successfully follows user.");
+          console.log("Successfully follow user.");
         }
       }
     );
-
     this.setState({ followed: true });
   };
 
   onUnfollowUser = async () => {
+    let myUsername = this.state.observer;
+    let targetUserId = this.props.navigation.state.params.userId;
+    const token = await AsyncStorage.getItem("@Token:key");
 
+    console.log("heyhey");
+    console.log(token);
+
+    console.log(this.state.observerFollowingList);
+
+    // this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
+    unFollowUser(
+      targetUserId,
+      token,
+      (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Successfully unfollow user.");
+        }
+      }
+    );
+
+    console.log("lollll");
+    this.setState({ followed: false });
   }
 
   onChangeProfile = async () => {
@@ -300,13 +332,6 @@ export default class Profile extends React.Component {
     });
   };
 
-  onPressPostTab = () => {
-    this.setState({
-      tab: "post",
-      dataSource: lv.cloneWithRows(this.state.post),
-    });
-  };
-
   onPressFollowingTab = () => {
     this.setState({
       tab: "following",
@@ -315,7 +340,6 @@ export default class Profile extends React.Component {
   };
 
   setEditorRef = editor => (this.editor = editor);
-
 
   async signOut() {
     try {
@@ -329,7 +353,6 @@ export default class Profile extends React.Component {
   }
 
   renderListView(post) {
-    console.log(post.profilePic);
     return (
       <View style={styles.singleListContainer}>
         <Image
@@ -409,8 +432,12 @@ export default class Profile extends React.Component {
                   </Button>
                 </View>
               }
-              <Text style={styles.name}> {this.state.userName} </Text>
-              <Text style={styles.score}>Score: {this.state.score}</Text>
+              <View
+                style={styles.nameScore}
+              >
+                <Text style={styles.name}> {this.state.userName} </Text>
+                <Text style={styles.score}>Score: {this.state.score}</Text>
+              </View>
             </View>
           </Image>
           <LinearGradient
@@ -425,6 +452,7 @@ export default class Profile extends React.Component {
           <View style={styles.bodyMiddle}>
             <TouchableHighlight
               onPress={() => this.onPressFollowerTab()}
+              underlayColor="transparent"
             >
               <View style={styles.box}>
                 <Text style={styles.fda}>{this.state.followers}</Text>
@@ -432,15 +460,8 @@ export default class Profile extends React.Component {
               </View>
             </TouchableHighlight>
             <TouchableHighlight
-              onPress={() => this.onPressPostTab()}
-            >
-              <View style={styles.box}>
-                <Text style={styles.fda}>32</Text>
-                <Text style={styles.fda}>Post</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight
               onPress={() => this.onPressFollowingTab()}
+              underlayColor="transparent"
             >
               <View style={styles.box}>
                 <Text style={styles.fda}>{this.state.following}</Text>
@@ -462,7 +483,22 @@ export default class Profile extends React.Component {
             )}
           />
         </View>
-        <Button onPress={this.signOut}>Sign Out</Button>
+        {this.state.self &&
+          <View style={styles.signout}>
+            <Button
+              onPress={this.signOut}
+              style={styles.signoutButton}
+            >
+              Sign Out
+            </Button>
+            <TouchableHighlight
+              onPress={this.signOut}
+              underlayColor="#ffffff"
+            >
+              <Icon name="exit-to-app" color="grey" size={25} />
+            </TouchableHighlight>
+          </View>
+        }
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -498,7 +534,9 @@ const styles = StyleSheet.create({
   },
   profiles: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    paddingTop: "10%",
+    paddingBottom: "5%",
   },
   profilePicture: {
     width: 120,
@@ -509,13 +547,14 @@ const styles = StyleSheet.create({
   name: {
     color: "white",
     fontSize: 25,
-    top: 20,
+    top: 10,
     backgroundColor: "rgba(0,0,0,0)"
   },
   score: {
     color: "white",
     fontSize: 15,
-    top: 15,
+    top: 7,
+    marginTop: 4,
     backgroundColor: "rgba(0,0,0,0)"
   },
   battlewon: {
@@ -525,7 +564,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0)"
   },
   bodyMiddle: {
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
     flexDirection: "row",
     height: 50,
@@ -583,6 +622,21 @@ const styles = StyleSheet.create({
   profileButton: {
     fontSize: 12,
     color: "grey"
+  },
+  signout: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingBottom: 3,
+  },
+  signoutButton: {
+    paddingRight: 2,
+    color: "grey"
+  },
+  nameScore: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   }
 });
 

@@ -19,7 +19,7 @@ import Button from "react-native-button";
 import Battle from "./Battle";
 import NavigationBar from "../NavigationBar";
 import SearchProfile from "../SearchProfile";
-import { fetchBattles, createBattle, followBattle } from "../../api";
+import { fetchBattles, createBattle, followBattle, fetchMyBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 import Pusher from "pusher-js/react-native";
@@ -47,6 +47,7 @@ export default class BattleList extends React.Component {
 
     this.state = {
       battleDataSource: ds.cloneWithRows([]),
+      myBattleDataSource: ds.cloneWithRows([]),
       loaded: false,
       selectedBattle: battleId,
       selectedBattleTheme: "",
@@ -103,6 +104,17 @@ export default class BattleList extends React.Component {
             });
           }
         });
+        fetchMyBattles(this.state.token, (response, error) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(response);
+            this.setState({
+              myBattleDataSource: ds.cloneWithRows(response)
+            });
+          }
+        });
+
       });
     }
   }
@@ -143,10 +155,19 @@ export default class BattleList extends React.Component {
       "ignore this for now"
     );
     this.setState({
-      postDataSource: ds.cloneWithRows(sortedPosts),
+      battleDataSource: ds.cloneWithRows(sortedPosts),
       headingTabSelected: "hot"
     });
   }
+
+  myBattleTabPress() {
+    this.setState({
+      battleDataSource: this.state.myBattleDataSource,
+      headingTabSelected: "my"
+    });
+  }
+
+
   returnToList() {
     this.setState({
       selectedBattle: "",
@@ -297,7 +318,7 @@ export default class BattleList extends React.Component {
               style={{
                 width: "75%",
                 borderColor: "#d9b3ff",
-                borderBottomWidth: 2,
+                borderWidth: 2,
                 height: "100%"
               }}
               maxLength={50}
@@ -358,6 +379,25 @@ export default class BattleList extends React.Component {
                 ]}
               >
                 HOT
+              </Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={this.myBattleTabPress.bind(this)}
+              style={[
+                styles.headingTabButton,
+                this.state.headingTabSelected == "my" &&
+                  styles.activeHeadingTabView
+              ]}
+              underlayColor="white"
+            >
+              <Text
+                style={[
+                  styles.headingTabText,
+                  this.state.headingTabSelected == "my" &&
+                    styles.activeHeadingTabText
+                ]}
+              >
+                MY BATTLES
               </Text>
             </TouchableHighlight>
           </View>
@@ -484,7 +524,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   headingTabBar: {
-    width: "50%",
+    width: "70%",
     height: 28,
     borderBottomWidth: 2,
     borderColor: "#d9b3ff",
@@ -525,7 +565,6 @@ const styles = StyleSheet.create({
   textInput: {
     flexDirection: "row",
     height: "5%",
-    marginTop: "0.5%",
     justifyContent: "flex-start"
   },
   startBattleButton: {

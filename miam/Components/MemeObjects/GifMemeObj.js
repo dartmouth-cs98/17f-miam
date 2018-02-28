@@ -21,6 +21,7 @@ class GifMemeObj extends React.Component{
 	    	scaling: 1,
 	    	rotation: 0,
 	    	editor: props.editor || null,
+	    	selected: false,
 	    	animatedValue: new Animated.ValueXY({x: 0, y: 0}),
 	    	viewScale: 1
 	    };
@@ -31,6 +32,7 @@ class GifMemeObj extends React.Component{
 	    if(props.editor)
 	    	props.editor.addLayerRef(props.selectionKey, this);
 
+	    this.deselect = this.deselect.bind(this);
 	    this.recenter = this.recenter.bind(this);
 	    this.updateGifURL = this.updateGifURL.bind(this);
 	}
@@ -70,7 +72,8 @@ class GifMemeObj extends React.Component{
 		        onMoveShouldSetResponderCapture: () => true, //Tell iOS that we are allowing the movement
 		        onMoveShouldSetPanResponderCapture: () => true, // Same here, tell iOS that we allow dragging
 		        onPanResponderStart: (e, gestureState) => {
-				  this.state.editor.setState({ selectedObj: this, selectedType: this.state.type, selectedObjKey: this.state.key });
+				  this.state.editor.selectObj(this, this.state.type, this.state.key);
+				  this.setState({selected: true});
 		        },
 		        onPanResponderGrant: (e, gestureState) => {
 		          this.state.animatedValue.setOffset({x: this._value.x, y: this._value.y});
@@ -90,6 +93,10 @@ class GifMemeObj extends React.Component{
 		this.setState({
 			gifURL: gifURL
 		});
+	}
+
+	deselect(){
+		this.setState({selected: false});
 	}
 
 	recenter(){
@@ -123,7 +130,10 @@ class GifMemeObj extends React.Component{
 		                backgroundColor: '#00000000',
 		                position: 'absolute',
 		                alignSelf: 'center',
-		                bottom: '50%'
+		                bottom: '50%',
+	                    borderRadius: this.state.selected ? 5 : 0,
+					    borderColor: this.state.selected ? "#ffaa00" : "#ffffff00",
+					    borderWidth: 3
 		              }}
 		            {...this._panResponder.panHandlers}>
 		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
@@ -150,7 +160,10 @@ class GifMemeObj extends React.Component{
 		                backgroundColor: '#00000000',
 		                position: 'absolute',
 		                alignSelf: 'center',
-		                bottom: '50%'
+		                bottom: '50%',
+	                    borderRadius: 0,
+					    borderColor: "#ffffff00",
+					    borderWidth: 3 * this.state.viewScale
 		              }}>
 		            <Image source={{ uri: this.state.gifURL }} resizeMode="contain" style={
 		            	{

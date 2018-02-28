@@ -34,7 +34,6 @@ class Canvas extends React.Component {
     this.state = {
       image: null,
       layers: [],
-      isLocalPhoto: false,
 
       anon: false,
 
@@ -72,15 +71,13 @@ class Canvas extends React.Component {
     if (this.props.navigation.state.params) {
       if (this.props.navigation.state.params.gifurl) {
         this.setState({
-          image: this.props.navigation.state.params.gifurl,
-          isLocalPhoto: false
+          image: this.props.navigation.state.params.gifurl
         });
       } else if (this.props.navigation.state.params.fromEditor) {
         this.setState({
           image: this.props.navigation.state.params.imgURL,
           layers: this.props.navigation.state.params.layers,
           originalPostID: this.props.navigation.state.params.originalPostID,
-          isLocalPhoto: false
         });
       } else if (this.props.navigation.state.params.imgURL) {
                   
@@ -94,7 +91,6 @@ class Canvas extends React.Component {
           image: this.props.navigation.state.params.imgURL,
           layers: this.props.navigation.state.params.layers,
           originalPostID: originalPostID,
-          isLocalPhoto: false
         });
       }
     }
@@ -115,22 +111,19 @@ class Canvas extends React.Component {
     }
   }
 
-  toggleAnon(){
+  toggleAnon() {
     var newAnonState = !this.state.anon;
     this.setState({
       anon: newAnonState
     });
   }
 
-  saveMeme(){
-    if (this.state.isLocalPhoto) {
-      this.uploadLocalPhoto('save');
-    }
-    else this.save();
+  saveMeme() {
+    this.save();
   }
 
   save() {
-    if(this.state.image == null){
+    if (this.state.image == null) {
       alert("Please select an image or gif.");
       return;
     }
@@ -138,15 +131,14 @@ class Canvas extends React.Component {
     const meme = {
       imgURL: this.state.image,
       layers: this.state.layers
-    }
+    };
 
-    saveNewMeme(meme, this.state.token, (response, error) => {
+  saveNewMeme(meme, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
         this.setState({
           image: null,
-          isLocalPhoto: false,
           tags: [],
           text: "",
           showCaption: false,
@@ -160,10 +152,7 @@ class Canvas extends React.Component {
   }
 
   sendPost() {
-    if (this.state.isLocalPhoto) {
-      this.uploadLocalPhoto('post');
-    }
-    else this.createMeme();
+    this.createMeme();
   }
 
   createMeme() {
@@ -177,7 +166,7 @@ class Canvas extends React.Component {
     //   });
     // } else {
 
-    if(this.state.image == null){
+    if (this.state.image == null) {
       alert("Please select an image or gif.");
       return;
     }
@@ -199,7 +188,6 @@ class Canvas extends React.Component {
       } else {
         this.setState({
           image: null,
-          isLocalPhoto: false,
           tags: [],
           text: "",
           showCaption: false,
@@ -213,7 +201,7 @@ class Canvas extends React.Component {
     });
   }
 
-  uploadLocalPhoto(action) {
+  uploadLocalPhoto(uri) {
     pseudoRandomFileName =
       Math.random()
         .toString(36)
@@ -221,10 +209,10 @@ class Canvas extends React.Component {
       Math.random()
         .toString(36)
         .substr(2);
-    typeExtension = this.state.image.substr(this.state.image.length - 3);
+    typeExtension = uri.substr(uri.length - 3);
 
     const file = {
-      uri: this.state.image,
+      uri: uri,
       name: pseudoRandomFileName + "." + typeExtension,
       type: "image/" + typeExtension
     };
@@ -235,10 +223,6 @@ class Canvas extends React.Component {
     uploadImage(file)
       .then(function(datum) {
         canvasObj.setState({ image: datum.url });
-        if (action === 'post')
-          canvasObj.createMeme();
-        else if (action === 'save')
-          canvasObj.save();
       })
       .catch(function(err) {
         console.log(err);
@@ -270,18 +254,19 @@ class Canvas extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri, isLocalPhoto: true });
+      this.uploadLocalPhoto(result.uri);
     }
   };
 
   goGetImageFromGiphy() {
-    this.props.navigation.navigate("Search", {sendImgURLBack: this.receiveGifURL.bind(this)});
+    this.props.navigation.navigate("Search", {
+      sendImgURLBack: this.receiveGifURL.bind(this)
+    });
   }
 
-  receiveGifURL(gifURL){
+  receiveGifURL(gifURL) {
     this.setState({
-      image: gifURL,
-      isLocalPhoto: false
+      image: gifURL
     });
   }
 
@@ -306,7 +291,7 @@ class Canvas extends React.Component {
   }
 
   editImage() {
-    if(this.state.image != null){
+    if (this.state.image != null) {
       var imgURL = this.state.image;
       this.props.navigation.navigate("Editor", { imgURL: this.state.image, layers: this.state.layers, originalPostID: this.state.originalPostID });
     }
@@ -316,123 +301,120 @@ class Canvas extends React.Component {
   }
 
   render() {
-
     // Anonymous Posting Buttons
-    var anonOffButton = <TouchableHighlight onPress={() => this.toggleAnon()} underlayColor="#ffffffaa" style={[styles.anonButton, {backgroundColor: "#222222"}]}>
-                    <View style={styles.anonButtonView} >
-                      <Icon name="lock-open" color="#FFFFFF" size={25}/>
-                      <Text style={styles.anonButtonText}>  Anonymous OFF</Text>
-                    </View>
-                  </TouchableHighlight>
+    var anonOffButton = (
+      <TouchableHighlight
+        onPress={() => this.toggleAnon()}
+        underlayColor="#ffffffaa"
+        style={[styles.anonButton, { backgroundColor: "#222222" }]}
+      >
+        <View style={styles.anonButtonView}>
+          <Icon name="lock-open" color="#FFFFFF" size={20} />
+          <Text style={styles.anonButtonText}> Anonymous OFF</Text>
+        </View>
+      </TouchableHighlight>
+    );
 
-    var anonOnButton = <TouchableHighlight onPress={() => this.toggleAnon()} underlayColor="#ffffffaa" style={[styles.anonButton, {backgroundColor: "#006400"}]}>
-                    <View style={styles.anonButtonView} >
-                      <Icon name="lock" color="#FFFFFF" size={25}/>
-                      <Text style={styles.anonButtonText}>  Anonymous ON</Text>
-                    </View>
-                  </TouchableHighlight>
+    var anonOnButton = (
+      <TouchableHighlight
+        onPress={() => this.toggleAnon()}
+        underlayColor="#ffffffaa"
+        style={[styles.anonButton, { backgroundColor: "#006400" }]}
+      >
+        <View style={styles.anonButtonView}>
+          <Icon name="lock" color="#FFFFFF" size={20} />
+          <Text style={styles.anonButtonText}> Anonymous ON</Text>
+        </View>
+      </TouchableHighlight>
+    );
 
     return (
       <View style={styles.body}>
         <StatusBarColor />
-        <Heading text="MiAM" />
+        <Heading text="MiAM Editor" />
         <KeyboardAwareScrollView>
+          <View style={styles.uploadIcons}>
+            <TouchableHighlight
+              onPress={this.getImageFromRoll}
+              underlayColor="white"
+            >
+              <View style={styles.uploadContainer}>
+                <Icon name="photo" color="#ac3973" size={43} />
+                <Text style={styles.uploadContainerText}>Local files</Text>
+              </View>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              onPress={this.goGetImageFromGiphy}
+              underlayColor="white"
+            >
+              <View style={styles.uploadContainer}>
+                <Icon name="gif" color="#ac3973" size={50} />
+                <Text style={styles.uploadContainerText}>Search Gif</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
           <View style={styles.canvasContainer}>
             <View style={styles.canvas}>
-              <View style={styles.canvasHeading}>
-                <View />
-                <View>
-                  <Text style={{ fontSize: 25, color: "#cc66cc" }}>Canvas</Text>
-                </View>
-                <View>
-                  <TouchableHighlight
-                    onPress={this.saveMeme}
-                    underlayColor="#ffffff"
-                  >
-                    <Icon name="save" color="#ac3973" size={28} />
-                  </TouchableHighlight>
-                </View>
-                <View>
-                  <TouchableHighlight
-                    onPress={this.sendPost}
-                    underlayColor="#ffffff"
-                  >
-                    <Icon name="send" color="#ac3973" size={28} />
-                  </TouchableHighlight>
-                </View>
-              </View>
-              <View style={{ height: "20%" }}>
-                <Isao
-                  label={"Translate words to a Gif!"}
-                  // this is applied as active border and label color
-                  activeColor={"#da7071"}
-                  // this is applied as passive border and label color
-                  passiveColor={"#e6b3cc"}
-                  onChangeText={text => this.setState({ gifWords: text })}
-                  onSubmitEditing={this.translate}
-                  value={this.state.gifWords}
-                  defaultValue="Sup"
-                />
-              </View>
-              <View style={{ height: "80%", marginTop: "2%" }}>
+              <View style={{ height: "85%", marginTop: "5%" }}>
                 {this.state.image && (
                   <View>
-                    <Meme imgURL={this.state.image} layers={this.state.layers}/>
-                    <View
-                      style={{
-                        width: "80%",
-                        justifyContent: "center",
-                        alignSelf: "center"
-                      }}
-                    >
-                      <Text style={{ textAlign: "center" }}>
-                        {this.state.text}
-                      </Text>
-                    </View>
+                    <Meme
+                      imgURL={this.state.image}
+                      layers={this.state.layers}
+                    />
                   </View>
                 )}
               </View>
-            </View>
-            <View style={styles.tools}>
-              <View style={styles.textInput}>
-                <Icon style={{width: "15%"}} name="text-fields" color="#ac3973" size={40} />
-                <TextInput
-                  style={{
-                    width: "75%",
-                    borderColor: "gray",
-                    borderWidth: 1,
-                    height: "100%"
-                  }}
-                  maxLength={50}
-                  onChangeText={text => this.setState({ text })}
-                  value={this.state.text}
-                />
+              <View
+                style={{
+                  justifyContent: "center",
+                  marginBottom: "1%"
+                }}
+              >
+                <TouchableHighlight
+                  onPress={this.editImage}
+                  underlayColor="white"
+                >
+                  <View style={styles.mainIcons}>
+                    <Text
+                      style={{
+                        fontSize: 23,
+                        color: "#a64dff",
+                        textAlign: "center",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      Enter Edit Mode
+                    </Text>
+                    <Icon name="edit" color="#a64dff" size={25} />
+                  </View>
+                </TouchableHighlight>
               </View>
             </View>
-
-            {(this.state.anon ? anonOnButton : anonOffButton)}
-
-            <View style={styles.mainIcons}>
+            <View style={styles.savePost}>
               <TouchableHighlight
-                onPress={this.getImageFromRoll}
-                underlayColor="white"
+                onPress={this.saveMeme}
+                underlayColor="#ffffff"
               >
-                <Icon name="photo" color="#ac3973" size={40} />
+                <View style={styles.savePostContainer}>
+                  <Icon name="save" color="#ac3973" size={30} />
+                  <Text style={styles.savePostText}>Save</Text>
+                </View>
               </TouchableHighlight>
 
-              <TouchableHighlight
-                onPress={this.goGetImageFromGiphy}
-                underlayColor="white"
-              >
-                <Icon name="gif" color="#ac3973" size={40} />
-              </TouchableHighlight>
-
-              <TouchableHighlight
-                onPress={this.editImage}
-                underlayColor="white"
-              >
-                <Icon name="edit" color="#ac3973" size={40} />
-              </TouchableHighlight>
+              {this.state.anon ? anonOnButton : anonOffButton}
+              <View style={{ flexDirection: "column", marginRight: "2%" }}>
+                <TouchableHighlight
+                  onPress={this.sendPost}
+                  underlayColor="#ffffff"
+                >
+                  <View style={styles.savePostContainer}>
+                    <Icon name="send" color="#ac3973" size={30} />
+                    <Text style={styles.savePostText}>Post</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
             </View>
           </View>
         </KeyboardAwareScrollView>
@@ -450,16 +432,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   canvasContainer: {
-    height: "84%",
+    height: "60%",
     alignItems: "center"
   },
   canvas: {
     width: "90%",
     height: 350,
-    marginTop: "10%",
     borderWidth: 1,
-    borderRadius: 3,
-    flexDirection: "column"
+    borderRadius: 10,
+    flexDirection: "column",
+    borderColor: "#a64dff"
   },
   canvasHeading: {
     height: "5%",
@@ -496,7 +478,7 @@ const styles = StyleSheet.create({
   },
   mainIcons: {
     flexDirection: "row",
-    height: "10%"
+    justifyContent: "center"
   },
   textIcon: {
     width: "5%",
@@ -507,20 +489,50 @@ const styles = StyleSheet.create({
     height: "30%"
   },
   anonButton: {
-    margin: 3,
-    padding: 5,
     borderRadius: 3,
     borderColor: "#006400",
-    borderWidth: 2
+    borderWidth: 2,
+    height: "50%"
   },
   anonButtonView: {
-    alignItems: 'center',
-    width: 190,
+    alignItems: "center",
     flexDirection: "row"
   },
   anonButtonText: {
     color: "#FFFFFF",
-    fontSize: 20,
+    fontSize: 12,
     fontWeight: "bold"
   },
+  savePost: {
+    flexDirection: "row",
+    marginTop: "5%",
+    width: "80%",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  savePostText: {
+    fontSize: 15,
+    color: "#a64dff",
+    textAlign: "center",
+    fontWeight: "bold"
+  },
+  savePostContainer: {
+    flexDirection: "column"
+  },
+  uploadIcons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: "1%",
+    width: "80%",
+    alignSelf: "center"
+  },
+  uploadContainer: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  uploadContainerText: {
+    fontSize: 15,
+    color: "#a64dff",
+    fontWeight: "bold"
+  }
 });

@@ -12,7 +12,7 @@ import {
   Animated,
   Easing,
   Dimensions,
-  Image
+  Image,
 } from "react-native";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
@@ -31,6 +31,7 @@ class Comment extends Component {
     super(props);
     this.state = {
       userId: "",
+      sunPic: require('./Assets/SunIconMed.png'),
       commentDataSource: ds.cloneWithRows([]),
       comments: [],
       comment: "",
@@ -73,6 +74,19 @@ class Comment extends Component {
         if(err)
           alert(err);
         else{
+
+          if(res.data === ""){
+            Alert.alert(
+              'Original Post Deleted',
+              'Unforunately, the original post has been deleted by the user :(',
+              [
+                {text: 'Ok', style: 'cancel'},
+              ],
+              { cancelable: false }
+            );
+            this.props.navigation.goBack();
+          }
+
           this.setState({post: res.data});
 
           if(res.data.originalPost)
@@ -81,7 +95,6 @@ class Comment extends Component {
           for (i = 0; i < res.data.comments.length; i++)
             this.getComment(res.data.comments[i]);
         }
-
       });
     }
   }
@@ -330,16 +343,16 @@ class Comment extends Component {
       inputRange: [0, 1],
       outputRange: ['45deg', '-45deg'],
     });
-         
-    var leftAnimStar = <Animated.View style={{right: "75%", transform: [{rotate: interpolRotLeft}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
-    var rightAnimStar = <Animated.View style={{left: "75%", transform: [{rotate: interpolRotRight}]}}><Icon name="star" color="#FFDF00" size={45} /></Animated.View>;
+    
+    var starIcon = <Icon name="star" color="#FFDF00" size={45} />;
+    var sunIcon  = <Image source={this.state.sunPic} style={{width: 50, height: 50, resizeMode: "contain"}}/>;
+    var leftAnimStar = <Animated.View style={{ right: "50%", transform: [{rotate: interpolRotLeft}] }}>{sunIcon}</Animated.View>;
+    var rightAnimStar = <Animated.View style={{ left: "50%", transform: [{rotate: interpolRotRight}] }}>{sunIcon}</Animated.View>;
     var opButton = null;
     var postView = null;
 
     if(this.state.post != null){
       postView = this.renderPost(this.state.post);
-
-      console.log(this.state.post);
 
       if(this.state.post.originalPost && this.state.post.originalPost != null){
         opButton = <TouchableHighlight
@@ -353,7 +366,7 @@ class Comment extends Component {
                           colors={[ '#1D2671', '#9733EE' ]}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}>      
-                          <View style={{flexDirection: "row", paddingTop: 3, paddingBottom: 3, justifyContent: "center", alignItems: "center"}}>
+                          <View style={{ flexDirection: "row", paddingTop: 3, paddingBottom: 3, justifyContent: "center", alignItems: "center"}}>
                             {leftAnimStar}
                             <View style={{alignItems: "center"}}>
                               <Text style={{fontWeight: "bold", color: "#FFFFFF", fontStyle: "italic", fontSize: 16}}> This is a REMIXED post </Text>
@@ -483,7 +496,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#9999ff"
   },
   createCommentContainer: {
-    height: 30,
+    height: 40,
     flexDirection: "row"
   },
   commentTitleBox: {

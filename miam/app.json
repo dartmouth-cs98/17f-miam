@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "miam",
-    "description": "An empty new project",
+    "description": "Make it a meme!",
     "slug": "miam",
     "privacy": "public",
     "sdkVersion": "21.0.0",
@@ -17,7 +17,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cs98.miam"
+      "bundleIdentifier": "edu.cs98.miam"
     }
   }
 }
