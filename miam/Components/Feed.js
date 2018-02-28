@@ -91,7 +91,7 @@ export default class Feed extends React.Component {
         token: token,
         username: username
       });
-      if (token && userId && username === null) {
+      if ((token && userId && username) === null) {
         getUserProfile(token, async (response, error) => {
           if (response.data) {
             try {

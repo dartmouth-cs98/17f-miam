@@ -34,7 +34,6 @@ class Canvas extends React.Component {
     this.state = {
       image: null,
       layers: [],
-      isLocalPhoto: false,
 
       anon: false,
 
@@ -70,14 +69,12 @@ class Canvas extends React.Component {
     if (this.props.navigation.state.params) {
       if (this.props.navigation.state.params.gifurl) {
         this.setState({
-          image: this.props.navigation.state.params.gifurl,
-          isLocalPhoto: false
+          image: this.props.navigation.state.params.gifurl
         });
       } else if (this.props.navigation.state.params.imgURL) {
         this.setState({
           image: this.props.navigation.state.params.imgURL,
-          layers: this.props.navigation.state.params.layers,
-          isLocalPhoto: false
+          layers: this.props.navigation.state.params.layers
         });
       }
     }
@@ -106,9 +103,7 @@ class Canvas extends React.Component {
   }
 
   saveMeme() {
-    if (this.state.isLocalPhoto) {
-      this.uploadLocalPhoto("save");
-    } else this.save();
+    this.save();
   }
 
   save() {
@@ -122,13 +117,12 @@ class Canvas extends React.Component {
       layers: this.state.layers
     };
 
-    saveNewMeme(meme, this.state.token, (response, error) => {
+  saveNewMeme(meme, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
         this.setState({
           image: null,
-          isLocalPhoto: false,
           tags: [],
           text: "",
           showCaption: false,
@@ -142,9 +136,7 @@ class Canvas extends React.Component {
   }
 
   sendPost() {
-    if (this.state.isLocalPhoto) {
-      this.uploadLocalPhoto("post");
-    } else this.createMeme();
+    this.createMeme();
   }
 
   createMeme() {
@@ -179,7 +171,6 @@ class Canvas extends React.Component {
       } else {
         this.setState({
           image: null,
-          isLocalPhoto: false,
           tags: [],
           text: "",
           showCaption: false,
@@ -192,7 +183,7 @@ class Canvas extends React.Component {
     });
   }
 
-  uploadLocalPhoto(action) {
+  uploadLocalPhoto(uri) {
     pseudoRandomFileName =
       Math.random()
         .toString(36)
@@ -200,10 +191,10 @@ class Canvas extends React.Component {
       Math.random()
         .toString(36)
         .substr(2);
-    typeExtension = this.state.image.substr(this.state.image.length - 3);
+    typeExtension = uri.substr(uri.length - 3);
 
     const file = {
-      uri: this.state.image,
+      uri: uri,
       name: pseudoRandomFileName + "." + typeExtension,
       type: "image/" + typeExtension
     };
@@ -214,8 +205,6 @@ class Canvas extends React.Component {
     uploadImage(file)
       .then(function(datum) {
         canvasObj.setState({ image: datum.url });
-        if (action === "post") canvasObj.createMeme();
-        else if (action === "save") canvasObj.save();
       })
       .catch(function(err) {
         console.log(err);
@@ -247,7 +236,7 @@ class Canvas extends React.Component {
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result.uri, isLocalPhoto: true });
+      this.uploadLocalPhoto(result.uri);
     }
   };
 
@@ -259,8 +248,7 @@ class Canvas extends React.Component {
 
   receiveGifURL(gifURL) {
     this.setState({
-      image: gifURL,
-      isLocalPhoto: false
+      image: gifURL
     });
   }
 
@@ -335,8 +323,8 @@ class Canvas extends React.Component {
               underlayColor="white"
             >
               <View style={styles.uploadContainer}>
-                <Icon name="photo" color="#ac3973" size={45} />
-                <Text>Upload local files</Text>
+                <Icon name="photo" color="#ac3973" size={43} />
+                <Text style={styles.uploadContainerText}>Local files</Text>
               </View>
             </TouchableHighlight>
 
@@ -345,8 +333,8 @@ class Canvas extends React.Component {
               underlayColor="white"
             >
               <View style={styles.uploadContainer}>
-                <Icon name="gif" color="#ac3973" size={45} />
-                <Text>Search Gif</Text>
+                <Icon name="gif" color="#ac3973" size={50} />
+                <Text style={styles.uploadContainerText}>Search Gif</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -383,30 +371,33 @@ class Canvas extends React.Component {
                     >
                       Enter Edit Mode
                     </Text>
-                    <Icon name="edit" color="#a64dff" size={28} />
+                    <Icon name="edit" color="#a64dff" size={25} />
                   </View>
                 </TouchableHighlight>
               </View>
             </View>
             <View style={styles.savePost}>
-              <View style={{ flexDirection: "column", marginLeft: "2%" }}>
-                <TouchableHighlight
-                  onPress={this.saveMeme}
-                  underlayColor="#ffffff"
-                >
-                  <Icon name="save" color="#ac3973" size={28} />
-                </TouchableHighlight>
-                <Text style={styles.savePostText}>save</Text>
-              </View>
+              <TouchableHighlight
+                onPress={this.saveMeme}
+                underlayColor="#ffffff"
+              >
+                <View style={styles.savePostContainer}>
+                  <Icon name="save" color="#ac3973" size={30} />
+                  <Text style={styles.savePostText}>Save</Text>
+                </View>
+              </TouchableHighlight>
+
               {this.state.anon ? anonOnButton : anonOffButton}
               <View style={{ flexDirection: "column", marginRight: "2%" }}>
                 <TouchableHighlight
                   onPress={this.sendPost}
                   underlayColor="#ffffff"
                 >
-                  <Icon name="send" color="#ac3973" size={28} />
+                  <View style={styles.savePostContainer}>
+                    <Icon name="send" color="#ac3973" size={30} />
+                    <Text style={styles.savePostText}>Post</Text>
+                  </View>
                 </TouchableHighlight>
-                <Text style={styles.savePostText}>post</Text>
               </View>
             </View>
           </View>
@@ -501,26 +492,31 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     width: "80%",
     justifyContent: "space-between",
-    borderWidth: 0.5,
-    borderColor: "#ac3973",
     alignItems: "center"
   },
   savePostText: {
     fontSize: 15,
-    color: "#ac3973",
+    color: "#a64dff",
     textAlign: "center",
     fontWeight: "bold"
+  },
+  savePostContainer: {
+    flexDirection: "column"
   },
   uploadIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderWidth: 1,
-    borderColor: "#ac3973",
     marginTop: "1%",
-    width: "90%",
+    width: "80%",
     alignSelf: "center"
   },
   uploadContainer: {
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  uploadContainerText: {
+    fontSize: 15,
+    color: "#a64dff",
+    fontWeight: "bold"
   }
 });
