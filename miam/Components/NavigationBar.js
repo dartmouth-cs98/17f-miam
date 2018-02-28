@@ -71,9 +71,7 @@ export default class NavigationBar extends React.Component {
 
         <TouchableHighlight
           onPress={() => {
-            if (state.routeName !== "Profile") {
-              this.props.navigation.navigate("Profile");
-            }
+            this.props.navigation.navigate("Profile");
           }}
           underlayColor="#ffffff"
         >
