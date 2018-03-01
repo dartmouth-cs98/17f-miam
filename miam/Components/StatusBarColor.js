@@ -11,7 +11,7 @@ class StatusBarColor extends Component {
 
 const styles = StyleSheet.create({
   background: {
-    height: "3%",
+    height: "4%",
     backgroundColor: "#ffffff"
   }
 });

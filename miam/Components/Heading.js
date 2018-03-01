@@ -42,7 +42,7 @@ class Heading extends Component {
       <LinearGradient
         colors={["#6a3093", "#a044ff"]}
         style={{
-          height: "7%",
+          height: "8%",
           width: "100%",
           backgroundColor: "transparent",
           justifyContent: "center"

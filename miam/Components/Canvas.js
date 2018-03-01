@@ -117,7 +117,7 @@ class Canvas extends React.Component {
       layers: this.state.layers
     };
 
-  saveNewMeme(meme, this.state.token, (response, error) => {
+    saveNewMeme(meme, this.state.token, (response, error) => {
       if (error) {
         alert(error);
       } else {
@@ -286,122 +286,64 @@ class Canvas extends React.Component {
 
   render() {
     // Anonymous Posting Buttons
-    var anonOffButton = (
-      <TouchableHighlight
-        onPress={() => this.toggleAnon()}
-        underlayColor="#ffffffaa"
-        style={[styles.anonButton, { backgroundColor: "#222222" }]}
-      >
-        <View style={styles.anonButtonView}>
-          <Icon name="lock-open" color="#FFFFFF" size={20} />
-          <Text style={styles.anonButtonText}> Anonymous OFF</Text>
-        </View>
-      </TouchableHighlight>
-    );
-
-    var anonOnButton = (
-      <TouchableHighlight
-        onPress={() => this.toggleAnon()}
-        underlayColor="#ffffffaa"
-        style={[styles.anonButton, { backgroundColor: "#006400" }]}
-      >
-        <View style={styles.anonButtonView}>
-          <Icon name="lock" color="#FFFFFF" size={20} />
-          <Text style={styles.anonButtonText}> Anonymous ON</Text>
-        </View>
-      </TouchableHighlight>
-    );
-
-    return (
-      <View style={styles.body}>
-        <StatusBarColor />
-        <Heading text="MiAM Editor" />
-        <KeyboardAwareScrollView>
-          <View style={styles.uploadIcons}>
+    // var anonOffButton = (
+    //   <TouchableHighlight
+    //     onPress={() => this.toggleAnon()}
+    //     underlayColor="#ffffffaa"
+    //     style={[styles.anonButton, { backgroundColor: "#222222" }]}
+    //   >
+    //     <View style={styles.anonButtonView}>
+    //       <Icon name="lock-open" color="#FFFFFF" size={20} />
+    //       <Text style={styles.anonButtonText}> Anonymous OFF</Text>
+    //     </View>
+    //   </TouchableHighlight>
+    // );
+    //
+    // var anonOnButton = (
+    //   <TouchableHighlight
+    //     onPress={() => this.toggleAnon()}
+    //     underlayColor="#ffffffaa"
+    //     style={[styles.anonButton, { backgroundColor: "#006400" }]}
+    //   >
+    //     <View style={styles.anonButtonView}>
+    //       <Icon name="lock" color="#FFFFFF" size={20} />
+    //       <Text style={styles.anonButtonText}> Anonymous ON</Text>
+    //     </View>
+    //   </TouchableHighlight>
+    // );
+    var uploadContainer = (
+      <View style={{ height: "82%", justifyContent: "center" }}>
+        <View style={styles.uploadContainer}>
+          <View style={styles.uploadButton}>
             <TouchableHighlight
               onPress={this.getImageFromRoll}
               underlayColor="white"
             >
-              <View style={styles.uploadContainer}>
-                <Icon name="photo" color="#ac3973" size={43} />
-                <Text style={styles.uploadContainerText}>Local files</Text>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Icon name="photo" color="#ac3973" size={100} />
+                <Text style={styles.uploadButtonText}>local files</Text>
               </View>
             </TouchableHighlight>
-
+          </View>
+          <View style={styles.uploadButton}>
             <TouchableHighlight
               onPress={this.goGetImageFromGiphy}
               underlayColor="white"
             >
-              <View style={styles.uploadContainer}>
-                <Icon name="gif" color="#ac3973" size={50} />
-                <Text style={styles.uploadContainerText}>Search Gif</Text>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Icon name="gif" color="#ac3973" size={110} />
+                <Text style={styles.uploadButtonText}>search Gif</Text>
               </View>
             </TouchableHighlight>
           </View>
-          <View style={styles.canvasContainer}>
-            <View style={styles.canvas}>
-              <View style={{ height: "85%", marginTop: "5%" }}>
-                {this.state.image && (
-                  <View>
-                    <Meme
-                      imgURL={this.state.image}
-                      layers={this.state.layers}
-                    />
-                  </View>
-                )}
-              </View>
-              <View
-                style={{
-                  justifyContent: "center",
-                  marginBottom: "1%"
-                }}
-              >
-                <TouchableHighlight
-                  onPress={this.editImage}
-                  underlayColor="white"
-                >
-                  <View style={styles.mainIcons}>
-                    <Text
-                      style={{
-                        fontSize: 23,
-                        color: "#a64dff",
-                        textAlign: "center",
-                        fontWeight: "bold"
-                      }}
-                    >
-                      Enter Edit Mode
-                    </Text>
-                    <Icon name="edit" color="#a64dff" size={25} />
-                  </View>
-                </TouchableHighlight>
-              </View>
-            </View>
-            <View style={styles.savePost}>
-              <TouchableHighlight
-                onPress={this.saveMeme}
-                underlayColor="#ffffff"
-              >
-                <View style={styles.savePostContainer}>
-                  <Icon name="save" color="#ac3973" size={30} />
-                  <Text style={styles.savePostText}>Save</Text>
-                </View>
-              </TouchableHighlight>
-
-              {this.state.anon ? anonOnButton : anonOffButton}
-              <View style={{ flexDirection: "column", marginRight: "2%" }}>
-                <TouchableHighlight
-                  onPress={this.sendPost}
-                  underlayColor="#ffffff"
-                >
-                  <View style={styles.savePostContainer}>
-                    <Icon name="send" color="#ac3973" size={30} />
-                    <Text style={styles.savePostText}>Post</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            </View>
-          </View>
-        </KeyboardAwareScrollView>
+        </View>
+      </View>
+    );
+    return (
+      <View style={styles.body}>
+        <StatusBarColor />
+        <Heading text="MiAM Editor" />
+        {this.state.image == null ? uploadContainer : <View />}
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
@@ -503,20 +445,31 @@ const styles = StyleSheet.create({
   savePostContainer: {
     flexDirection: "column"
   },
-  uploadIcons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: "1%",
+  uploadContainer: {
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center",
     width: "80%",
+    height: "80%",
     alignSelf: "center"
   },
-  uploadContainer: {
-    flexDirection: "row",
-    alignItems: "center"
+  uploadButton: {
+    width: "80%",
+    height: "45%",
+    borderWidth: 0.5,
+    marginTop: 1,
+    borderColor: "grey",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#a64dff",
+    shadowOffset: { height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3
   },
-  uploadContainerText: {
-    fontSize: 15,
-    color: "#a64dff",
-    fontWeight: "bold"
+  uploadButtonText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#b3b3cc"
   }
 });
