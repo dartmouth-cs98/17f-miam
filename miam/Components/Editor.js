@@ -132,8 +132,8 @@ class Editor extends React.Component {
       this.state.selectedObj.deselect();
 
     this.setState({
-      selectedObj: obj, 
-      selectedType: type, 
+      selectedObj: obj,
+      selectedType: type,
       selectedObjKey: key
     });
   }
@@ -247,7 +247,7 @@ class Editor extends React.Component {
       );
       return;
     }
-    
+
     if(layer == null){
       var newObj = <GifObj
                       key={key || this.state.key}

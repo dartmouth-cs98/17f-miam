@@ -63,7 +63,6 @@ export default class SearchProfileList extends React.Component {
         if (error) {
           console.log(error);
         } else {
-          console.log(response.data.battle_id);
           this.props.navigation.navigate("BattleList", {
             battleId: response.data.battle_id
           });

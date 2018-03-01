@@ -1,7 +1,7 @@
 import React from "react";
-import { 
-  AsyncStorage, 
-  Image, 
+import {
+  AsyncStorage,
+  Image,
   View,
   Animated,
   Easing,
@@ -53,7 +53,6 @@ class Splash extends React.Component {
       } else {
         this.setState({ nextState: "Feed" });
         this.goToNextState();
-        console.log(savedToken);
       }
     } catch (error) {
       console.log(error);
@@ -162,7 +161,7 @@ class Splash extends React.Component {
               <Animated.Image source={this.state.sunPic} onLoad={this.elasticBringIn} style={{ position: 'absolute', transform:[{rotate: sunRotateVal}] }}/>
               <Image source={this.state.mingPic}/>
             </Animated.View>
-            { this.state.fontLoaded && 
+            { this.state.fontLoaded &&
               <Animated.Text style={[styles.miamLogo, { opacity: textOpacity, letterSpacing: textSpacing, transform:[{translateY: 140}, {scale: textScaling}] }]}>
                 MiAM
               </Animated.Text>

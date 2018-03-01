@@ -80,7 +80,7 @@ class Canvas extends React.Component {
           originalPostID: this.props.navigation.state.params.originalPostID,
         });
       } else if (this.props.navigation.state.params.imgURL) {
-                  
+
         var originalPostID = null;
         if(this.props.navigation.state.params.originalPost != null)
           originalPostID = this.props.navigation.state.params.originalPost;
@@ -146,7 +146,6 @@ class Canvas extends React.Component {
           layers: []
         });
         alert("Successfully saved your meme!");
-        console.log(response.data);
       }
     });
   }
@@ -156,16 +155,6 @@ class Canvas extends React.Component {
   }
 
   createMeme() {
-    // var params = this.props.navigation.state.params;
-    // if (params && params.source === "battle") {
-    //   console.log(this.state.image);
-    //   this.props.navigation.navigate("BattleList", {
-    //     gifUrl: this.state.image,
-    //     memetext: this.state.text,
-    //     battleId: params.battleId
-    //   });
-    // } else {
-
     if (this.state.image == null) {
       alert("Please select an image or gif.");
       return;
