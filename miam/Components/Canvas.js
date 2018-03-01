@@ -302,31 +302,32 @@ class Canvas extends React.Component {
 
   render() {
     // Anonymous Posting Buttons
-    // var anonOffButton = (
-    //   <TouchableHighlight
-    //     onPress={() => this.toggleAnon()}
-    //     underlayColor="#ffffffaa"
-    //     style={[styles.anonButton, { backgroundColor: "#222222" }]}
-    //   >
-    //     <View style={styles.anonButtonView}>
-    //       <Icon name="lock-open" color="#FFFFFF" size={20} />
-    //       <Text style={styles.anonButtonText}> Anonymous OFF</Text>
-    //     </View>
-    //   </TouchableHighlight>
-    // );
-    //
-    // var anonOnButton = (
-    //   <TouchableHighlight
-    //     onPress={() => this.toggleAnon()}
-    //     underlayColor="#ffffffaa"
-    //     style={[styles.anonButton, { backgroundColor: "#006400" }]}
-    //   >
-    //     <View style={styles.anonButtonView}>
-    //       <Icon name="lock" color="#FFFFFF" size={20} />
-    //       <Text style={styles.anonButtonText}> Anonymous ON</Text>
-    //     </View>
-    //   </TouchableHighlight>
-    // );
+    var anonOffButton = (
+      <TouchableHighlight
+        onPress={() => this.toggleAnon()}
+        underlayColor="#ffffffaa"
+        style={[styles.anonButton, { backgroundColor: "#222222" }]}
+      >
+        <View style={styles.anonButtonView}>
+          <Icon name="lock-open" color="#FFFFFF" size={20} />
+          <Text style={styles.anonButtonText}> Anonymous OFF</Text>
+        </View>
+      </TouchableHighlight>
+    );
+    
+    var anonOnButton = (
+      <TouchableHighlight
+        onPress={() => this.toggleAnon()}
+        underlayColor="#ffffffaa"
+        style={[styles.anonButton, { backgroundColor: "#006400" }]}
+      >
+        <View style={styles.anonButtonView}>
+          <Icon name="lock" color="#FFFFFF" size={20} />
+          <Text style={styles.anonButtonText}> Anonymous ON</Text>
+        </View>
+      </TouchableHighlight>
+    );
+
     var uploadContainer = (
       <View style={{ height: "82%", justifyContent: "center" }}>
         <View style={styles.uploadContainer}>
@@ -355,11 +356,101 @@ class Canvas extends React.Component {
         </View>
       </View>
     );
+
+    var postUploadContainer = (
+      <KeyboardAwareScrollView>
+        <View style={styles.uploadIcons}>
+          <TouchableHighlight
+            onPress={this.getImageFromRoll}
+            underlayColor="white"
+          >
+            <View style={styles.uploadContainer}>
+              <Icon name="photo" color="#ac3973" size={43} />
+              <Text style={styles.uploadContainerText}>Local files</Text>
+            </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            onPress={this.goGetImageFromGiphy}
+            underlayColor="white"
+          >
+            <View style={styles.uploadContainer}>
+              <Icon name="gif" color="#ac3973" size={50} />
+              <Text style={styles.uploadContainerText}>Search Gif</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <View style={styles.canvasContainer}>
+          <View style={styles.canvas}>
+            <View style={{ height: "85%", marginTop: "5%" }}>
+              {this.state.image && (
+                <View>
+                  <Meme
+                    imgURL={this.state.image}
+                    layers={this.state.layers}
+                  />
+                </View>
+              )}
+            </View>
+            <View
+              style={{
+                justifyContent: "center",
+                marginBottom: "1%"
+              }}
+            >
+              <TouchableHighlight
+                onPress={this.editImage}
+                underlayColor="white"
+              >
+                <View style={styles.mainIcons}>
+                  <Text
+                    style={{
+                      fontSize: 23,
+                      color: "#a64dff",
+                      textAlign: "center",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    Enter Edit Mode
+                  </Text>
+                  <Icon name="edit" color="#a64dff" size={25} />
+                </View>
+              </TouchableHighlight>
+            </View>
+          </View>
+          <View style={styles.savePost}>
+            <TouchableHighlight
+              onPress={this.saveMeme}
+              underlayColor="#ffffff"
+            >
+              <View style={styles.savePostContainer}>
+                <Icon name="save" color="#ac3973" size={30} />
+                <Text style={styles.savePostText}>Save</Text>
+              </View>
+            </TouchableHighlight>
+
+            {this.state.anon ? anonOnButton : anonOffButton}
+            <View style={{ flexDirection: "column", marginRight: "2%" }}>
+              <TouchableHighlight
+                onPress={this.sendPost}
+                underlayColor="#ffffff"
+              >
+                <View style={styles.savePostContainer}>
+                  <Icon name="send" color="#ac3973" size={30} />
+                  <Text style={styles.savePostText}>Post</Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
+    );
+
     return (
       <View style={styles.body}>
         <StatusBarColor />
         <Heading text="MiAM Editor" />
-        {this.state.image == null ? uploadContainer : <View />}
+        {this.state.image == null ? uploadContainer : postUploadContainer}
         <NavigationBar navigation={this.props.navigation} />
       </View>
     );
