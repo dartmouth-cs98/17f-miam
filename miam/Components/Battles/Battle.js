@@ -148,7 +148,7 @@ class Battle extends React.Component {
       if (error) {
         alert(error);
       } else {
-        console.log(response.data.likes);
+        // console.log(response.data.likes);
         this.fetchBattle();
       }
     })
