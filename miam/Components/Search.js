@@ -124,8 +124,8 @@ export default class Search extends React.Component {
   renderHeaderTab(){
     return (
       <View style={styles.tabHeading}>
-        <SwitchSelector options={this.gifOptions} 
-          initial={0} 
+        <SwitchSelector options={this.gifOptions}
+          initial={0}
           fontSize={18}
           buttonColor={"#8A2BE2"}
           backgroundColor={"#ffffff00"}
@@ -165,7 +165,7 @@ export default class Search extends React.Component {
       <View>
         <StatusBarColor />
         <Heading
-          text="Miam"
+          text="MiAM"
           backButtonVisible={true}
           nav={this.props.navigation}
         />
@@ -186,7 +186,8 @@ export default class Search extends React.Component {
             <Text
               style={{
                 color: "#ffffff",
-                textAlign: "center"
+                textAlign: "center",
+                fontWeight: "bold"
               }}
             >
               Go
@@ -217,7 +218,9 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     height: "5%",
     flexDirection: "row",
-    margin: 2
+    margin: "2%",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   headingContainer: {
     flexDirection: "row"
@@ -234,16 +237,23 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   searchBar: {
-    borderWidth: 3,
-    width: "85%",
-    backgroundColor: "#f2d9e6",
-    borderColor: "#d279a6"
+    borderWidth: 2,
+    width: "70%",
+    borderColor: "#d9b3ff",
+    height: "100%",
+    borderRadius: 5,
+    margin: 5,
+    paddingHorizontal: 10
   },
   searchBarButton: {
-    backgroundColor: "#993366",
+    backgroundColor: "#b366ff",
     height: "100%",
-    width: "15%",
-    justifyContent: "center"
+    width: "20%",
+    justifyContent: "center",
+    borderRadius: 5,
+    margin: 5,
+    padding: 5,
+    width: "25%"
   },
   memeContainer: {
     borderWidth: 1,
@@ -258,10 +268,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3
   },
   tabHeading: {
-    marginHorizontal: 60, 
-    marginVertical: 3, 
+    marginHorizontal: 60,
+    marginVertical: 3,
     padding: 2,
-    transform:[{scale: 0.8}], 
+    transform:[{scale: 0.8}],
     borderColor: "#8A2BE2",
     borderWidth: 1,
     borderRadius: 100,

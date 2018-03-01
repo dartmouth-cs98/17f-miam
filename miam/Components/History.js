@@ -46,7 +46,6 @@ export default class History extends React.Component {
     }
 
     this.setState({
-      //dataSource: lv.cloneWithRows(listData),
       loaded: true,
     });
 
@@ -74,10 +73,17 @@ export default class History extends React.Component {
   renderListView(post) {
     var target = post.target != null ? post.target.username : "";
     var picture = post.target != null ? post.target.profilePic : "http://sprintresources.com/wp-content/uploads/2016/12/icon-user.png";
-    var time = post.createdAt;
+    var time = moment(post.createdAt).fromNow();
+
     var message = "";
     if (post.action == "follow") {
-      message = "is now following you.";
+      message = target + " is now following you.";
+    } else if (post.action == "like-post") {
+      message = target + " likes your post.";
+    } else if (post.action == "like-msg") {
+      message = target + " likes your messages.";
+    } else {
+      message = "You won in the battle " + post.action;
     }
 
     return (
@@ -88,7 +94,7 @@ export default class History extends React.Component {
         />
         <View style={styles.audienceBox}>
           <Text style={styles.message}>
-            {target} {message}
+            {message}
           </Text>
           <Text style={styles.time}>{time}</Text>
         </View>
