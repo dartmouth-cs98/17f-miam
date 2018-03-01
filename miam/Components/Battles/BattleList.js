@@ -109,7 +109,7 @@ export default class BattleList extends React.Component {
           if (error) {
             console.log(error);
           } else {
-            console.log(response);
+            // console.log(response);
             this.setState({
               myBattleDataSource: ds.cloneWithRows(response)
             });
@@ -543,13 +543,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   headingTabBar: {
-    width: "70%",
+    width: "75%",
     height: 28,
     borderBottomWidth: 2,
     borderColor: "#d9b3ff",
     borderRadius: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
     alignSelf: "center",
     margin: "3%"

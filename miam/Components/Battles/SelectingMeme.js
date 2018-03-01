@@ -42,7 +42,7 @@ class SelectingMeme extends React.Component {
       if (error) {
         console.log("Get saved memes error: " + error);
       } else {
-        console.log(response.data);
+        // console.log(response.data);
         this.setState({
           memesDataSource: ds.cloneWithRows(response.data),
           memes: response.data,
