@@ -43,7 +43,6 @@ class SignUp extends React.Component {
     e.preventDefault();
 
     let token = await Notifications.getExpoPushTokenAsync();
-    console.log(token);
 
     if (this.state.email !== "" && this.state.password !== "") {
       signUpUser(

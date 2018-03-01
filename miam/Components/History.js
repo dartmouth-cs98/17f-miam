@@ -57,7 +57,6 @@ export default class History extends React.Component {
       const token = await AsyncStorage.getItem("@Token:key");
       getUserNotification(token, async (response, error) => {
         if (response.data) {
-          console.log(response.data);
           this.setState({
             dataSource: lv.cloneWithRows(response.data),
           });
