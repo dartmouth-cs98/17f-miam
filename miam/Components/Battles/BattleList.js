@@ -51,6 +51,7 @@ export default class BattleList extends React.Component {
       loaded: false,
       selectedBattle: battleId,
       selectedBattleTheme: "",
+      selectedBattleExpired: false,
       pusher: {},
       myId: "",
       token: "",
@@ -91,7 +92,7 @@ export default class BattleList extends React.Component {
           if (error) {
             console.log(error);
           } else {
-            console.log(response);
+            // console.log(response);
             var sortedData =
               this.state.headingTabSelected == "new"
                 ? this.sortPostByNewest(response)
@@ -119,10 +120,12 @@ export default class BattleList extends React.Component {
     }
   }
 
-  selectBattle(battleId, theme) {
+  selectBattle(battle) {
+    const remainedTime = this.getTimeLeft(battle.startTime);
     this.setState({
-      selectedBattle: battleId,
-      selectedBattleTheme: theme
+      selectedBattle: battle._id,
+      selectedBattleTheme: battle.theme,
+      selectedBattleExpired: remainedTime === "Expired!"
     });
   }
 
@@ -171,7 +174,8 @@ export default class BattleList extends React.Component {
   returnToList() {
     this.setState({
       selectedBattle: "",
-      selectedBattleTheme: ""
+      selectedBattleTheme: "",
+      selectedBattleExpired: false
     });
     this.props.navigation.state.params = {};
   }
@@ -208,10 +212,11 @@ export default class BattleList extends React.Component {
   getTimeLeft(startTime) {
     var start = moment(startTime);
     var deadline = start.clone().add(24, "h");
-    if (start.isAfter(deadline)) {
-      return "expired";
+    var now = moment();
+    if (now.isAfter(deadline)) {
+      return "Expired!";
     } else {
-      return deadline.from(start);
+      return "Expire "+deadline.from(now);
     }
   }
   follow(battleId) {
@@ -234,7 +239,7 @@ export default class BattleList extends React.Component {
           if (error) {
             console.log(error);
           } else {
-            console.log(response);
+            // console.log(response);
             this.setState({
               myBattleDataSource: ds.cloneWithRows(response)
             });
@@ -248,7 +253,7 @@ export default class BattleList extends React.Component {
     return (
       <View style={styles.battleContainer}>
         <TouchableHighlight
-          onPress={() => this.selectBattle(battle._id, battle.theme)}
+          onPress={() => this.selectBattle(battle)}
           underlayColor="#ffffff"
         >
           <View>
@@ -294,7 +299,7 @@ export default class BattleList extends React.Component {
             <View style={styles.battleInfoContainer}>
               <View style={{ marginLeft: "2%" }}>
                 <Text style={{ fontSize: 10, color: "#000000" }}>
-                  expire {remainedTime}
+                  {remainedTime}
                 </Text>
               </View>
               <View style={{ flexDirection: "row", marginRight: "2%" }}>
@@ -334,7 +339,7 @@ export default class BattleList extends React.Component {
                 margin: 5,
                 paddingHorizontal: 10
               }}
-              maxLength={50}
+              maxLength={23}
               onChangeText={text => this.setState({ theme: text })}
               value={this.state.theme}
               placeholder="theme"
@@ -475,6 +480,7 @@ export default class BattleList extends React.Component {
             myId={this.state.myId}
             token={this.state.token}
             theme={this.state.selectedBattleTheme}
+            expired={this.state.selectedBattleExpired}
           />
         </View>
       );

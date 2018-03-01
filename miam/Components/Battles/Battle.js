@@ -314,7 +314,7 @@ class Battle extends React.Component {
               }}
               style={styles.listView}
             />
-            {this.renderInputBar()}
+            {!this.props.expired && this.renderInputBar()}
           </KeyboardAwareScrollView>
         </View>
       );
@@ -328,7 +328,7 @@ class Battle extends React.Component {
             onContentSizeChange={(contentWidth, contentHeight) => {
               this.scrollView.scrollToEnd({ animated: true });
             }}
-            contentContainerStyle={styles.scrollView}
+            contentContainerStyle={styles.scrollView, this.props.expired && {paddingBottom: "20%"}}
           >
             <ListView
               initialListSize={5}
@@ -338,7 +338,7 @@ class Battle extends React.Component {
                 return this.renderMsgRow(msg);
               }}
             />
-            {this.renderInputBar()}
+            {!this.props.expired && this.renderInputBar()}
           </KeyboardAwareScrollView>
         </View>
       );
@@ -362,11 +362,15 @@ class Battle extends React.Component {
           myId={this.props.myId}/>
       );
     } else {
+      let text = '#'+this.props.theme;
+      if (this.props.expired) {
+        text += " (expired)";
+      }
       return (
         <View style={styles.body}>
           <StatusBarColor />
           <Heading
-            text={'#'+this.props.theme}
+            text={text}
             backButtonVisible={true}
             backFunction={this.props.returnToList}
           />
@@ -505,7 +509,7 @@ const styles = StyleSheet.create({
 
   scrollView: {
     flexDirection: "column",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
 
   avator: {
