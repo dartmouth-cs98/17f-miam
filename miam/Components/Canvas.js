@@ -348,14 +348,14 @@ class Canvas extends React.Component {
 
     var postUploadContainer = (
       <KeyboardAwareScrollView>
-        <View style={styles.uploadIcons}>
+        <View style={styles.postUploadIcons}>
           <TouchableHighlight
             onPress={this.getImageFromRoll}
             underlayColor="white"
           >
-            <View style={styles.uploadContainer}>
+            <View style={styles.postUploadContainer}>
               <Icon name="photo" color="#ac3973" size={43} />
-              <Text style={styles.uploadContainerText}>Local files</Text>
+              <Text style={styles.postUploadContainerText}>Local files</Text>
             </View>
           </TouchableHighlight>
 
@@ -363,9 +363,9 @@ class Canvas extends React.Component {
             onPress={this.goGetImageFromGiphy}
             underlayColor="white"
           >
-            <View style={styles.uploadContainer}>
+            <View style={styles.postUploadContainer}>
               <Icon name="gif" color="#ac3973" size={50} />
-              <Text style={styles.uploadContainerText}>Search Gif</Text>
+              <Text style={styles.postUploadContainerText}>Search Gif</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -567,5 +567,21 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     color: "#b3b3cc"
+  },
+  postUploadIcons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: "1%",
+    width: "80%",
+    alignSelf: "center"
+  },
+  postUploadContainer: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  postUploadContainerText: {
+    fontSize: 15,
+    color: "#a64dff",
+    fontWeight: "bold"
   }
 });
