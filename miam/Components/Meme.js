@@ -5,7 +5,8 @@ import {
   Text,
   Image,
   View,
-  TouchableHighlight
+  TouchableHighlight,
+  ActivityIndicator
 } from "react-native";
 import TextObj from "./MemeObjects/TextMemeObj.js";
 import ImgObj from "./MemeObjects/ImgMemeObj.js";
@@ -18,7 +19,8 @@ class Meme extends React.Component {
       imgURL: this.props.imgURL,
       text: this.props.text || "",
       layers: this.props.layers || [],
-      viewScale: this.props.scale || 1
+      viewScale: this.props.scale || 1,
+      loadingComplete: false
     };
 
     this.defaultWidth = 300;
@@ -33,9 +35,9 @@ class Meme extends React.Component {
 
   componentWillReceiveProps(nextProps){
     if(nextProps.lastFeedAction && (nextProps.lastFeedAction === "sort" || nextProps.lastFeedAction === "delete"))
-      this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: ""}, () => this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text }));
-    else
-      this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text });
+      this.setState({ imgURL: "./Assets/Sun.png", layers: [], text: ""}, () => this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text, loadingComplete: false }));
+    else if(nextProps.layers !== this.state.layers && nextProps.imgURL !== this.state.imgURL)
+      this.setState({ imgURL: nextProps.imgURL, layers: nextProps.layers, text: nextProps.text, loadingComplete: false });
   }
 
   renderLayers(){
@@ -53,17 +55,23 @@ class Meme extends React.Component {
   }
 
   render() {
-
     var layerObjects = this.renderLayers();
+    var meme = <Image source={{ uri: this.state.imgURL }} onLoad={ () => this.setState({ loadingComplete: true }) } style={[styles.memeStyle, {width: this.defaultWidth * this.state.viewScale, height: this.defaultHeight * this.state.viewScale}]} resizeMode="contain">
+                {layerObjects}
+              </Image>;
 
     return (
-      <View style={styles.memeContainer}>
-        <Image source={{ uri: this.state.imgURL }} style={[styles.memeStyle, {width: this.defaultWidth * this.state.viewScale, height: this.defaultHeight * this.state.viewScale}]} resizeMode="contain">
-          {layerObjects}
-        </Image>
-        <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
-          {this.state.text}
-        </Text>
+      <View>
+        <View style={[styles.memeContainer, {opacity: this.state.loadingComplete ? 1 : 0, height: this.state.loadingComplete ? null : 0 }]}>
+          {meme}
+          <Text style={{ textAlign: "center", fontSize: 14, fontWeight: "bold" }}>
+            {this.state.text}
+          </Text>
+        </View>
+        <View style={{ flex: 1, width: this.defaultWidth, height: this.state.loadingComplete ? 0 : this.defaultHeight, alignItems: 'center', justifyContent: 'center', opacity: this.state.loadingComplete ? 0 : 1 }}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text>Loading...</Text>
+        </View>
       </View>
     );
   }
