@@ -68,7 +68,6 @@ export default class SearchProfile extends React.Component {
         } else if (response.data.length === 0){
           alert("User not found.");
         } else {
-          console.log(response.data);
           this.setState({
             profiles: response.data,
             profileList: ds.cloneWithRows(response.data)

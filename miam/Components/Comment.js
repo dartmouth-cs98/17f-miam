@@ -174,7 +174,6 @@ class Comment extends Component {
             alert(err);
           else{
             this.setState({post: res.data});
-            console.log(res.data);
           }
         });
       }
@@ -343,7 +342,7 @@ class Comment extends Component {
       inputRange: [0, 1],
       outputRange: ['45deg', '-45deg'],
     });
-    
+
     var starIcon = <Icon name="star" color="#FFDF00" size={45} />;
     var sunIcon  = <Image source={this.state.sunPic} style={{width: 50, height: 50, resizeMode: "contain"}}/>;
     var leftAnimStar = <Animated.View style={{ right: "50%", transform: [{rotate: interpolRotLeft}] }}>{sunIcon}</Animated.View>;
@@ -365,7 +364,7 @@ class Comment extends Component {
                           style={styles.originalPosterBox}
                           colors={[ '#1D2671', '#9733EE' ]}
                           start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 1 }}>      
+                          end={{ x: 1, y: 1 }}>
                           <View style={{ flexDirection: "row", paddingTop: 3, paddingBottom: 3, justifyContent: "center", alignItems: "center"}}>
                             {leftAnimStar}
                             <View style={{alignItems: "center"}}>
@@ -506,7 +505,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   originalPosterBox: {
-    alignItems: 'center', 
+    alignItems: 'center',
     margin: 3,
     borderRadius: 15,
     padding: 5
