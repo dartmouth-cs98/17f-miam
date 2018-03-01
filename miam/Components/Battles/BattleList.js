@@ -22,6 +22,7 @@ import SearchProfile from "../SearchProfile";
 import { fetchBattles, createBattle, followBattle, fetchMyBattles } from "../../api";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
+const vh = Dimensions.get("window").height;
 import Pusher from "pusher-js/react-native";
 
 // <SearchProfile
@@ -518,9 +519,10 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    marginTop: "1%",
+    marginTop: vh*0.01,
+    marginBottom: vh*0.01,
     flexDirection: "column",
-    paddingBottom: "1%"
+    justifyContent: "space-between"
   },
   iconContainer: {
     flex: 1,
