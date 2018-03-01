@@ -365,7 +365,7 @@ class Editor extends React.Component {
       layers.push(this.layerRefs[key].getLayerInfo());
     }
 
-    this.props.navigation.navigate("Canvas", { imgURL: this.state.imgURL, layers: layers });
+    this.props.navigation.navigate("Canvas", { imgURL: this.state.imgURL, layers: layers, originalPostID: this.props.navigation.state.params.originalPostID, fromEditor: true });
   }
 
   render() {
@@ -531,7 +531,7 @@ class Editor extends React.Component {
               style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.fontSize}
               maximumValue={50}
-              minimumValue={10}
+              minimumValue={5}
               step={1}
               onValueChange={(value) => this.state.selectedObj.setState({fontSize: value})} />
           </View>
@@ -655,7 +655,7 @@ class Editor extends React.Component {
               style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.scaling}
               maximumValue={3}
-              minimumValue={0.5}
+              minimumValue={0.1}
               step={0.1}
               onValueChange={(value) => this.state.selectedObj.setState({scaling: value})} />
           </View>
@@ -748,7 +748,7 @@ class Editor extends React.Component {
               style={styles.sliderEditorStyle}
               value={this.state.selectedObj.state.scaling}
               maximumValue={3}
-              minimumValue={0.5}
+              minimumValue={0.1}
               step={0.1}
               onValueChange={(value) => this.state.selectedObj.setState({scaling: value})} />
           </View>
@@ -777,7 +777,7 @@ module.exports = Editor;
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: "#000000"
+    backgroundColor: "#000000",
   },
   mainEditorDrawer: {
     alignSelf: 'center',

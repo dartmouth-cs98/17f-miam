@@ -25,6 +25,7 @@
     "react-native-popup-menu": "^0.12.2",
     "react-native-signature-capture": "^0.4.9",
     "react-native-slider": "^0.11.0",
+    "react-native-switch-selector": "^1.1.4",
     "react-native-textinput-effects": "^0.4.1",
     "react-native-vector-icons": "^4.4.2",
     "react-native-view-shot": "^2.1.1",

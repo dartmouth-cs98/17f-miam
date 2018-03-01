@@ -69,8 +69,8 @@ export function unFollowUser(lostFollower, token, cb) {
   axios
     .delete(
       url,
-      { followedUserId: lostFollower },
-      { headers: { Authorization: token } }
+      { headers: { Authorization: token } },
+      { unfollowedUserId: lostFollower },
     )
     .then(async response => {
       cb(response, null);
@@ -171,7 +171,6 @@ export function createBattle(theme, token, cb) {
 
 export function createPost(postObj, token, cb) {
   const url = `${ROOT_URL}/posts`;
-  console.log(postObj.imgURL);
   axios
     .post(url, postObj, { headers: { Authorization: token } })
     .then(response => {
@@ -185,6 +184,17 @@ export function createPost(postObj, token, cb) {
 export function fetchPosts(cb) {
   axios
     .get(`${ROOT_URL}/posts/`)
+    .then(response => {
+      cb(response, null);
+    })
+    .catch(error => {
+      console.log(error.response);
+    });
+}
+
+export function fetchSinglePost(postID, cb) {
+  axios
+    .get(`${ROOT_URL}/posts/${postID}`)
     .then(response => {
       cb(response, null);
     })

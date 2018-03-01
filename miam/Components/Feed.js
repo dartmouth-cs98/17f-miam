@@ -384,7 +384,7 @@ export default class Feed extends React.Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    userId: userId,
+                    // userId: userId,
                     username: username
                   })}
               >
@@ -397,7 +397,7 @@ export default class Feed extends React.Component {
               <TouchableHighlight
                 onPress={() =>
                   this.props.navigation.navigate("Profile", {
-                    userId: userId,
+                    // userId: userId,
                     username: username
                   })}
               >
@@ -452,8 +452,7 @@ export default class Feed extends React.Component {
               underlayColor="white"
               onPress={() =>
                 this.props.navigation.navigate("Comment", {
-                  postID: post._id,
-                  comments: post.comments
+                  postID: post._id
                 })}
             >
               <Icon name="mode-comment" color="#cc6699" size={25} />
@@ -468,9 +467,10 @@ export default class Feed extends React.Component {
               onPress={() =>
                 this.props.navigation.navigate("Canvas", {
                   imgURL: post.meme.imgURL,
-                  layers: post.meme.layers
-                })}
-            >
+                  layers: post.meme.layers,
+                  postID: post._id,
+                  originalPost: post.originalPost
+                })}>
               <Icon name="autorenew" color="#cc6699" size={25} />
             </TouchableHighlight>
           </View>

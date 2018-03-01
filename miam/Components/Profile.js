@@ -37,7 +37,6 @@ export default class Profile extends React.Component {
 
     this.state = {
       dataSource: lv.cloneWithRows(["row 1", "row 2"]),
-      postDataSource: ds.cloneWithRows([]),
       loaded: false,
       userId: "",
       userName: "Default",
@@ -63,7 +62,9 @@ export default class Profile extends React.Component {
   componentDidMount() {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
-      let userId = this.props.navigation.state.params.userId;
+      let userId = this.props.navigation.state.params.userId || null;
+      //console.log(this.props.navigation.state.params);
+
       this.getTargetUser(username);
       this.setState({
         userName: username,
@@ -76,8 +77,7 @@ export default class Profile extends React.Component {
     }
 
     this.setState({
-      dataSource: lv.cloneWithRows([this.state.followerlist]),
-      postDataSource: ds.cloneWithRows(customData),
+      dataSource: lv.cloneWithRows(this.state.followerlist),
       loaded: true,
     });
   }
@@ -142,6 +142,7 @@ export default class Profile extends React.Component {
     try {
       getTargetUserProfile(username, async (response, error) => {
         if (response.data) {
+          console.log(response.data);
           this.setState({
             userName: response.data[0].username,
             followerlist: response.data[0].followers,
@@ -186,45 +187,46 @@ export default class Profile extends React.Component {
     let targetUserId = this.props.navigation.state.params.userId;
     const token = await AsyncStorage.getItem("@Token:key");
 
-    console.log("fdayu");
-    console.log(this.state.followed);
-
-    if (!this.state.followed) {
-      this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
-      followUser(
-        targetUserId,
-        token,
-        (response, error) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("Successfully follow user.");
-          }
+    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
+    followUser(
+      targetUserId,
+      token,
+      (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Successfully follow user.");
         }
-      );
-      this.setState({ followed: true });
-    } else {
-      console.log("heyhey");
-      console.log(this.state.observerFollowingList);
-
-      // this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
-      unFollowUser(
-        targetUserId,
-        token,
-        (response, error) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("Successfully unfollow user.");
-          }
-        }
-      );
-      this.setState({ followed: false });
-    }
+      }
+    );
+    this.setState({ followed: true });
   };
 
   onUnfollowUser = async () => {
+    let myUsername = this.state.observer;
+    let targetUserId = this.props.navigation.state.params.userId;
+    const token = await AsyncStorage.getItem("@Token:key");
 
+    console.log("heyhey");
+    console.log(token);
+
+    console.log(this.state.observerFollowingList);
+
+    // this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
+    unFollowUser(
+      targetUserId,
+      token,
+      (response, error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Successfully unfollow user.");
+        }
+      }
+    );
+
+    console.log("lollll");
+    this.setState({ followed: false });
   }
 
   onChangeProfile = async () => {
@@ -339,7 +341,6 @@ export default class Profile extends React.Component {
 
   setEditorRef = editor => (this.editor = editor);
 
-
   async signOut() {
     try {
       await AsyncStorage.removeItem("@Token:key");
@@ -352,7 +353,6 @@ export default class Profile extends React.Component {
   }
 
   renderListView(post) {
-    console.log(post.profilePic);
     return (
       <View style={styles.singleListContainer}>
         <Image
@@ -491,7 +491,12 @@ export default class Profile extends React.Component {
             >
               Sign Out
             </Button>
-            <Icon name="exit-to-app" color="grey" size={25} />
+            <TouchableHighlight
+              onPress={this.signOut}
+              underlayColor="#ffffff"
+            >
+              <Icon name="exit-to-app" color="grey" size={25} />
+            </TouchableHighlight>
           </View>
         }
         <NavigationBar navigation={this.props.navigation} />
@@ -630,6 +635,8 @@ const styles = StyleSheet.create({
   },
   nameScore: {
     flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   }
 });
 

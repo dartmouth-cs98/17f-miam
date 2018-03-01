@@ -42,7 +42,9 @@ class Canvas extends React.Component {
       showCaption: false,
       gifWords: "Sup",
       res: null,
-      token: ""
+      token: "",
+
+      originalPostID: null
     };
 
     this.goGetImageFromGiphy = this.goGetImageFromGiphy.bind(this);
@@ -71,10 +73,24 @@ class Canvas extends React.Component {
         this.setState({
           image: this.props.navigation.state.params.gifurl
         });
-      } else if (this.props.navigation.state.params.imgURL) {
+      } else if (this.props.navigation.state.params.fromEditor) {
         this.setState({
           image: this.props.navigation.state.params.imgURL,
-          layers: this.props.navigation.state.params.layers
+          layers: this.props.navigation.state.params.layers,
+          originalPostID: this.props.navigation.state.params.originalPostID,
+        });
+      } else if (this.props.navigation.state.params.imgURL) {
+                  
+        var originalPostID = null;
+        if(this.props.navigation.state.params.originalPost != null)
+          originalPostID = this.props.navigation.state.params.originalPost;
+        else
+          originalPostID = this.props.navigation.state.params.postID;
+
+        this.setState({
+          image: this.props.navigation.state.params.imgURL,
+          layers: this.props.navigation.state.params.layers,
+          originalPostID: originalPostID,
         });
       }
     }
@@ -163,7 +179,8 @@ class Canvas extends React.Component {
       hashtags: "",
       memetext: this.state.text,
       posttext: this.state.text,
-      anon: this.state.anon
+      anon: this.state.anon,
+      originalPost: this.state.originalPostID
     };
     createPost(postObj, this.state.token, (response, error) => {
       if (error) {
@@ -176,7 +193,8 @@ class Canvas extends React.Component {
           showCaption: false,
           res: null,
           layers: [],
-          anon: false
+          anon: false,
+          originalPostID: null
         });
         alert("Successfully posted your meme!");
       }
@@ -275,11 +293,9 @@ class Canvas extends React.Component {
   editImage() {
     if (this.state.image != null) {
       var imgURL = this.state.image;
-      this.props.navigation.navigate("Editor", {
-        imgURL: this.state.image,
-        layers: this.state.layers
-      });
-    } else {
+      this.props.navigation.navigate("Editor", { imgURL: this.state.image, layers: this.state.layers, originalPostID: this.state.originalPostID });
+    }
+    else{
       alert("Select an image before entering Editor Mode");
     }
   }

@@ -14,11 +14,12 @@ import {
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import SwitchSelector from 'react-native-switch-selector';
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
-const apiUrl = "http://api.giphy.com/v1/gifs/search?";
+const apiUrl = ["http://api.giphy.com/v1/", "/search?"];
 const apiKey = "7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx";
 const limit = "30";
 
@@ -27,19 +28,31 @@ export default class Search extends React.Component {
     super(props);
     this.state = {
       isLoading: true,
-      text: ""
+      text: "",
+      mode: "gifs"
     };
+
+    this.gifOptions = [
+      { label: 'Gifs', value: 'gifs' },
+      { label: 'Stickers', value: 'stickers' }
+    ];
+
+    this.fetchTrending = this.fetchTrending.bind(this);
     this.fetchData = this.fetchData.bind(this);
     this.selectMeme = this.selectMeme.bind(this);
+    this.renderHeaderTab = this.renderHeaderTab.bind(this);
     this.renderRow = this.renderRow.bind(this);
+    this.tabSwitch = this.tabSwitch.bind(this);
   }
 
   fetchData(offset = 0) {
     if (this.state.text === "") {
-      return;
+      return this.fetchTrending();
     }
     var query =
-      apiUrl +
+      apiUrl[0] +
+      this.state.mode +
+      apiUrl[1] +
       "q=" +
       this.state.text +
       "&api_key=" +
@@ -50,6 +63,8 @@ export default class Search extends React.Component {
       .then(response => response.json())
       .then(responseJson => {
         if (responseJson.data.length === 0) {
+          alert("Unable to find results");
+          return;
         }
         let ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
@@ -65,12 +80,15 @@ export default class Search extends React.Component {
   }
 
   componentDidMount() {
+    return this.fetchTrending();
+  }
+
+  fetchTrending() {
     return fetch(
-      "http://api.giphy.com/v1/gifs/trending?api_key=7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx"
+      "http://api.giphy.com/v1/" + this.state.mode + "/trending?api_key=7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx"
     )
       .then(response => response.json())
       .then(responseJson => {
-        console.log(responseJson);
         let ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
         });
@@ -83,6 +101,11 @@ export default class Search extends React.Component {
         console.error(error);
       });
   }
+
+  tabSwitch(mode){
+    this.setState({ mode: mode }, () => this.fetchData());
+  }
+
   selectMeme(url) {
     var params = this.props.navigation.state.params;
 
@@ -97,6 +120,21 @@ export default class Search extends React.Component {
       // this.props.navigation.navigate("Canvas", { gifurl: url });
     }
   }
+
+  renderHeaderTab(){
+    return (
+      <View style={styles.tabHeading}>
+        <SwitchSelector options={this.gifOptions} 
+          initial={0} 
+          fontSize={18}
+          buttonColor={"#8A2BE2"}
+          backgroundColor={"#ffffff00"}
+          onPress={(value) => this.tabSwitch(value)}
+        />
+      </View>
+    );
+  }
+
   renderRow(rowData) {
     return (
       <View style={styles.memeContainer}>
@@ -113,10 +151,11 @@ export default class Search extends React.Component {
       </View>
     );
   }
+
   render() {
     if (this.state.isLoading) {
       return (
-        <View style={{ flex: 1, paddingTop: 20 }}>
+        <View style={{ flex: 1, paddingTop: 20, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator />
           <Text>Loading...</Text>
         </View>
@@ -130,6 +169,7 @@ export default class Search extends React.Component {
           backButtonVisible={true}
           nav={this.props.navigation}
         />
+
         <View style={styles.searchBarContainer}>
           <TextInput
             style={styles.searchBar}
@@ -153,10 +193,12 @@ export default class Search extends React.Component {
             </Text>
           </TouchableHighlight>
         </View>
+
         <View>
           <ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
+            renderHeader={this.renderHeaderTab}
             renderRow={rowData => {
               return this.renderRow(rowData);
             }}
@@ -174,7 +216,8 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     height: "5%",
-    flexDirection: "row"
+    flexDirection: "row",
+    margin: 2
   },
   headingContainer: {
     flexDirection: "row"
@@ -213,6 +256,16 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3
+  },
+  tabHeading: {
+    marginHorizontal: 60, 
+    marginVertical: 3, 
+    padding: 2,
+    transform:[{scale: 0.8}], 
+    borderColor: "#8A2BE2",
+    borderWidth: 1,
+    borderRadius: 100,
+    backgroundColor: "#D8BFD8",
   }
 });
 module.exports = Search;
