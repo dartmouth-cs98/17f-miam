@@ -14,14 +14,14 @@ import {
   TextInput
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import SwitchSelector from 'react-native-switch-selector';
+import SwitchSelector from "react-native-switch-selector";
 import StatusBarColor from "./StatusBarColor";
 import Heading from "./Heading";
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 const apiUrl = ["http://api.giphy.com/v1/", "/search?"];
 const apiKey = "7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx";
-const limit = "30";
+const limit = "50";
 
 export default class Search extends React.Component {
   constructor(props) {
@@ -33,8 +33,8 @@ export default class Search extends React.Component {
     };
 
     this.gifOptions = [
-      { label: 'Gifs', value: 'gifs' },
-      { label: 'Stickers', value: 'stickers' }
+      { label: "Gifs", value: "gifs" },
+      { label: "Stickers", value: "stickers" }
     ];
 
     this.fetchTrending = this.fetchTrending.bind(this);
@@ -85,7 +85,9 @@ export default class Search extends React.Component {
 
   fetchTrending() {
     return fetch(
-      "http://api.giphy.com/v1/" + this.state.mode + "/trending?api_key=7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx"
+      "http://api.giphy.com/v1/" +
+        this.state.mode +
+        "/trending?api_key=7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx"
     )
       .then(response => response.json())
       .then(responseJson => {
@@ -102,7 +104,7 @@ export default class Search extends React.Component {
       });
   }
 
-  tabSwitch(mode){
+  tabSwitch(mode) {
     this.setState({ mode: mode }, () => this.fetchData());
   }
 
@@ -121,15 +123,16 @@ export default class Search extends React.Component {
     }
   }
 
-  renderHeaderTab(){
+  renderHeaderTab() {
     return (
       <View style={styles.tabHeading}>
-        <SwitchSelector options={this.gifOptions}
+        <SwitchSelector
+          options={this.gifOptions}
           initial={0}
           fontSize={18}
           buttonColor={"#8A2BE2"}
           backgroundColor={"#ffffff00"}
-          onPress={(value) => this.tabSwitch(value)}
+          onPress={value => this.tabSwitch(value)}
         />
       </View>
     );
@@ -155,7 +158,14 @@ export default class Search extends React.Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <View style={{ flex: 1, paddingTop: 20, alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{
+            flex: 1,
+            paddingTop: 20,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
           <ActivityIndicator />
           <Text>Loading...</Text>
         </View>
@@ -220,7 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     margin: "2%",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "center"
   },
   headingContainer: {
     flexDirection: "row"
@@ -271,11 +281,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 60,
     marginVertical: 3,
     padding: 2,
-    transform:[{scale: 0.8}],
+    transform: [{ scale: 0.8 }],
     borderColor: "#8A2BE2",
     borderWidth: 1,
     borderRadius: 100,
-    backgroundColor: "#D8BFD8",
+    backgroundColor: "#D8BFD8"
   }
 });
 module.exports = Search;
