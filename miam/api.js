@@ -69,8 +69,9 @@ export function unFollowUser(lostFollower, token, cb) {
   axios
     .delete(
       url,
-      { headers: { Authorization: token } },
-      { unfollowedUserId: lostFollower },
+      { headers: { Authorization: token },
+        data: {unfollowedUserId: lostFollower}
+      }
     )
     .then(async response => {
       cb(response, null);

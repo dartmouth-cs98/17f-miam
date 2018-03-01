@@ -63,7 +63,6 @@ export default class Profile extends React.Component {
     if (this.props.navigation.state.params){
       let username = this.props.navigation.state.params.username;
       let userId = this.props.navigation.state.params.userId || null;
-      //console.log(this.props.navigation.state.params);
 
       this.getTargetUser(username);
       this.setState({
@@ -142,7 +141,6 @@ export default class Profile extends React.Component {
     try {
       getTargetUserProfile(username, async (response, error) => {
         if (response.data) {
-          console.log(response.data);
           this.setState({
             userName: response.data[0].username,
             followerlist: response.data[0].followers,
@@ -185,9 +183,12 @@ export default class Profile extends React.Component {
   onFollowUser = async () => {
     let myUsername = this.state.observer;
     let targetUserId = this.props.navigation.state.params.userId;
+
     const token = await AsyncStorage.getItem("@Token:key");
 
-    this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
+    let before = this.state.followers;
+    this.setState({ followers: before+1 });
+
     followUser(
       targetUserId,
       token,
@@ -207,12 +208,8 @@ export default class Profile extends React.Component {
     let targetUserId = this.props.navigation.state.params.userId;
     const token = await AsyncStorage.getItem("@Token:key");
 
-    console.log("heyhey");
-    console.log(token);
-
-    console.log(this.state.observerFollowingList);
-
-    // this.setState({ observerFollowingList: this.state.observerFollowingList.push(targetUserId) });
+    let before = this.state.followers;
+    this.setState({ followers: before-1 });
     unFollowUser(
       targetUserId,
       token,
@@ -225,7 +222,6 @@ export default class Profile extends React.Component {
       }
     );
 
-    console.log("lollll");
     this.setState({ followed: false });
   }
 
