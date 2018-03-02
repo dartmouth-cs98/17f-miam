@@ -318,7 +318,7 @@ class Comment extends Component {
             <TouchableHighlight
               underlayColor="white"
               onPress={() =>
-                this.props.navigation.navigate("Canvas", {
+                this.props.navigation.navigate("Editor", {
                   imgURL: post.meme.imgURL,
                   layers: post.meme.layers,
                   postID: this.state.post._id,

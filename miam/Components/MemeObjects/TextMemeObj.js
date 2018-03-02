@@ -134,10 +134,7 @@ class TextMemeObj extends React.Component{
 		            		color: 'rgb(' + this.state.red + ',' + this.state.green + ',' + this.state.blue + ')',
 		            		fontSize: this.state.fontSize,
 		            		fontWeight: 'bold',
-		            		textAlign: "center",
-		            		shadowColor: "#000000",
-		            		shadowOpacity: 255,
-		            		shadowRadius: 10
+		            		textAlign: "center"
 		            	}
 		            }>
 		            	{this.state.text}

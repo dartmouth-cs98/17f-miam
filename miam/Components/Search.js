@@ -117,9 +117,8 @@ export default class Search extends React.Component {
         battleId: params.battleId
       });
     } else {
-      params.sendImgURLBack(url);
       this.props.navigation.goBack();
-      // this.props.navigation.navigate("Canvas", { gifurl: url });
+      params.sendImgURLBack(url);
     }
   }
 
