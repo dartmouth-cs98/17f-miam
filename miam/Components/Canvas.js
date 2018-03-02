@@ -211,7 +211,7 @@ class Canvas extends React.Component {
     // Returning promise
     uploadImage(file)
       .then(function(datum) {
-        canvasObj.setState({ image: datum.url });
+        canvasObj.props.navigation.navigate("Editor", { imgURL: datum.url });
       })
       .catch(function(err) {
         console.log(err);
@@ -254,9 +254,7 @@ class Canvas extends React.Component {
   }
 
   receiveGifURL(gifURL) {
-    this.setState({
-      image: gifURL
-    });
+    this.props.navigation.navigate("Editor", { imgURL: gifURL });
   }
 
   createTextObj() {

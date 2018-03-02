@@ -24,8 +24,8 @@ import ViewShot from "react-native-view-shot";
 import FadeAnim from "./AnimatedComponents/FadeAnim";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { captureRef } from "react-native-view-shot";
-import { createPost } from "../api";
-import { uploadImage } from "../api";
+import { createPost, saveNewMeme, uploadImage } from "../api";
+import { Menu, MenuProvider, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import TextObj from "./MemeObjects/TextMemeObj.js";
 import ImgObj from "./MemeObjects/ImgMemeObj.js";
 import GifObj from "./MemeObjects/GifMemeObj.js";
@@ -42,18 +42,25 @@ class Editor extends React.Component {
       selectedObjKey: -1,
 
       editorMode: "",
-
       layers: [],
-      key: 0
+      key: 0,
+
+      anon: false,
+      token: "",
+      originalPostID: null
     };
 
-    this.layerLimit = 25;
+    // Pre-editing methods
+    this.retrieveToken = this.retrieveToken.bind(this);
+
+    // Layer Variables and Methods
+    this.layerLimit           = 25;
     this.layerRefs            = [];
+    this.getLayers            = this.getLayers.bind(this);
     this.addLayerRef          = this.addLayerRef.bind(this);
     this.addObjectsFromLayers = this.addObjectsFromLayers.bind(this);
 
     // Editor methods
-    this.getLayers      = this.getLayers.bind(this);
     this.clearAll       = this.clearAll.bind(this);
     this.selectObj      = this.selectObj.bind(this);
     this.unselectObj    = this.unselectObj.bind(this);
@@ -78,17 +85,49 @@ class Editor extends React.Component {
     this.editBringToFront = this.editBringToFront.bind(this);
     this.editBringToBack  = this.editBringToBack.bind(this);
 
+    // Post-editing methods
+    this.saveMeme   = this.saveMeme.bind(this);
+    this.toggleAnon    = this.toggleAnon.bind(this);
     this.finishEditing = this.finishEditing.bind(this);
   }
 
+  componentWillMount() {
+    this.retrieveToken();
+  }
+
   componentDidMount() {
-    if (this.props.navigation.state.params) {   // This used to be ...params.imgURL
+    if (this.props.navigation.state.params.layers) {
       if(this.props.navigation.state.params.layers)
         this.addObjectsFromLayers(this.props.navigation.state.params.layers);
 
+      var originalPostID = null;
+      if(this.props.navigation.state.params.originalPost != null)
+        originalPostID = this.props.navigation.state.params.originalPost;
+      else
+        originalPostID = this.props.navigation.state.params.postID;
+
       this.setState({
-        imgURL: this.props.navigation.state.params.imgURL || "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png"
+        imgURL: this.props.navigation.state.params.imgURL || "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png",
+        originalPostID: originalPostID
       });
+    }
+
+    else
+      this.setState({ imgURL: this.props.navigation.state.params.imgURL || "https://icon-icons.com/icons2/317/PNG/512/sign-error-icon_34362.png" });
+  }
+
+  async retrieveToken() {
+    try {
+      const savedToken = await AsyncStorage.getItem("@Token:key");
+      if (savedToken === null) {
+        this.props.navigation.navigate("LogIn");
+      } else {
+        this.setState({
+          token: savedToken
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -358,14 +397,64 @@ class Editor extends React.Component {
     }));
   }
 
-  finishEditing(){
+  toggleAnon() {
+    var newAnonState = !this.state.anon;
+    this.setState({
+      anon: newAnonState
+    });
+  }
+
+  saveMeme() {
     let layers = [];
     for(let i = 0; i < this.state.layers.length; i++){
       let key = this.state.layers[i]["key"];
       layers.push(this.layerRefs[key].getLayerInfo());
     }
 
-    this.props.navigation.navigate("Canvas", { imgURL: this.state.imgURL, layers: layers, originalPostID: this.props.navigation.state.params.originalPostID, fromEditor: true });
+    const meme = {
+      imgURL: this.state.imgURL,
+      layers: layers
+    };
+
+    saveNewMeme(meme, this.state.token, (response, error) => {
+      if (error)
+        alert(error);
+      else
+        alert("Successfully saved your meme!");
+    });
+  }
+
+  finishEditing(anon){
+    let layers = [];
+    for(let i = 0; i < this.state.layers.length; i++){
+      let key = this.state.layers[i]["key"];
+      layers.push(this.layerRefs[key].getLayerInfo());
+    }
+
+    const postObj = {
+      meme: {
+        imgURL: this.state.imgURL,
+        layers: layers
+      },
+      hashtags: "",
+      memetext: "",
+      posttext: "",
+      anon: anon,
+      originalPost: this.state.originalPostID
+    };
+
+    createPost(postObj, this.state.token, (response, error) => {
+      if (error) {
+        alert(error);
+      } else {
+        Alert.alert(
+          'Meme Submitted',
+          'Successfully posted your meme!',
+          [ {text: 'OK', onPress: () => this.props.navigation.navigate("Feed")} ],
+          { cancelable: false }
+        );
+      }
+    });
   }
 
   render() {
@@ -375,6 +464,21 @@ class Editor extends React.Component {
     var imgEditorVisible = (this.state.selectedType == "img");
     var gifEditorVisible = (this.state.selectedType == "gif");
 
+    var postOptionArr = [
+      <MenuOption key={1} value={false}>
+        <View style={styles.popUpMenuButton}>
+          <Icon name="lock-open" color="#6a3093" size={18}/>
+          <Text style={[ styles.popUpMenuText, { color: "#6a3093" } ]}> Post Normally </Text>
+        </View>
+      </MenuOption>,
+      <MenuOption key={2} value={true}>
+        <View style={styles.popUpMenuButton}>
+          <Icon name="lock" color="#6a3093" size={18}/>
+          <Text style={[ styles.popUpMenuText, { color: "#6a3093" } ]}> Post Anonymously </Text>
+        </View>
+      </MenuOption>
+    ];
+
     return (
       <View style={styles.body}>
         <StatusBarColor />
@@ -383,6 +487,8 @@ class Editor extends React.Component {
           backButtonVisible={true}
           nav={this.props.navigation}
         />
+        <MenuProvider>
+
         <TouchableWithoutFeedback onPress={this.unselectObj}>
           <Image source={{ uri: this.state.imgURL }} style={styles.memeStyle} resizeMode="contain">
             {this.state.layers}
@@ -395,26 +501,10 @@ class Editor extends React.Component {
           <Text style={styles.mainEditorDrawerTitleText}> EDITOR DRAWER </Text>
 
           <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight onPress={() => this.addText()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#007D75"}]}>
+            <TouchableHighlight onPress={() => this.addText()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#1d4678"}]}>
               <View style={styles.mainEditorDrawerButtonView} >
                 <Icon name="text-fields" color="#FFFFFF" size={20}/>
                 <Text style={styles.mainEditorDrawerButtonText}>  Add Text</Text>
-              </View>
-            </TouchableHighlight>
-
-            <TouchableHighlight onPress={() => this.getImageFromRoll("create")} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#EC6778"}]}>
-              <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="collections" color="#FFFFFF" size={20}/>
-                <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-
-          <View style={styles.mainEditorDrawerRow}>
-            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#2A1657"}]}>
-              <View style={styles.mainEditorDrawerButtonView} >
-                <Icon name="gif" color="#FFFFFF" size={20}/>
-                <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
               </View>
             </TouchableHighlight>
 
@@ -425,17 +515,47 @@ class Editor extends React.Component {
               </View>
             </TouchableHighlight>
           </View>
+
+          <View style={styles.mainEditorDrawerRow}>
+            <TouchableHighlight onPress={() => this.getImageFromRoll("create")} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#ef659d"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="collections" color="#FFFFFF" size={20}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Add Image</Text>
+              </View>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={() => this.saveMeme()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#e1821a"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="save" color="#FFFFFF" size={20}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Save Meme</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+
+          <View style={styles.mainEditorDrawerRow}>
+            <TouchableHighlight onPress={() => this.getGifAPICall()} underlayColor="#ffffffaa" style={[styles.mainEditorDrawerButton, {backgroundColor: "#761f89"}]}>
+              <View style={styles.mainEditorDrawerButtonView} >
+                <Icon name="gif" color="#FFFFFF" size={20}/>
+                <Text style={styles.mainEditorDrawerButtonText}>  Add Gif</Text>
+              </View>
+            </TouchableHighlight>
+
+            <Menu onSelect={(value) => this.finishEditing(value)}>
+              <MenuTrigger>
+                <View style={[styles.mainEditorDrawerButton, {backgroundColor: "#00822f"}]}>
+                  <View style={styles.mainEditorDrawerButtonView} >
+                    <Icon name="send" color="#FFFFFF" size={20}/>
+                    <Text style={styles.mainEditorDrawerButtonText}>  Post Meme</Text>
+                  </View>
+                </View>
+              </MenuTrigger>
+              <MenuOptions>
+                {postOptionArr}
+              </MenuOptions>
+            </Menu>
+          </View>
+
         </FadeAnim>
-
-
-        {/** ================ COMPLETE BUTTON ================ **/}
-        <TouchableHighlight onPress={this.finishEditing} underlayColor="#ffffffaa" style={[styles.completeButton, {backgroundColor: "#009900"}]}>
-            <View style={styles.completeButtonView} >
-              <Icon name="check-circle" color="#FFFFFF" size={25}/>
-              <Text style={styles.completeButtonText}>  Finished</Text>
-            </View>
-          </TouchableHighlight>
-
 
         {/** ================ TEXT EDITOR DRAWER ================ **/}
         <FadeAnim style={styles.objEditorDrawer} visible={textEditorVisible}>
@@ -767,6 +887,8 @@ class Editor extends React.Component {
               onValueChange={(value) => this.state.selectedObj.setState({rotation: value})} />
           </View>
         }
+
+        </MenuProvider>
       </View>
     );
   }
@@ -922,5 +1044,15 @@ const styles = StyleSheet.create({
   listView: {
     alignItems: "center",
     height: 300
-  }
+  },
+  popUpMenuButton: {
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  popUpMenuText: {
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingLeft: 10
+  },
 });

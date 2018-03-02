@@ -465,7 +465,7 @@ export default class Feed extends React.Component {
             <TouchableHighlight
               underlayColor="white"
               onPress={() =>
-                this.props.navigation.navigate("Canvas", {
+                this.props.navigation.navigate("Editor", {
                   imgURL: post.meme.imgURL,
                   layers: post.meme.layers,
                   postID: post._id,
