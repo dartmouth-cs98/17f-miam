@@ -21,7 +21,7 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 });
 const vw = Dimensions.get("window").width;
 const apiUrl = ["http://api.giphy.com/v1/", "/search?"];
 const apiKey = "7oHJC3R9iIXrbyCdYSjDWfkU3JTDGERx";
-const limit = "50";
+const limit = "30";
 
 export default class Search extends React.Component {
   constructor(props) {
