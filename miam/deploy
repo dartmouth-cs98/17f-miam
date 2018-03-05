@@ -1,0 +1,25 @@
+#! /usr/bin/env bash
+set -e # exit entire script when command exits with non-zero status
+# Publish `production` release
+exp publish --release-channel production --non-interactive
+# Makes sure there are no standalone app builds in progress.
+# Will exit with a non-zero status code if there is an active standalone app build already in progress.
+exptool check:status
+
+# Start building standalone android build using `production` release channel
+exp build:ios --release-channel production --non-interactive
+
+# Wait for the build to finish, checking its status periodically
+# Will exit 0 (success) once the build has successfully been built
+exptool wait:build # using default interval & timeout
+
+# Download the artifact to current directory as `app.ipa`
+exptool download:artifact
+
+# [Optional] See comment above this code snippet to decide
+# if you would like to follow this route.
+# export $DELIVER_USERNAME=f001yh2@gmail.com
+# export $DELIVER_PASSWORD=Rainbow*1996
+
+# Use fastlane to upload your current standalone iOS build to test flight on iTunes Connect.
+fastlane deliver --verbose --ipa "app.ipa" --skip_screenshots --skip_metadata
