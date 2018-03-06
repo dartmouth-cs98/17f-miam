@@ -269,7 +269,7 @@ class Battle extends React.Component {
           underlayColor="white"
           onPress={() => this.setState({ selectingMeme: true })}
           style={styles.iconStyle}>
-          <IconMaterial name="control-point" color="#ac3973" size={30} />
+          <IconMaterial name="control-point" color="#b366ff" size={30} />
         </TouchableHighlight>
         <TextInput
           onChangeText={text => this.setState({ text })}
@@ -278,22 +278,18 @@ class Battle extends React.Component {
           autoCapitalize="none"
           style={styles.textArea}
         />
-        <LinearGradient
-          colors={["#6a3093", "#a044ff"]}
+        <TouchableHighlight
           style={styles.sendButton}
+          onPress={() => this.sendTextMsg()}
         >
-          <TouchableHighlight
-            onPress={() => this.sendTextMsg()}
-          >
-            <Text style={{ color: "white" }}>Send</Text>
-          </TouchableHighlight>
-        </LinearGradient>
+          <Text style={{ color: "white" }}>Send</Text>
+        </TouchableHighlight>
       </View>
     );
   }
 
   renderList() {
-    if (this.state.messages.length < 8) {
+    if (this.state.messages.length < 6) {
       return (
         <View ref="myRef">
           <KeyboardAwareScrollView
@@ -303,7 +299,6 @@ class Battle extends React.Component {
             onContentSizeChange={(contentWidth, contentHeight) => {
               this.scrollView.scrollToEnd({ animated: true });
             }}
-            contentContainerStyle={styles.scrollView}
           >
             <ListView
               initialListSize={5}
@@ -328,7 +323,7 @@ class Battle extends React.Component {
             onContentSizeChange={(contentWidth, contentHeight) => {
               this.scrollView.scrollToEnd({ animated: true });
             }}
-            contentContainerStyle={styles.scrollView, this.props.expired && {paddingBottom: "20%"}}
+            contentContainerStyle={this.props.expired && {paddingBottom: "20%"}}
           >
             <ListView
               initialListSize={5}
@@ -417,7 +412,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E5E5",
     marginTop: 20,
     alignItems: "center",
-    marginBottom: 0.1*vh
+    marginBottom: 0.12*vh
   },
   textArea: {
     backgroundColor: "white",
@@ -426,7 +421,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: vw * 0.93,
     margin: 5,
-    borderColor: "black",
+    borderColor: "#b366ff",
     borderWidth: 1,
     borderRadius: 5,
     flex: 1,
@@ -439,7 +434,7 @@ const styles = StyleSheet.create({
     padding: 12,
     margin: 5,
     borderRadius: 5,
-    backgroundColor: "transparent"
+    backgroundColor: "#b366ff"
   },
 
   messageMain: {
@@ -504,7 +499,7 @@ const styles = StyleSheet.create({
   // },
 
   listView: {
-    height: vh*0.75
+    height: vh*0.76
   },
 
   scrollView: {

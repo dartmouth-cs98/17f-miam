@@ -332,7 +332,7 @@ export default class BattleList extends React.Component {
           <View style={styles.textInput}>
             <TextInput
               style={{
-                width: "65%",
+                width: "57%",
                 borderColor: "#d9b3ff",
                 borderWidth: 2,
                 height: "100%",
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   headingTabBar: {
-    width: "90%",
+    width: "80%",
     height: 28,
     borderBottomWidth: 2,
     borderColor: "#d9b3ff",
@@ -600,7 +600,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     margin: 5,
     padding: 5,
-    width: "30%"
+    width: "35%"
   }
 });
 
