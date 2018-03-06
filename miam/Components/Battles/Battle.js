@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   // },
 
   listView: {
-    height: vh*0.79
+    height: vh*0.75
   },
 
   scrollView: {

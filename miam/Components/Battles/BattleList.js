@@ -545,13 +545,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   headingTabBar: {
-    width: "75%",
+    width: "90%",
     height: 28,
     borderBottomWidth: 2,
     borderColor: "#d9b3ff",
     borderRadius: 10,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "center",
     margin: "3%"
@@ -596,7 +596,6 @@ const styles = StyleSheet.create({
   startBattleButton: {
     backgroundColor: "#b366ff",
     height: "100%",
-    width: "25%",
     justifyContent: "center",
     borderRadius: 5,
     margin: 5,
