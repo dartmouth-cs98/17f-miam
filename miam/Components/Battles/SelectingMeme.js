@@ -55,16 +55,12 @@ class SelectingMeme extends React.Component {
     return (
       <View style={styles.memeContainer}>
         <Meme imgURL={meme.imgURL} layers={meme.layers} />
-        <LinearGradient
-          colors={["#6a3093", "#a044ff"]}
+        <TouchableHighlight
           style={styles.sendButton}
+          onPress={() => this.props.sendMemeMsg(meme._id)}
         >
-          <TouchableHighlight
-            onPress={() => this.props.sendMemeMsg(meme._id)}
-          >
-            <Text style={{ color: "white" }}>Send</Text>
-          </TouchableHighlight>
-        </LinearGradient>
+          <Text style={{ color: "white" }}>Send</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -137,9 +133,6 @@ const styles = StyleSheet.create({
     height: 200,
     marginTop: "1%"
   },
-  sendButton: {
-    color: "#841584"
-  },
   textMsg: {
     color: "#000000",
     textAlign: "center",
@@ -155,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: "1%",
     borderRadius: 5,
-    backgroundColor: "transparent",
+    backgroundColor: "#b366ff",
     width: "40%",
     height: "11%"
   }
