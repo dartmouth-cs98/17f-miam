@@ -119,6 +119,12 @@ export default class Profile extends React.Component {
           let followlist = this.state.observerFollowingList;
           var that = this;
 
+          if (this.state.observer == username){
+            that.setState({
+              self: true,
+            });
+          }
+
           if (followlist !== null){
             followlist.forEach(function(element) {
               if (element.username == username){
@@ -149,6 +155,7 @@ export default class Profile extends React.Component {
             following: response.data[0].following ? response.data[0].following.length : 0,
             score: response.data[0].score,
             image: response.data[0].profilePic,
+            background: response.data[0].backgroundPic,
           });
         } else {
           console.log(error);
